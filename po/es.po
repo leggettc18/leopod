@@ -1,0 +1,51 @@
+# Spanish translations for com.github.leggettc18.leapod package.
+# Copyright (C) 2021 THE com.github.leggettc18.leapod'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the com.github.leggettc18.leapod package.
+# Automatically generated, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: com.github.leggettc18.leapod\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-04 20:59-0400\n"
+"PO-Revision-Date: 2021-09-04 20:59-0400\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ASCII\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/Application.vala:18 data/leapod.desktop.in:3
+#: data/leapod.appdata.xml.in:6
+msgid "Leapod"
+msgstr ""
+
+#: src/Application.vala:21
+msgid "Hello World!"
+msgstr ""
+
+#: data/leapod.desktop.in:4
+msgid "Podcast Client App"
+msgstr ""
+
+#: data/leapod.desktop.in:5
+msgid "Organize and listen to your podcasts"
+msgstr ""
+
+#: data/leapod.desktop.in:8
+msgid "com.github.leggettc18.leapod"
+msgstr ""
+
+#: data/leapod.desktop.in:11
+msgid "Leapod;Podcast;Audio;"
+msgstr ""
+
+#: data/leapod.appdata.xml.in:7
+msgid "Organize and listen to your podcasts!"
+msgstr ""
+
+#: data/leapod.appdata.xml.in:9
+msgid "Subscribe to podcasts, organize them, and listen to them."
+msgstr ""
