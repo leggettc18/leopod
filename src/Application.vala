@@ -12,14 +12,11 @@
     }
 
     protected override void activate () {
-        var main_window = new Gtk.ApplicationWindow (this) {
-            default_height = 300,
-            default_width = 300,
-            title = _("Leapod")
-        };
+        var granite_settings = Granite.Settings.get_default ();
+        var gtk_settings = Gtk.Settings.get_default ();
         
-        var label = new Gtk.Label (_("Hello World!"));
-        main_window.add (label);
+    
+        var main_window = new MainWindow (this);
         main_window.show_all ();
     }
 
