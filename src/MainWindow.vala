@@ -16,6 +16,9 @@
      }
 
      construct {
+        var soup_client = new SoupClient ();
+        var image = new Gdk.Pixbuf.from_stream (soup_client.request (HttpMethod.GET, "https://chrisleggett.me/me.jpg"));
+        image = image.scale_simple (170, 170, Gdk.InterpType.BILINEAR);
         var grid = new Gtk.Grid () {
             column_spacing = 6,
             row_spacing = 6,
@@ -23,9 +26,9 @@
             valign = Gtk.Align.CENTER
         };
         var label1 = new Gtk.Label (_("Hello World!"));
-        var label2 = new Gtk.Label (_("Hello World Again!"));
         grid.add (label1);
-        grid.add (label2);
+        grid.add (new Gtk.Image.from_pixbuf(image));
+        
         add (grid);
      }
  }

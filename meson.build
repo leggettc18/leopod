@@ -12,9 +12,12 @@ executable(
     meson.project_name(),
     'src' / 'Application.vala',
     'src' / 'MainWindow.vala',
+    'src' / 'Utils' / 'SoupClient.vala',
     dependencies: [
         dependency('gtk+-3.0'),
         dependency('granite'),
+        dependency('gdk-3.0'),
+        dependency('libsoup-2.4')
     ],
     install: true
 )
