@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Leapod
+GenericName=Podcast Client App
+Comment=Organize and listen to your podcasts
+Categories=Audio;AudioVideo;Network;
+Exec=com.github.leggettc18.leapod
+Icon=com.github.leggettc18.leapod
+Terminal=false
+Type=Application
+Keywords=Leapod;Podcast;Audio;
