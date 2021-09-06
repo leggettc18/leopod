@@ -18,7 +18,8 @@
      construct {
         int width, height;
         var soup_client = new SoupClient ();
-        var pixbuf = new Gdk.Pixbuf.from_stream (soup_client.request (HttpMethod.GET, "https://chrisleggett.me/me.jpg"));
+        var podcast = new Leapod.Podcast.with_remote_art_uri ("http://latenightlinux.com/wp-content/uploads/latenightlinux.jpg");
+        Gdk.Pixbuf pixbuf = new Gdk.Pixbuf.from_stream (soup_client.request (HttpMethod.GET, podcast.remote_art_uri));
         pixbuf = pixbuf.scale_simple (170, 170, Gdk.InterpType.BILINEAR);
         var flowbox = new Gtk.FlowBox () {
             column_spacing = 20,
@@ -39,15 +40,15 @@
         flowbox.add (button);
         var scrolled_window = new Gtk.ScrolledWindow (null, null);
         scrolled_window.add(flowbox);
-        
+
         add (scrolled_window);
-        
+
         size_allocate.connect ((allocation) => {
             flowbox.set_size_request (allocation.width - 40, allocation.height - 40);
         });
-        
+
         button.clicked.connect (() => {
             label.set_text("Image pressed");
         });
-     }
- }
+    }
+}

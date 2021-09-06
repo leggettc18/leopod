@@ -13,6 +13,7 @@ executable(
     'src' / 'Application.vala',
     'src' / 'MainWindow.vala',
     'src' / 'Utils' / 'SoupClient.vala',
+    'src' / 'Objects' / 'Podcast.vala',
     dependencies: [
         dependency('gtk+-3.0'),
         dependency('granite'),
