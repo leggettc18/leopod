@@ -3,20 +3,23 @@
  * SPDX-FileCopyrightText: 2021 Christopher Leggett <chris@leggett.dev>
  */
 
- public class MainWindow : Gtk.Window {
-     public MainWindow (Gtk.Application application) {
-         Object (
-             application: application,
-             default_height: 600,
-             default_width: 1000,
-             icon_name: "com.github.leggettc18.leapod",
-             title: _("Leapod")
+namespace Leapod {
 
-         );
-     }
-
-     construct {
-        int width, height;
+public class MainWindow : Gtk.Window {
+    // Core Components
+    private Controller controller;
+    
+    
+     public MainWindow (Controller controller) {
+        this.controller = controller;
+        this.set_application (controller.app);
+        default_height = 600;
+        default_width = 1000;
+        this.set_icon_name ("com.github.leggettc18.leapod");
+        title = _("Leapod");
+         
+        int width = 0;
+        int height = 0;
         var soup_client = new SoupClient ();
         var podcast = new Leapod.Podcast.with_remote_art_uri ("http://latenightlinux.com/wp-content/uploads/latenightlinux.jpg");
         Gdk.Pixbuf pixbuf = new Gdk.Pixbuf.from_stream (soup_client.request (HttpMethod.GET, podcast.remote_art_uri));
@@ -27,7 +30,7 @@
             halign = Gtk.Align.CENTER,
             valign = Gtk.Align.START,
             orientation = Gtk.Orientation.HORIZONTAL,
-            height_request = height,
+            height_request = 	height,
             width_request = width,
             margin = 20
         };
@@ -51,4 +54,6 @@
             label.set_text("Image pressed");
         });
     }
+}
+
 }

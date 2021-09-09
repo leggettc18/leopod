@@ -12,6 +12,7 @@ executable(
     meson.project_name(),
     'src' / 'Application.vala',
     'src' / 'MainWindow.vala',
+    'src' / 'Controller.vala',
     'src' / 'Utils' / 'SoupClient.vala',
     'src' / 'Objects' / 'Podcast.vala',
     dependencies: [
