@@ -18,8 +18,6 @@ public class MainWindow : Gtk.Window {
         this.set_icon_name ("com.github.leggettc18.leapod");
         title = _("Leapod");
          
-        int width = 0;
-        int height = 0;
         var soup_client = new SoupClient ();
         var podcast = new Leapod.Podcast.with_remote_art_uri ("http://latenightlinux.com/wp-content/uploads/latenightlinux.jpg");
         Gdk.Pixbuf pixbuf = new Gdk.Pixbuf.from_stream (soup_client.request (HttpMethod.GET, podcast.remote_art_uri));
@@ -30,8 +28,6 @@ public class MainWindow : Gtk.Window {
             halign = Gtk.Align.CENTER,
             valign = Gtk.Align.START,
             orientation = Gtk.Orientation.HORIZONTAL,
-            height_request = 	height,
-            width_request = width,
             margin = 20
         };
         var label = new Gtk.Label ("Hello World!");
