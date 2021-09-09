@@ -10,7 +10,7 @@ public class MainWindow : Gtk.Window {
     private Controller controller;
 
 
-     public MainWindow (Controller controller) {
+    public MainWindow (Controller controller) {
         var granite_settings = Granite.Settings.get_default ();
         var gtk_settings = Gtk.Settings.get_default ();
 
