@@ -29,11 +29,19 @@ public class MainWindow : Gtk.Window {
         default_width = 1000;
         this.set_icon_name ("com.github.leggettc18.leapod");
         title = _("Leapod");
+        
+        var button = new Gtk.Button ();
 
-        var soup_client = new SoupClient ();
         var podcast = new Leapod.Podcast.with_remote_art_uri ("http://latenightlinux.com/wp-content/uploads/latenightlinux.jpg");
-        Gdk.Pixbuf pixbuf = new Gdk.Pixbuf.from_stream (soup_client.request (HttpMethod.GET, podcast.remote_art_uri));
-        pixbuf = pixbuf.scale_simple (170, 170, Gdk.InterpType.BILINEAR);
+        Gdk.Pixbuf pixbuf = null;
+        load_image_async.begin (podcast.remote_art_uri, (obj, res) => {
+            pixbuf = load_image_async.end (res);
+            pixbuf = pixbuf.scale_simple (170, 170, Gdk.InterpType.BILINEAR);
+            var image = new Gtk.Image.from_pixbuf (pixbuf);
+            button.image = image;
+            
+        });
+
         var flowbox = new Gtk.FlowBox () {
             column_spacing = 20,
             row_spacing = 20,
@@ -43,10 +51,6 @@ public class MainWindow : Gtk.Window {
             margin = 20
         };
         var label = new Gtk.Label ("Hello World!");
-        var image = new Gtk.Image.from_pixbuf (pixbuf);
-        var button = new Gtk.Button () {
-            image = image
-        };
         flowbox.add (label);
         flowbox.add (button);
         var scrolled_window = new Gtk.ScrolledWindow (null, null);
@@ -61,6 +65,11 @@ public class MainWindow : Gtk.Window {
         button.clicked.connect (() => {
             label.set_text("Image pressed");
         });
+    }
+    
+    private async Gdk.Pixbuf load_image_async (string url) {
+        var soup_client = new SoupClient ();
+        return yield new Gdk.Pixbuf.from_stream_async (soup_client.request (HttpMethod.GET, url));
     }
 }
 
