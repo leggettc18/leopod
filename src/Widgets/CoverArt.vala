@@ -11,10 +11,8 @@ namespace Leapod {
             Gdk.Pixbuf pixbuf = null;
             Gtk.Image image = null;
             Gtk.Label name = new Gtk.Label (podcast.name);
-            
-            var button = new Gtk.Button () {
-                no_show_all = true
-            };
+            name.margin = 5;
+            Gtk.Button button = new Gtk.Button ();
             load_image_async.begin (podcast.remote_art_uri, (obj, res) => {
                 pixbuf = load_image_async.end (res);
                 pixbuf = pixbuf.scale_simple (170, 170, Gdk.InterpType.BILINEAR);
