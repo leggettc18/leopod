@@ -48,13 +48,18 @@ public class MainWindow : Gtk.Window {
             orientation = Gtk.Orientation.HORIZONTAL,
             margin = 20
         };
+        var label = new Gtk.Label ("initial state");
         for (var i = 0; i < 2; i++) {
             var coverart = new CoverArt.with_podcast (podcasts[i]);
             coverart.double_clicked.connect ((podcast) => {
-                destroy ();
+                label.label = "double-clicked";
+            });
+            coverart.clicked.connect ((podcast) => {
+                label.label = "single-clicked";
             });
             flowbox.add (coverart);
         }
+        flowbox.add (label);
         var scrolled_window = new Gtk.ScrolledWindow (null, null);
         scrolled_window.add(flowbox);
         add (scrolled_window);
