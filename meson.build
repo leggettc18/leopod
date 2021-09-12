@@ -15,6 +15,7 @@ executable(
     'src' / 'Controller.vala',
     'src' / 'Utils' / 'SoupClient.vala',
     'src' / 'Objects' / 'Podcast.vala',
+    'src' / 'Widgets' / 'CoverArt.vala',
     dependencies: [
         dependency('gtk+-3.0'),
         dependency('granite'),
