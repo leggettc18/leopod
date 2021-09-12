@@ -6,8 +6,12 @@
 namespace Leapod {
     public class CoverArt : Gtk.Box {
         public CoverArt.with_podcast (Podcast podcast) {
+            orientation = Gtk.Orientation.VERTICAL;
+            no_show_all = true;
             Gdk.Pixbuf pixbuf = null;
             Gtk.Image image = null;
+            Gtk.Label name = new Gtk.Label (podcast.name);
+            
             var button = new Gtk.Button () {
                 no_show_all = true
             };
@@ -17,8 +21,11 @@ namespace Leapod {
                 image = new Gtk.Image.from_pixbuf (pixbuf);
                 button.image = image;
                 button.show ();
+                name.show ();
+                show ();
             });
             add (button);
+            add (name);
         }
     }
     

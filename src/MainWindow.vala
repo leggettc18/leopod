@@ -31,8 +31,14 @@ public class MainWindow : Gtk.Window {
         title = _("Leapod");
 
 
-        var podcast1 = new Leapod.Podcast.with_remote_art_uri ("http://latenightlinux.com/wp-content/uploads/latenightlinux.jpg");
-        var podcast2 = new Leapod.Podcast.with_remote_art_uri ("https://assets.fireside.fm/file/fireside-images/podcasts/images/f/f31a453c-fa15-491f-8618-3f71f1d565e5/cover.jpg?v=3");
+        var podcast1 = new Leapod.Podcast () {
+            remote_art_uri = "http://latenightlinux.com/wp-content/uploads/latenightlinux.jpg",
+            name = "Late Night Linux"
+        };
+        var podcast2 = new Leapod.Podcast () {
+            remote_art_uri = "https://assets.fireside.fm/file/fireside-images/podcasts/images/f/f31a453c-fa15-491f-8618-3f71f1d565e5/cover.jpg?v=3",
+            name = "Linux Unplugged"
+        };
         Podcast[] podcasts = {podcast1, podcast2};
         var flowbox = new Gtk.FlowBox () {
             column_spacing = 20,

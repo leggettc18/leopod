@@ -7,6 +7,7 @@ namespace Leapod {
 	public class Podcast {
 
 		public string remote_art_uri = "";
+		public string name = "";
 
 		public Podcast () {
 
