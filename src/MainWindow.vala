@@ -49,7 +49,11 @@ public class MainWindow : Gtk.Window {
             margin = 20
         };
         for (var i = 0; i < 2; i++) {
-            flowbox.add (new CoverArt.with_podcast (podcasts[i]));
+            var coverart = new CoverArt.with_podcast (podcasts[i]);
+            coverart.double_clicked.connect ((podcast) => {
+                destroy ();
+            });
+            flowbox.add (coverart);
         }
         var scrolled_window = new Gtk.ScrolledWindow (null, null);
         scrolled_window.add(flowbox);

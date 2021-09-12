@@ -5,7 +5,9 @@
 
 namespace Leapod {
     public class CoverArt : Gtk.Box {
+        private bool double_click = false;
         public CoverArt.with_podcast (Podcast podcast) {
+            add_events (Gdk.EventMask.BUTTON_RELEASE_MASK);
             orientation = Gtk.Orientation.VERTICAL;
             no_show_all = true;
             Gdk.Pixbuf pixbuf = null;
@@ -24,7 +26,28 @@ namespace Leapod {
             });
             add (button);
             add (name);
+            
+            button_release_event.connect ((event) => {
+                if (!this.double_click) {
+                    clicked (podcast);
+                    return true;
+                }
+                this.double_click = false;
+                return false;
+            });
+            
+            button_press_event.connect ((event) => {
+                if (event.type == Gdk.EventType.@2BUTTON_PRESS) {
+                    double_clicked (podcast);
+                    this.double_click = true;
+                    return true;
+                }
+                return false;
+            });
         }
+        
+        public signal void clicked (Podcast podcast);
+        public signal void double_clicked (Podcast podcast);
     }
     
     private async Gdk.Pixbuf load_image_async (string url) {
