@@ -8,6 +8,8 @@ namespace Leapod {
 public class MainWindow : Gtk.Window {
     // Core Components
     private Controller controller;
+    private Gee.ArrayList<Podcast> podcasts;
+    private Gtk.FlowBox flowbox;
 
 
     public MainWindow (Controller controller) {
@@ -30,13 +32,12 @@ public class MainWindow : Gtk.Window {
         this.set_icon_name ("com.github.leggettc18.leapod");
         title = _("Leapod");
         
-        FeedParser feed_parser = new FeedParser ();
+        podcasts = new Gee.ArrayList<Podcast> ();
 
-        var podcast1 = new FeedParser ().get_podcast_from_file ("https://latenightlinux.com/feed/mp3");
-        var podcast2 = new FeedParser ().get_podcast_from_file ("https://feeds.fireside.fm/linuxunplugged/rss");
-        var podcast3 = new FeedParser ().get_podcast_from_file ("https://feeds.fireside.fm/coder/rss");
-        Podcast[] podcasts = {podcast1, podcast2, podcast3};
-        var flowbox = new Gtk.FlowBox () {
+        podcasts.add (new FeedParser ().get_podcast_from_file ("https://latenightlinux.com/feed/mp3"));
+        podcasts.add (new FeedParser ().get_podcast_from_file ("https://feeds.fireside.fm/linuxunplugged/rss"));
+        podcasts.add (new FeedParser ().get_podcast_from_file ("https://feeds.fireside.fm/coder/rss"));
+        flowbox = new Gtk.FlowBox () {
             column_spacing = 20,
             row_spacing = 20,
             halign = Gtk.Align.CENTER,
@@ -44,18 +45,9 @@ public class MainWindow : Gtk.Window {
             orientation = Gtk.Orientation.HORIZONTAL,
             margin = 20
         };
-        var label = new Gtk.Label ("initial state");
         for (var i = 0; i < 3; i++) {
-            var coverart = new CoverArt.with_podcast (podcasts[i]);
-            coverart.double_clicked.connect ((podcast) => {
-                label.label = "double-clicked";
-            });
-            coverart.clicked.connect ((podcast) => {
-                label.label = "single-clicked";
-            });
-            flowbox.add (coverart);
+            add_podcast (podcasts[i]);
         }
-        flowbox.add (label);
         var scrolled_window = new Gtk.ScrolledWindow (null, null);
         scrolled_window.add(flowbox);
         add (scrolled_window);
@@ -63,6 +55,11 @@ public class MainWindow : Gtk.Window {
         size_allocate.connect ((allocation) => {
             flowbox.set_size_request (allocation.width - 40, allocation.height - 40);
         });
+    }
+    
+    public void add_podcast (Podcast podcast) {
+        var coverart = new CoverArt.with_podcast (podcast);
+        flowbox.add (coverart);
     }
 }
 

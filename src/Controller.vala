@@ -14,8 +14,14 @@ namespace Leapod {
 			
 			info ("initializing the main window");
 			window = new MainWindow (this);
+			window.set_titlebar (this.app.header_bar);
 			
 			window.show_all ();
+		}
+		
+		public void add_podcast (string podcast_uri) {
+		    Podcast podcast = new FeedParser ().get_podcast_from_file (podcast_uri);
+		    window.add_podcast(podcast);
 		}
 	}
 }

@@ -20,6 +20,7 @@ executable(
     'src' / 'Objects' / 'Podcast.vala',
     'src' / 'Objects' / 'Episode.vala',
     'src' / 'Widgets' / 'CoverArt.vala',
+    'src' / 'Widgets' / 'AddPodcastDialog.vala',
     dependencies: [
         dependency('gtk+-3.0'),
         dependency('granite'),
