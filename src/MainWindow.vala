@@ -29,17 +29,13 @@ public class MainWindow : Gtk.Window {
         default_width = 1000;
         this.set_icon_name ("com.github.leggettc18.leapod");
         title = _("Leapod");
+        
+        FeedParser feed_parser = new FeedParser ();
 
-
-        var podcast1 = new Leapod.Podcast () {
-            remote_art_uri = "http://latenightlinux.com/wp-content/uploads/latenightlinux.jpg",
-            name = "Late Night Linux"
-        };
-        var podcast2 = new Leapod.Podcast () {
-            remote_art_uri = "https://assets.fireside.fm/file/fireside-images/podcasts/images/f/f31a453c-fa15-491f-8618-3f71f1d565e5/cover.jpg?v=3",
-            name = "Linux Unplugged"
-        };
-        Podcast[] podcasts = {podcast1, podcast2};
+        var podcast1 = new FeedParser ().get_podcast_from_file ("https://latenightlinux.com/feed/mp3");
+        var podcast2 = new FeedParser ().get_podcast_from_file ("https://feeds.fireside.fm/linuxunplugged/rss");
+        var podcast3 = new FeedParser ().get_podcast_from_file ("https://feeds.fireside.fm/coder/rss");
+        Podcast[] podcasts = {podcast1, podcast2, podcast3};
         var flowbox = new Gtk.FlowBox () {
             column_spacing = 20,
             row_spacing = 20,
@@ -49,7 +45,7 @@ public class MainWindow : Gtk.Window {
             margin = 20
         };
         var label = new Gtk.Label ("initial state");
-        for (var i = 0; i < 2; i++) {
+        for (var i = 0; i < 3; i++) {
             var coverart = new CoverArt.with_podcast (podcasts[i]);
             coverart.double_clicked.connect ((podcast) => {
                 label.label = "double-clicked";

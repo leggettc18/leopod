@@ -1,3 +1,8 @@
+/*
+ * SPDX-License-Identifier: MIT
+ * SPDX-FileCopyrightText: 2021 Christopher Leggett <chris@leggett.dev>
+ */
+namespace Leapod {
 public class SoupClient {
     private Soup.Session soup_session = null;
 
@@ -179,4 +184,5 @@ public errordomain PublishingError {
      * client as out-of-date. The local client should acquire a new session identifier.
      */
     EXPIRED_SESSION
+}
 }

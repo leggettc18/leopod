@@ -13,14 +13,20 @@ executable(
     'src' / 'Application.vala',
     'src' / 'MainWindow.vala',
     'src' / 'Controller.vala',
+    'src' / 'Library.vala',
     'src' / 'Utils' / 'SoupClient.vala',
+    'src' / 'Utils' / 'FeedParser.vala',
+    'src' / 'Utils' / 'XmlUtils.vala',
     'src' / 'Objects' / 'Podcast.vala',
+    'src' / 'Objects' / 'Episode.vala',
     'src' / 'Widgets' / 'CoverArt.vala',
     dependencies: [
         dependency('gtk+-3.0'),
         dependency('granite'),
         dependency('gdk-3.0'),
-        dependency('libsoup-2.4')
+        dependency('libsoup-2.4'),
+        dependency('libxml-2.0'),
+        dependency('gee-0.8'),
     ],
     install: true
 )
