@@ -39,9 +39,7 @@ public class MainWindow : Gtk.Window {
             valign = Gtk.Align.START,
             margin = 10,
         };
-        foreach (Podcast podcast in controller.library.podcasts) {
-            add_podcast (podcast);
-        }
+        
         var scrolled_window = new Gtk.ScrolledWindow (null, null);
         scrolled_window.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
         scrolled_window.add(flowbox);
@@ -56,6 +54,37 @@ public class MainWindow : Gtk.Window {
     public void add_podcast (Podcast podcast) {
         var coverart = new CoverArt.with_podcast (podcast);
         flowbox.add (coverart);
+    }
+    
+    public void populate_views () {
+        this.controller.library.populate_library ();
+        info ("populating main window");
+        foreach (Podcast podcast in this.controller.library.podcasts) {
+            info ("adding podcast %s", podcast.name);
+            add_podcast (podcast);
+        }
+    }
+    
+    /*
+     * Populates the three views (all, audio, video) from the contents of the controller.library
+     */
+    public async void populate_views_async () {
+
+
+        SourceFunc callback = populate_views_async.callback;
+
+        ThreadFunc<void*> run = () => {
+
+            populate_views ();
+
+            Idle.add ((owned) callback);
+            return null;
+        };
+
+
+        Thread.create<void*> (run, false);
+
+        yield;
     }
 }
 

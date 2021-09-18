@@ -15,6 +15,9 @@ public class MyApp : Gtk.Application {
     }
 
     protected override void activate () {
+        Granite.Services.Logger.initialize ("Leapod");
+        Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO;
+        info ("Starting activation");
         var add_podcast_action = new SimpleAction ("add-podcast", null);
         
         add_action (add_podcast_action);

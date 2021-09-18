@@ -12,13 +12,20 @@ namespace Leapod {
 		public Controller (MyApp app) {
 			info ("initializing the controller.");
 			this.app = app;
+			
+			info ("initializing blank library");
 			library = new Library ();
 			
 			info ("initializing the main window");
 			window = new MainWindow (this);
 			window.set_titlebar (this.app.header_bar);
-			
+			info ("showing main window");
 			window.show_all ();
+			
+			window.populate_views_async.begin ((obj, res) => {
+			    window.populate_views_async.end (res);
+			});
+			
 		}
 		
 		public void add_podcast (string podcast_uri) {
