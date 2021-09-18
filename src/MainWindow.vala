@@ -13,6 +13,7 @@ public class MainWindow : Gtk.Window {
 
 
     public MainWindow (Controller controller) {
+        var width = 0, height = 0;
         var granite_settings = Granite.Settings.get_default ();
         var gtk_settings = Gtk.Settings.get_default ();
 
@@ -38,22 +39,23 @@ public class MainWindow : Gtk.Window {
         podcasts.add (new FeedParser ().get_podcast_from_file ("https://feeds.fireside.fm/linuxunplugged/rss"));
         podcasts.add (new FeedParser ().get_podcast_from_file ("https://feeds.fireside.fm/coder/rss"));
         flowbox = new Gtk.FlowBox () {
-            column_spacing = 20,
             row_spacing = 20,
+            column_spacing = 20,
             halign = Gtk.Align.CENTER,
             valign = Gtk.Align.START,
-            orientation = Gtk.Orientation.HORIZONTAL,
-            margin = 20
+            margin = 10,
         };
-        for (var i = 0; i < 3; i++) {
-            add_podcast (podcasts[i]);
+        foreach (Podcast podcast in podcasts) {
+            add_podcast (podcast);
         }
         var scrolled_window = new Gtk.ScrolledWindow (null, null);
+        scrolled_window.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
         scrolled_window.add(flowbox);
         add (scrolled_window);
 
-        size_allocate.connect ((allocation) => {
-            flowbox.set_size_request (allocation.width - 40, allocation.height - 40);
+        size_allocate.connect (() => {
+            get_size (out width, out height);
+            flowbox.set_size_request (width - 20, height - 20);
         });
     }
     

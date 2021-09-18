@@ -27,7 +27,7 @@ public class MyApp : Gtk.Application {
         header_bar = new Gtk.HeaderBar () {
             show_close_button = true
         };
-        header_bar.add (button);
+        header_bar.pack_end (button);
         
     
         var controller = new Controller(this);

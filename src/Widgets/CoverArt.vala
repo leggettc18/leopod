@@ -9,6 +9,7 @@ namespace Leapod {
         public Podcast podcast = null;
         public CoverArt.with_podcast (Podcast podcast) {
             this.podcast = podcast;
+            set_size_request (170, 170);
             add_events (Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.BUTTON_PRESS_MASK);
             orientation = Gtk.Orientation.VERTICAL;
             no_show_all = true;
