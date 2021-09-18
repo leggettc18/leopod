@@ -6,11 +6,13 @@
 namespace Leapod {
 	public class Controller : GLib.Object {
 		public MainWindow window = null;
+		public Library library = null;
 		public MyApp app = null;
 		
 		public Controller (MyApp app) {
 			info ("initializing the controller.");
 			this.app = app;
+			library = new Library ();
 			
 			info ("initializing the main window");
 			window = new MainWindow (this);

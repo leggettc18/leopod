@@ -8,7 +8,6 @@ namespace Leapod {
 public class MainWindow : Gtk.Window {
     // Core Components
     private Controller controller;
-    private Gee.ArrayList<Podcast> podcasts;
     private Gtk.FlowBox flowbox;
 
 
@@ -33,11 +32,6 @@ public class MainWindow : Gtk.Window {
         this.set_icon_name ("com.github.leggettc18.leapod");
         title = _("Leapod");
         
-        podcasts = new Gee.ArrayList<Podcast> ();
-
-        podcasts.add (new FeedParser ().get_podcast_from_file ("https://latenightlinux.com/feed/mp3"));
-        podcasts.add (new FeedParser ().get_podcast_from_file ("https://feeds.fireside.fm/linuxunplugged/rss"));
-        podcasts.add (new FeedParser ().get_podcast_from_file ("https://feeds.fireside.fm/coder/rss"));
         flowbox = new Gtk.FlowBox () {
             row_spacing = 20,
             column_spacing = 20,
@@ -45,7 +39,7 @@ public class MainWindow : Gtk.Window {
             valign = Gtk.Align.START,
             margin = 10,
         };
-        foreach (Podcast podcast in podcasts) {
+        foreach (Podcast podcast in controller.library.podcasts) {
             add_podcast (podcast);
         }
         var scrolled_window = new Gtk.ScrolledWindow (null, null);
