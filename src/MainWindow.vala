@@ -66,11 +66,9 @@ public class MainWindow : Gtk.Window {
     }
     
     /*
-     * Populates the three views (all, audio, video) from the contents of the controller.library
+     * Populates the views from the contents of the controller.library
      */
     public async void populate_views_async () {
-
-
         SourceFunc callback = populate_views_async.callback;
 
         ThreadFunc<void*> run = () => {
@@ -81,8 +79,7 @@ public class MainWindow : Gtk.Window {
             return null;
         };
 
-
-        Thread.create<void*> (run, false);
+        new Thread<void*> ("populate-views", run);
 
         yield;
     }

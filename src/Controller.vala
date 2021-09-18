@@ -25,7 +25,6 @@ namespace Leapod {
 			window.populate_views_async.begin ((obj, res) => {
 			    window.populate_views_async.end (res);
 			});
-			
 		}
 		
 		public void add_podcast (string podcast_uri) {
