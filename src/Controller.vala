@@ -43,7 +43,7 @@ namespace Leapod {
                 return null;
             };
     
-            new Thread<void*> ("add-podcast", run);
+            new Thread<void*> ("add-podcast", (owned) run);
     
             yield;
 		}

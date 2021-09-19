@@ -79,7 +79,7 @@ public class MainWindow : Gtk.Window {
             return null;
         };
 
-        new Thread<void*> ("populate-views", run);
+        new Thread<void*> ("populate-views", (owned) run);
 
         yield;
     }
