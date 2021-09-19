@@ -53,7 +53,7 @@ namespace Leapod {
                     destroy ();
                     break;
                 case Gtk.ResponseType.APPLY:
-                    this.controller.add_podcast(this.podcast_uri_entry.text);
+                    this.controller.add_podcast_async.begin (this.podcast_uri_entry.text);
                     destroy ();
                     break;
             }

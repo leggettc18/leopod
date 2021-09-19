@@ -31,5 +31,21 @@ namespace Leapod {
 		    Podcast podcast = new FeedParser ().get_podcast_from_file (podcast_uri);
 		    window.add_podcast(podcast);
 		}
+		
+		public async void add_podcast_async (string podcast_uri) {
+		    SourceFunc callback = add_podcast_async.callback;
+    
+            ThreadFunc<void*> run = () => {
+    
+                add_podcast (podcast_uri);
+    
+                Idle.add ((owned) callback);
+                return null;
+            };
+    
+            new Thread<void*> ("add-podcast", run);
+    
+            yield;
+		}
 	}
 }
