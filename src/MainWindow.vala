@@ -59,10 +59,6 @@ public class MainWindow : Gtk.Window {
     public void populate_views () {
         this.controller.library.populate_library ();
         info ("populating main window");
-        foreach (Podcast podcast in this.controller.library.podcasts) {
-            info ("adding podcast %s", podcast.name);
-            add_podcast (podcast);
-        }
     }
     
     /*

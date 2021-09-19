@@ -14,7 +14,7 @@ namespace Leapod {
 			this.app = app;
 			
 			info ("initializing blank library");
-			library = new Library ();
+			library = new Library (this);
 			
 			info ("initializing the main window");
 			window = new MainWindow (this);
@@ -29,6 +29,7 @@ namespace Leapod {
 		
 		public void add_podcast (string podcast_uri) {
 		    Podcast podcast = new FeedParser ().get_podcast_from_file (podcast_uri);
+		    library.podcasts.add (podcast);
 		    window.add_podcast(podcast);
 		}
 		
