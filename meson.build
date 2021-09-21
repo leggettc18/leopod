@@ -28,6 +28,7 @@ executable(
         dependency('libsoup-2.4'),
         dependency('libxml-2.0'),
         dependency('gee-0.8'),
+        dependency('sqlite3'),
     ],
     install: true
 )
