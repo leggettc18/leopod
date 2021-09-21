@@ -14,6 +14,7 @@ executable(
     'src' / 'MainWindow.vala',
     'src' / 'Controller.vala',
     'src' / 'Library.vala',
+    'src' / 'LeapodSettings.vala',
     'src' / 'Utils' / 'SoupClient.vala',
     'src' / 'Utils' / 'FeedParser.vala',
     'src' / 'Utils' / 'XmlUtils.vala',
@@ -67,5 +68,15 @@ foreach i : icon_sizes
         rename: meson.project_name() + '.svg'
     )
 endforeach
+
+install_data(
+    'gschema.xml',
+    install_dir: get_option('datadir') / 'glib-2.0' / 'schemas',
+    rename: meson.project_name() + '.gschema.xml'
+)
+
+meson.add_install_script('meson/post_install.py')
+
+subdir('data')
 
 subdir('po')

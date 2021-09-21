@@ -1,0 +1,10 @@
+<?xml version="1.0" encode="UTF-8"?>
+<schemalist>
+  <schema path="/com/github/leggettc18/leapod/" id="com.github.leggettc18.leapod">
+    <key name="library-location" type="s">
+      <default>"~/.local/share/leapod"</default>
+      <summary>The directory where podcasts are stored</summary>
+      <description>The directory where podcasts are stored</description>
+    </key>
+  </schema>
+</schemalist>
