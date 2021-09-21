@@ -9,11 +9,15 @@ namespace Leapod {
         private Gtk.Widget add_podcast_button;
         private Controller controller;
         
-        public AddPodcastDialog (Controller controller) {
-            this.title = "Add Podcast";
-            this.controller = controller;
+        public AddPodcastDialog (Window parent) {
+            this.title = _("Add Podcast");
+            set_transient_for (parent);
+            set_attached_to (parent);
+            set_modal (true);
+            set_resizable (false);
+            set_default_response (Gtk.ResponseType.OK)
             this.border_width = 5;
-            set_default_size (500, 100);
+            set_default_size (500, 150);
             create_widgets ();
             connect_signals ();
         }
@@ -38,25 +42,6 @@ namespace Leapod {
             this.add_podcast_button.sensitive = false;
             
             show_all ();
-        }
-        
-        private void connect_signals () {
-            this.podcast_uri_entry.changed.connect (() => {
-                this.add_podcast_button.sensitive = (this.podcast_uri_entry.text != "");
-            });
-            this.response.connect (on_response);
-        }
-        
-        private void on_response (Gtk.Dialog source, int response_id) {
-            switch (response_id) {
-                case Gtk.ResponseType.CLOSE:
-                    destroy ();
-                    break;
-                case Gtk.ResponseType.APPLY:
-                    this.controller.add_podcast_async.begin (this.podcast_uri_entry.text);
-                    destroy ();
-                    break;
-            }
         }
     }
 }

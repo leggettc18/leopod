@@ -29,7 +29,7 @@ namespace Leapod {
 		
 		public void add_podcast (string podcast_uri) {
 		    Podcast podcast = new FeedParser ().get_podcast_from_file (podcast_uri);
-		    library.podcasts.add (podcast);
+		    library.add_podcast (podcast);
 		    window.add_podcast(podcast);
 		}
 		
