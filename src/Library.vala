@@ -59,6 +59,61 @@ namespace Leapod {
             library_loaded ();
 		}
 		
+		/* 
+		 * Adds a podcast to the database and the active podcast list
+		 */
+		public bool add_podcast (Podcast podcast) throws LeapodLibraryError {
+		    info ("Podcast %s is being added to the library", podcast.name);
+		    
+		    // Set all but the most recent episode as played
+		    if (podcast.episodes.size > 0) {
+		        for (int i = 0; i < podcasts.size - 1; i++) {
+		            podcast.episodes[i].status = EpisodeStatus.PLAYED;
+		        }
+		    }
+		    
+		    string podcast_path = local_library_path + "%s".printf (
+		        podcast.name.replace ("%27", "'").replace ("%", "_")
+		    );
+		    
+		    // Create a directory for downloads and artwork caching
+		    GLib.DirUtils.create_with_parents (podcast_path, 0775);
+		    
+		    // Locally cache the album art if necessary
+		    try {
+		        // Don't user the coverart_path getter, use the remote_uri
+		        GLib.File remote_art = GLib.File.new_for_uri (podcast.remote_art_uri);
+		        if (remote_art.query_exists ()) {
+		            // If the remote art exists, set path for new file and create object for the local file
+		            string art_path = podcast_path + "/" + remote_art.get_basename ().replace ("%", "_");
+		            GLib.File local_art = GLib.File.new_for_path (art_path);
+		            
+		            if (!local_art.query_exists ()) {
+		                // Cache the art
+		                remote_art.copy (local_art, FileCopyFlags.NONE);
+		            }
+		            // Mark the local path on the podcast
+		            podcast.local_art_uri = "file://" + art_path;
+		        }
+		    } catch (Error e) {
+		        error ("unable to save a local copy of album art. %s" e.message);
+		    }
+		    
+		    // Add the podcast
+		    if (write_podcast_to_database (podcast)) {
+		        // Add it to the local arraylist
+		        podcasts.add (podcast);
+		        
+		        // Fill in the podcast's episodes
+		        foreach (Episode in podcast.episodes) {
+		            episode.podcast_uri = podcast.feed_uri;
+		            write_episode_to_database (episode);
+		        }
+		    } else {
+		        warning ("failed adding podcast '%s'.", podcast.name);
+		    }
+		}
+		
 		/*
 		 * Opens the database connection, creating the database if it does
 		 * not exist
@@ -163,6 +218,126 @@ namespace Leapod {
 		    }
 		    
 		    return;
+		}
+		
+		/*
+		 * Inserts or replaces a podcast in the database
+		 */
+		public bool write_podcast_to_database (Podcast podcast) {
+		    // Convert content_type enum to string
+		    string content_type_text;
+		    if (podcast.content_type == MediaType.AUDIO) {
+		        content_type_text = "audio";
+		    } else if (podcast.content_type == MediaType.VIDEO) {
+		        content_type_text = "video";
+		    } else {
+		        content_type_text = "unknown";
+		    }
+		    
+		    //Convert license enum to string
+		    string license_text;
+            if (podcast.license == License.CC) {
+                license_text = "cc";
+            } else if (podcast.license == License.PUBLIC) {
+                license_text = "public";
+            } else if (podcast.license == License.RESERVED) {
+                license_text = "reserved";
+            } else {
+                license_text = "unknown";
+            }
+            
+            string query = "INSERT OR REPLACE INTO Podcast" +
+                " (name, feed_uri, album_art_url, album_art_local_uri, description, content_type, license) " +
+                " VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);";
+            
+            Sqlite.Statement stmt;
+            int ec = db.prepare_v2 (query, query.length, out stmt);
+            
+            if (ec != Sqlite.OK) {
+                warning (
+                    "unable to prepare podcast statment. %d: %s", 
+                    db.errcode (), 
+                    db.errmsg ()
+                );
+                return false;
+            }
+            
+            stmt.bind_text (1, podcast.name);
+            stmt.bind_text (2, podcast.feed_uri);
+            stmt.bind_text (3, podcast.remote_art_uri);
+            stmt.bind_text (4, podcast.local_art_uri);
+            stmt.bind_text (5, podcast.description);
+            stmt.bind_text (6, content_type_text);
+            stmt.bind_text (7, license_text);
+            
+            ec = stmt.step ();
+            
+            if (ec != Sqlite.DONE) {
+                warning (
+                    "unable to insert/update podcast. %s: %d",
+                    db.errcode (),
+                    db.errmsg ()
+                );
+                return false;
+            }
+            
+            return true;
+		}
+		
+		/*
+		 * Insert or Replace an episode in the database
+		 */
+		public bool write_episode_to_database (Episode episode) {
+		    assert (episode.podcast_uri != null && episode.podcast_uri != "");
+		    
+		    string query = """
+		        INSERT OR REPLACE INTO Episode
+		        (title, podcast_uri, uri, local_uri, released, description, 
+		        latest_position, download_status, play_status, guid, link)
+		        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11);
+		    """;
+		    
+		    Sqlite.Statment = stmt;
+		    int ec = db.prepare_v2(query, query.length, out stmt);
+		    
+		    if (ec != Sqlite.OK) {
+		        warning (
+		            "unable to prepare episode insert statment. %s: %d",
+		            db.errcode (),
+		            db.errmsg ()
+		        );
+		        
+		    // Convert Enums to their text representations
+		    string played_text = 
+		        (episode.status == EpisodeStatus.PLAYED) ? "played" : "unplayed";
+		    string download_text = 
+		        (episode.current_download_status == DownloadStatus.DOWNLOADED) ? "downloaded" : "not_downloaded";
+		    }
+		    
+		    stmt.bind_text (1, episode.title);
+		    stmt.bind_text (2, episode.podcast_uri);
+		    stmt.bind_text (3, episode.uri);
+		    stmt.bind_text (4, episode.local_uri);
+		    stmt.bind_int64 (5, episode.datetime_release.to_unix ());
+		    stmt.bind_text (6, episode.description);
+		    stmt.bind_text (7, episode.last_played_position.to_string ());
+		    stmt.bind_text (8, download_text);
+		    stmt.bind_text (9, played_text);
+		    stmt.bind_text (10, episode.guid);
+		    stmt.bind_text (11, episode.link);
+		    
+		    ec = stmt.step ();
+		    
+		    if (ec != Sqlite.DONE) {
+		        warning (
+		            "unable to insert/update episode. %d: %s",
+		            db.errcode (),
+		            db.errmsg ()
+		        );
+		        return false;
+		    }
+		    
+		    return true;
 		}
 	}
 }
