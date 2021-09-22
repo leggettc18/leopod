@@ -15,6 +15,9 @@ public class MainWindow : Gtk.Window {
     private Gtk.Stack notebook;
     
     public AddPodcastDialog add_podcast;
+    
+    public Gtk.Widget current_widget;
+    public Gtk.Widget previous_widget;
 
 
     public MainWindow (Controller controller) {
@@ -82,15 +85,19 @@ public class MainWindow : Gtk.Window {
         notebook.add_titled(all_scrolled, "all", _("All Podcasts"));
         
         add (notebook);
+        
+        add_podcast.response.connect (on_add_podcast);
     }
     
-    public void add_podcast (Podcast podcast) {
+    public void add_podcast_feed (Podcast podcast) {
         var coverart = new CoverArt.with_podcast (podcast);
         all_flowbox.add (coverart);
+        add_podcast.destroy ();
+        switch_visible_page (all_scrolled);
     }
     
     public void populate_views () {
-        this.controller.library.populate_library ();
+        // this.controller.library.populate_library ();
         info ("populating main window");
     }
     
@@ -114,20 +121,42 @@ public class MainWindow : Gtk.Window {
     }
     
     /*
+     * Called when the main window needs to switch views
+     */
+    public void switch_visible_page (Gtk.Widget widget) {
+        if (current_widget != widget) {
+            previous_widget = current_widget;
+        }
+        
+        if (widget == all_scrolled) {
+            notebook.set_visible_child (all_scrolled);
+            current_widget = all_scrolled;
+        } else if (widget == welcome) {
+            notebook.set_visible_child (welcome);
+            current_widget = welcome;
+        } else {
+            info ("Attempted to switch to a page that doesn't exist.");
+        }
+    }
+    
+    /*
      * Handles responses from the welcome screen
      */
-    privte void on_welcome (int index) {
+    private void on_welcome (int index) {
         // Add podcast from freed
         if (index == 0) {
-            add_podcast = new AddPodcastDialog (this)
+            add_podcast = new AddPodcastDialog (this);
             add_podcast.response.connect (on_add_podcast);
             add_podcast.show_all ();
         }
     }
     
+    /*
+     * Handles adding adding the podcast from the dialog
+     */
     public void on_add_podcast (int response_id) {
         if (response_id == Gtk.ResponseType.OK) {
-            controller.add_podcast(add_podcast.entry.get_text ());
+            controller.add_podcast(add_podcast.podcast_uri_entry.get_text ());
         }
     }
 }

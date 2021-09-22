@@ -69,12 +69,6 @@ foreach i : icon_sizes
     )
 endforeach
 
-install_data(
-    'gschema.xml',
-    install_dir: get_option('datadir') / 'glib-2.0' / 'schemas',
-    rename: meson.project_name() + '.gschema.xml'
-)
-
 meson.add_install_script('meson/post_install.py')
 
 subdir('data')

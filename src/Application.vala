@@ -36,7 +36,7 @@ public class MyApp : Gtk.Application {
         var controller = new Controller(this);
         
         add_podcast_action.activate.connect (() => {
-            new AddPodcastDialog (controller).show ();
+            new AddPodcastDialog (controller.window).show ();
         });
     }
 

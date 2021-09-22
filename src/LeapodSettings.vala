@@ -10,10 +10,10 @@ namespace Leapod {
         public string library_location { get; set; }
         
         private LeapodSettings () {
-            base ("com.github.leggettc18.leapod");
+            Object (schema_id: "com.github.leggettc18.leapod");
         }
         
-        public LeapodSettings.get_default_instance () {
+        public static LeapodSettings get_default_instance () {
             if (_default_instance == null) {
                 _default_instance = new LeapodSettings ();
             }
