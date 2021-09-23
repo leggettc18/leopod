@@ -32,10 +32,6 @@ namespace Leapod {
 			window.set_titlebar (this.app.header_bar);
 			info ("showing main window");
 			
-			window.populate_views_async.begin ((obj, res) => {
-			    window.populate_views_async.end (res);
-			});
-			
 			post_creation_sequence ();
 		}
 		
