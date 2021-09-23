@@ -33,8 +33,27 @@ public class MainWindow : Gtk.Window {
             gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme ==
                 Granite.Settings.ColorScheme.DARK;
         });
-
+        
         this.controller = controller;
+        
+        var add_podcast_action = new SimpleAction ("add-podcast", null);
+        
+        this.controller.app.add_action (add_podcast_action);
+        this.controller.app.set_accels_for_action ("app.add-podcast", {"<Control>a"});
+        
+        var button = new Gtk.Button.from_icon_name ("list-add", Gtk.IconSize.LARGE_TOOLBAR) {
+            action_name = "app.add-podcast"
+        };
+        
+        this.controller.app.header_bar = new Gtk.HeaderBar () {
+            show_close_button = true
+        };
+        this.controller.app.header_bar.pack_end (button);
+        
+        add_podcast_action.activate.connect (() => {
+            on_add_podcast_clicked ();
+        });
+
         this.set_application (controller.app);
         default_height = 600;
         default_width = 1000;
@@ -92,12 +111,12 @@ public class MainWindow : Gtk.Window {
     public void add_podcast_feed (Podcast podcast) {
         var coverart = new CoverArt.with_podcast (podcast);
         all_flowbox.add (coverart);
-        add_podcast.destroy ();
-        switch_visible_page (all_scrolled);
     }
     
     public void populate_views () {
-        // this.controller.library.populate_library ();
+        foreach (Podcast podcast in controller.library.podcasts) {
+            add_podcast_feed (podcast);
+        }
         info ("populating main window");
     }
     
@@ -145,10 +164,14 @@ public class MainWindow : Gtk.Window {
     private void on_welcome (int index) {
         // Add podcast from freed
         if (index == 0) {
-            add_podcast = new AddPodcastDialog (this);
-            add_podcast.response.connect (on_add_podcast);
-            add_podcast.show_all ();
+            on_add_podcast_clicked ();
         }
+    }
+    
+    private void on_add_podcast_clicked () {
+        add_podcast = new AddPodcastDialog (this);
+        add_podcast.response.connect (on_add_podcast);
+        add_podcast.show_all ();
     }
     
     /*
@@ -158,6 +181,8 @@ public class MainWindow : Gtk.Window {
         if (response_id == Gtk.ResponseType.OK) {
             controller.add_podcast(add_podcast.podcast_uri_entry.get_text ());
         }
+        add_podcast.destroy ();
+        switch_visible_page (all_scrolled);
     }
 }
 

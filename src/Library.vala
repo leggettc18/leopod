@@ -31,6 +31,7 @@ namespace Leapod {
 		        GLib.Environment.get_user_config_dir () + """/leapod""";
 		    this.db_directory = leapod_config_dir + """/database""";
 		    this.db_location = this.db_directory + """/leapod.db""";
+		    info (db_location);
 
 		    podcasts = new Gee.ArrayList<Podcast> ();
 
@@ -56,6 +57,75 @@ namespace Leapod {
          */
         public bool empty () {
             return podcasts.size == 0;
+        }
+        
+        /*
+         * Refills the library from the database
+         */
+        public void refill_library () {
+            podcasts.clear ();
+            prepare_database ();
+            
+            Sqlite.Statement stmt;
+            
+            string prepared_query = """
+                SELECT * FROM Podcast ORDER BY name;
+            """;
+            int ec = db.prepare_v2 (prepared_query, prepared_query.length, out stmt);
+            if (ec != Sqlite.OK) {
+                warning ("%d: %s", db.errcode (), db.errmsg ());
+                return;
+            }
+            
+            while (stmt.step () == Sqlite.ROW) {
+                Podcast current = podcast_from_row (stmt);
+                podcasts.add (current);
+            }
+            
+            stmt.reset ();
+            
+            //TODO: repeat for Episodes
+        }
+        
+        public Podcast podcast_from_row (Sqlite.Statement stmt) {
+            Podcast podcast = new Podcast ();
+            
+            for (int i = 0; i < stmt.column_count (); i++) {
+                string column_name = stmt.column_name (i) ?? "<none>";
+                string val = stmt.column_text (i) ?? "<none>";
+                
+                if (column_name == "name") {
+                    podcast.name = val;
+                } else if (column_name == "feed_uri") {
+                    podcast.feed_uri = val;
+                } else if (column_name == "album_art_url") {
+                    podcast.remote_art_uri = val;
+                } else if (column_name == "album_art_local_url") {
+                    podcast.local_art_uri = val;
+                } else if (column_name == "description") {
+                    podcast.description = val;
+                } else if (column_name == "content_type") {
+                    if (val == "audio") {
+                        podcast.content_type = MediaType.AUDIO;
+                    } else if (val == "video") {
+                        podcast.content_type = MediaType.VIDEO;
+                    } else {
+                        podcast.content_type = MediaType.UNKNOWN;
+                    }
+                } else if (column_name == "license") {
+                    if (val == "cc") {
+                        podcast.license = License.CC;
+                    } else if (val == "public") {
+                        podcast.license = License.PUBLIC;
+                    } else if (val == "reserved") {
+                        podcast.license = License.RESERVED;
+                    } else {
+                        podcast.license = License.UNKNOWN;
+                    }
+                }
+            }
+            
+            return podcast;
         }
 
 		/*
@@ -122,7 +192,7 @@ namespace Leapod {
 		    assert (db_location != null);
 
 		    // Open a database
-		    info ("Opening/Creating Database");
+		    info ("Opening/Creating Database: %s", db_location);
 		    int ec = Sqlite.Database.open (db_location, out db);
 		    if (ec != Sqlite.OK) {
 		        stderr.printf (

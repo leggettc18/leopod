@@ -19,6 +19,14 @@ namespace Leapod {
 			
 			first_run = (!library.check_database_exists ());
 			
+			if (first_run) {
+			    info ("Setting up library");
+			    library.setup_library ();
+			} else {
+			    info ("Refilling library");
+			    library.refill_library ();
+			}
+			
 			info ("initializing the main window");
 			window = new MainWindow (this);
 			window.set_titlebar (this.app.header_bar);
