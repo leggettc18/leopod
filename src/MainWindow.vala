@@ -115,8 +115,8 @@ public class MainWindow : Gtk.Window {
         episodes_scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
         episodes_scrolled.add (episodes_box);
         
-        notebook.add_titled(welcome, "welcome", _("Welcome"));
         notebook.add_titled(all_scrolled, "all", _("All Podcasts"));
+        notebook.add_titled(welcome, "welcome", _("Welcome"));
         notebook.add_titled(episodes_scrolled, "podcast-episodes", _("Episodes"));
         
         add (notebook);
