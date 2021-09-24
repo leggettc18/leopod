@@ -10,7 +10,7 @@ public class MainWindow : Gtk.Window {
     private Controller controller;
     public Gtk.FlowBox all_flowbox;
     public Gtk.ScrolledWindow all_scrolled; 
-    public Gtk.FlowBox episodes_flowbox;
+    public Gtk.Box episodes_box;
     public Gtk.ScrolledWindow episodes_scrolled;
     
     public Granite.Widgets.Welcome welcome;
@@ -101,16 +101,19 @@ public class MainWindow : Gtk.Window {
         size_allocate.connect (() => {
             get_size (out width, out height);
             all_flowbox.set_size_request (width - 20, height - 20);
-            episodes_flowbox.set_size_request (width - 20, height - 20);
+            episodes_box.set_size_request (width - 20, height - 20);
         });
         
         info ("Creating the podcast episodes view");
         // Create the view that will display all the episodes of a given podcast.
-        episodes_flowbox = new Gtk.FlowBox ();
+        episodes_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5){
+            halign = Gtk.Align.FILL,
+            valign = Gtk.Align.FILL
+        };
         
         episodes_scrolled = new Gtk.ScrolledWindow (null, null);
         episodes_scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
-        episodes_scrolled.add (episodes_flowbox);
+        episodes_scrolled.add (episodes_box);
         
         notebook.add_titled(welcome, "welcome", _("Welcome"));
         notebook.add_titled(all_scrolled, "all", _("All Podcasts"));
@@ -157,14 +160,22 @@ public class MainWindow : Gtk.Window {
      * Handles what happens when a podcast coverart is clicked
      */
     public async void on_podcast_clicked (Podcast podcast) {
-        Gtk.Box left_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5);
-        Gtk.Box right_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5);
-        episodes_flowbox.add (left_box);
-        episodes_flowbox.add (right_box);
+        Gtk.Box left_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
+            halign = Gtk.Align.FILL,
+            valign = Gtk.Align.FILL
+        };
+        Gtk.Box right_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
+            halign = Gtk.Align.FILL,
+            valign = Gtk.Align.FILL
+        };
+        episodes_box.pack_start (left_box);
+        episodes_box.pack_end (right_box);
         CoverArt coverart = new CoverArt.with_podcast (podcast);
         left_box.add (coverart);
         foreach (Episode episode in podcast.episodes) {
-            right_box.add (new Gtk.Label (episode.title));
+            right_box.add (new Gtk.Label (episode.title) {
+                halign = Gtk.Align.START
+            });
         }
         episodes_scrolled.show_all ();
         switch_visible_page(episodes_scrolled);
