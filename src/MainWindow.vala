@@ -184,6 +184,18 @@ public class MainWindow : Gtk.Window {
         }
         episodes_scrolled.show_all ();
         switch_visible_page(episodes_scrolled);
+        
+        var back_button = new Gtk.Button () {
+            label = "All Podcasts",
+        };
+        back_button.get_style_context ().add_class ("back-button");
+        back_button.clicked.connect (() => {
+            episodes_box.foreach ((child) => episodes_box.remove (child));
+            this.controller.app.header_bar.remove (back_button);
+            switch_visible_page (all_scrolled);
+        });
+        this.controller.app.header_bar.pack_start (back_button);
+        back_button.show_all ();
     }
     
     /*
