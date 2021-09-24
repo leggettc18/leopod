@@ -10,6 +10,8 @@ public class MainWindow : Gtk.Window {
     private Controller controller;
     public Gtk.FlowBox all_flowbox;
     public Gtk.ScrolledWindow all_scrolled; 
+    public Gtk.FlowBox episodes_flowbox;
+    public Gtk.ScrolledWindow episodes_scrolled;
     
     public Granite.Widgets.Welcome welcome;
     private Gtk.Stack notebook;
@@ -82,6 +84,7 @@ public class MainWindow : Gtk.Window {
         welcome.activated.connect (on_welcome);
         
         info ("Creating All Scrolled view");
+        // Create the all_scrolled view, which displays all podcasts in a grid.
         
         all_flowbox = new Gtk.FlowBox () {
             row_spacing = 20,
@@ -98,10 +101,20 @@ public class MainWindow : Gtk.Window {
         size_allocate.connect (() => {
             get_size (out width, out height);
             all_flowbox.set_size_request (width - 20, height - 20);
+            episodes_flowbox.set_size_request (width - 20, height - 20);
         });
+        
+        info ("Creating the podcast episodes view");
+        // Create the view that will display all the episodes of a given podcast.
+        episodes_flowbox = new Gtk.FlowBox ();
+        
+        episodes_scrolled = new Gtk.ScrolledWindow (null, null);
+        episodes_scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
+        episodes_scrolled.add (episodes_flowbox);
         
         notebook.add_titled(welcome, "welcome", _("Welcome"));
         notebook.add_titled(all_scrolled, "all", _("All Podcasts"));
+        notebook.add_titled(episodes_scrolled, "podcast-episodes", _("Episodes"));
         
         add (notebook);
         
@@ -110,6 +123,7 @@ public class MainWindow : Gtk.Window {
     
     public void add_podcast_feed (Podcast podcast) {
         var coverart = new CoverArt.with_podcast (podcast);
+        coverart.clicked.connect (on_podcast_clicked);
         all_flowbox.add (coverart);
     }
     
@@ -139,6 +153,23 @@ public class MainWindow : Gtk.Window {
         yield;
     }
     
+    /* 
+     * Handles what happens when a podcast coverart is clicked
+     */
+    public async void on_podcast_clicked (Podcast podcast) {
+        Gtk.Box left_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5);
+        Gtk.Box right_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5);
+        episodes_flowbox.add (left_box);
+        episodes_flowbox.add (right_box);
+        CoverArt coverart = new CoverArt.with_podcast (podcast);
+        left_box.add (coverart);
+        foreach (Episode episode in podcast.episodes) {
+            right_box.add (new Gtk.Label (episode.title));
+        }
+        episodes_scrolled.show_all ();
+        switch_visible_page(episodes_scrolled);
+    }
+    
     /*
      * Called when the main window needs to switch views
      */
@@ -153,6 +184,9 @@ public class MainWindow : Gtk.Window {
         } else if (widget == welcome) {
             notebook.set_visible_child (welcome);
             current_widget = welcome;
+        } else if (widget == episodes_scrolled) {
+            notebook.set_visible_child (episodes_scrolled);
+            current_widget = episodes_scrolled;
         } else {
             info ("Attempted to switch to a page that doesn't exist.");
         }

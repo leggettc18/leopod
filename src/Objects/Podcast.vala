@@ -55,6 +55,11 @@ namespace Leapod {
 		    episodes = new Gee.ArrayList<Episode> ();
             content_type = MediaType.UNKNOWN;
 		}
+		
+		public Podcast.with_name (string name) {
+            this ();
+            this.name = name;
+        }
 
 		public Podcast.with_remote_art_uri (string uri) {
 			remote_art_uri = uri;
