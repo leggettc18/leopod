@@ -20,7 +20,7 @@ namespace Leapod {
 		private string db_directory = null;
 		private string local_library_path;
 
-		private LeapodSettings settings;
+		private GLib.Settings settings;
 
 		public signal void library_loaded ();
 
@@ -35,10 +35,10 @@ namespace Leapod {
 
 		    podcasts = new Gee.ArrayList<Podcast> ();
 
-		    settings = LeapodSettings.get_default_instance ();
+		    settings = new GLib.Settings ("com.github.leggettc18.leapod");
 
 		    // Set the local library directory and replace ~ with absolute path
-		    local_library_path = settings.library_location.replace (
+		    local_library_path = settings.get_string("library-location").replace (
 		        "~",
 		        GLib.Environment.get_home_dir ()
 		    );
@@ -100,7 +100,7 @@ namespace Leapod {
                     podcast.feed_uri = val;
                 } else if (column_name == "album_art_url") {
                     podcast.remote_art_uri = val;
-                } else if (column_name == "album_art_local_url") {
+                } else if (column_name == "album_art_local_uri") {
                     podcast.local_art_uri = val;
                 } else if (column_name == "description") {
                     podcast.description = val;
@@ -127,6 +127,39 @@ namespace Leapod {
             
             return podcast;
         }
+        
+        /*
+         * Downloads and Caches a podcast's album art if it doesn't
+         * already exist.
+         */
+         public void cache_album_art (Podcast podcast) {
+             string podcast_path = local_library_path + "/%s".printf (
+ 		        podcast.name.replace ("%27", "'").replace ("%", "_")
+ 		    );
+ 
+ 		    // Create a directory for downloads and artwork caching
+ 		    GLib.DirUtils.create_with_parents (podcast_path, 0775);
+ 
+ 		    // Locally cache the album art if necessary
+ 		    try {
+ 		        // Don't user the coverart_path getter, use the remote_uri
+ 		        GLib.File remote_art = GLib.File.new_for_uri (podcast.remote_art_uri);
+ 		        if (remote_art.query_exists ()) {
+ 		            // If the remote art exists, set path for new file and create object for the local file
+ 		            string art_path = podcast_path + "/" + remote_art.get_basename ().replace ("%", "_");
+ 		            GLib.File local_art = GLib.File.new_for_path (art_path);
+ 
+ 		            if (!local_art.query_exists ()) {
+ 		                // Cache the art
+ 		                remote_art.copy (local_art, FileCopyFlags.NONE);
+ 		            }
+ 		            // Mark the local path on the podcast
+ 		            podcast.local_art_uri = "file://" + art_path;
+ 		        }
+ 		    } catch (Error e) {
+ 		        error ("unable to save a local copy of album art. %s", e.message);
+ 		    }
+         }
 
 		/*
 		 * Adds a podcast to the database and the active podcast list
@@ -141,32 +174,7 @@ namespace Leapod {
 		        }
 		    }
 
-		    string podcast_path = local_library_path + "/%s".printf (
-		        podcast.name.replace ("%27", "'").replace ("%", "_")
-		    );
-
-		    // Create a directory for downloads and artwork caching
-		    GLib.DirUtils.create_with_parents (podcast_path, 0775);
-
-		    // Locally cache the album art if necessary
-		    try {
-		        // Don't user the coverart_path getter, use the remote_uri
-		        GLib.File remote_art = GLib.File.new_for_uri (podcast.remote_art_uri);
-		        if (remote_art.query_exists ()) {
-		            // If the remote art exists, set path for new file and create object for the local file
-		            string art_path = podcast_path + "/" + remote_art.get_basename ().replace ("%", "_");
-		            GLib.File local_art = GLib.File.new_for_path (art_path);
-
-		            if (!local_art.query_exists ()) {
-		                // Cache the art
-		                remote_art.copy (local_art, FileCopyFlags.NONE);
-		            }
-		            // Mark the local path on the podcast
-		            podcast.local_art_uri = "file://" + art_path;
-		        }
-		    } catch (Error e) {
-		        error ("unable to save a local copy of album art. %s", e.message);
-		    }
+		    cache_album_art(podcast);
 
 		    // Add the podcast
 		    if (write_podcast_to_database (podcast)) {
@@ -211,18 +219,20 @@ namespace Leapod {
 		public bool setup_library () {
 		    prepare_database ();
 
-		    if (settings.library_location == null) {
-		        settings.library_location =
-		            GLib.Environment.get_user_data_dir () + """/leapod""";
+		    if (settings.get_string("library-location") == null) {
+		        settings.set_string(
+		            "library-location",
+		            GLib.Environment.get_user_data_dir () + """/leapod"""
+		        );
 		    }
-		    local_library_path = settings.library_location.replace (
+		    local_library_path = settings.get_string("library-location").replace (
 		        "~",
 		        GLib.Environment.get_user_data_dir ()
 		    );
 
 		    // If the local library path has been modified, update the setting
-		    if (settings.library_location != local_library_path) {
-		        settings.library_location = local_library_path;
+		    if (settings.get_string("library-location") != local_library_path) {
+		        settings.set_string("library-location", local_library_path);
 		    }
 
 		    // Create the local library
