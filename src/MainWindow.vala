@@ -174,6 +174,10 @@ public class MainWindow : Gtk.Window {
         episodes_box.pack_end (right_box);
         CoverArt coverart = new CoverArt.with_podcast (podcast);
         left_box.add (coverart);
+        left_box.add (new Gtk.Label (podcast.description) {
+            wrap = true,
+            max_width_chars = 25
+        });
         foreach (Episode episode in podcast.episodes) {
             right_box.add (new Gtk.Button () {
                 label = episode.title,
