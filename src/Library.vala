@@ -141,7 +141,7 @@ namespace Leapod {
 		        }
 		    }
 
-		    string podcast_path = local_library_path + "%s".printf (
+		    string podcast_path = local_library_path + "/%s".printf (
 		        podcast.name.replace ("%27", "'").replace ("%", "_")
 		    );
 
