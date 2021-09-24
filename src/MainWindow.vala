@@ -100,8 +100,8 @@ public class MainWindow : Gtk.Window {
             all_flowbox.set_size_request (width - 20, height - 20);
         });
         
-        notebook.add_titled(welcome, "welcome", _("Welcome"));
         notebook.add_titled(all_scrolled, "all", _("All Podcasts"));
+        notebook.add_titled(welcome, "welcome", _("Welcome"));
         
         add (notebook);
         
