@@ -89,7 +89,7 @@ namespace Leapod {
                     FROM Episode e
                     LEFT JOIN Podcast p on p.feed_uri = e.podcast_uri
                     WHERE podcast_uri = '%s'
-                    ORDER BY e.rowid ASC;
+                    ORDER BY e.rowid DESC;
                 """.printf (podcast.feed_uri);;
                 ec = db.prepare_v2 (prepared_query, prepared_query.length, out stmt);
                 if (ec != Sqlite.OK) {

@@ -162,11 +162,13 @@ public class MainWindow : Gtk.Window {
     public async void on_podcast_clicked (Podcast podcast) {
         Gtk.Box left_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
             halign = Gtk.Align.FILL,
-            valign = Gtk.Align.FILL
+            valign = Gtk.Align.FILL,
+            margin = 20
         };
         Gtk.Box right_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
             halign = Gtk.Align.FILL,
-            valign = Gtk.Align.FILL
+            valign = Gtk.Align.FILL,
+            margin = 10,
         };
         episodes_box.pack_start (left_box);
         episodes_box.pack_end (right_box);
@@ -174,7 +176,8 @@ public class MainWindow : Gtk.Window {
         left_box.add (coverart);
         foreach (Episode episode in podcast.episodes) {
             right_box.add (new Gtk.Label (episode.title) {
-                halign = Gtk.Align.START
+                halign = Gtk.Align.START,
+                margin = 5
             });
         }
         episodes_scrolled.show_all ();
