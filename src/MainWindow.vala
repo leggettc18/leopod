@@ -175,7 +175,9 @@ public class MainWindow : Gtk.Window {
         CoverArt coverart = new CoverArt.with_podcast (podcast);
         left_box.add (coverart);
         foreach (Episode episode in podcast.episodes) {
-            right_box.add (new Gtk.Label (episode.title) {
+            right_box.add (new Gtk.Button () {
+                label = episode.title,
+                relief = Gtk.ReliefStyle.NONE,
                 halign = Gtk.Align.START,
                 margin = 5
             });
