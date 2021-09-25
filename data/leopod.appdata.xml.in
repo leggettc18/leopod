@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2021 Christopher Leggett <chris@leggett.dev> -->
 <component type="desktop">
-  <id>com.github.leggettc18.leapod</id>
+  <id>com.github.leggettc18.leopod</id>
   <metadata_license>MIT</metadata_license>
-  <name>Leapod</name>
+  <name>Leopod</name>
   <summary>Organize and listen to your podcasts!</summary>
   <description>
     <p>Subscribe to podcasts, organize them, and listen to them.</p>
