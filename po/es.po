@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: com.github.leggettc18.leapod\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-19 18:07-0400\n"
+"POT-Creation-Date: 2021-09-24 23:45-0400\n"
 "PO-Revision-Date: 2021-09-04 20:59-0400\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,44 +17,84 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/MainWindow.vala:33 data/leapod.desktop.in:3 data/leapod.appdata.xml.in:6
-msgid "Leapod"
+#: src/MainWindow.vala:64
+msgid "Leopod"
+msgstr ""
+
+#: src/MainWindow.vala:76
+msgid "Welcome to Leopod"
+msgstr ""
+
+#: src/MainWindow.vala:77
+msgid "Build your library by adding podcasts."
+msgstr ""
+
+#: src/MainWindow.vala:81
+msgid "Add a new Feed"
+msgstr ""
+
+#: src/MainWindow.vala:82
+msgid "Provide the web address of a podcast feed."
+msgstr ""
+
+#: src/MainWindow.vala:119
+msgid "All Podcasts"
+msgstr ""
+
+#: src/MainWindow.vala:120
+msgid "Welcome"
+msgstr ""
+
+#: src/MainWindow.vala:121
+msgid "Episodes"
+msgstr ""
+
+#: src/MainWindow.vala:218 src/MainWindow.vala:221
+msgid "All Scrolled"
+msgstr ""
+
+#: src/Widgets/AddPodcastDialog.vala:12
+msgid "Add Podcast"
 msgstr ""
 
 #. Create and setup widgets
-#: src/Widgets/AddPodcastDialog.vala:24
+#: src/Widgets/AddPodcastDialog.vala:26
 msgid "Podcast RSS Feed URL:"
 msgstr ""
 
 #. Add buttons to button area at the bottom
-#: src/Widgets/AddPodcastDialog.vala:36
+#: src/Widgets/AddPodcastDialog.vala:38
 msgid "Close"
 msgstr ""
 
-#: src/Widgets/AddPodcastDialog.vala:37
+#: src/Widgets/AddPodcastDialog.vala:39
 msgid "Add"
 msgstr ""
 
-#: data/leapod.desktop.in:4
+#: data/leopod.desktop.in:3 data/leopod.appdata.xml.in:6
+msgid "Leapod"
+msgstr ""
+
+#: data/leopod.desktop.in:4
 msgid "Podcast Client App"
 msgstr ""
 
-#: data/leapod.desktop.in:5
+#: data/leopod.desktop.in:5
 msgid "Organize and listen to your podcasts"
 msgstr ""
 
-#: data/leapod.desktop.in:8
+#: data/leopod.desktop.in:8
 msgid "com.github.leggettc18.leapod"
 msgstr ""
 
-#: data/leapod.desktop.in:11
+#: data/leopod.desktop.in:11
 msgid "Leapod;Podcast;Audio;"
 msgstr ""
 
-#: data/leapod.appdata.xml.in:7
+#: data/leopod.appdata.xml.in:7
 msgid "Organize and listen to your podcasts!"
 msgstr ""
 
-#: data/leapod.appdata.xml.in:9
+#: data/leopod.appdata.xml.in:9
 msgid "Subscribe to podcasts, organize them, and listen to them."
 msgstr ""

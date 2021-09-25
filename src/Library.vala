@@ -3,9 +3,9 @@
  * SPDX-FileCopyrightText: 2021 Christopher Leggett <chris@leggett.dev>
  */
 
-namespace Leapod {
+namespace Leopod {
 
-	public errordomain LeapodLibraryError {
+	public errordomain LeopodLibraryError {
 	    ADD_ERROR, IMPORT_ERROR, MISSING_URI;
 	}
 
@@ -16,7 +16,7 @@ namespace Leapod {
 		private Sqlite.Database db; // the Database
 
 		private string db_location = null;
-		private string leapod_config_dir = null;
+		private string leopod_config_dir = null;
 		private string db_directory = null;
 		private string local_library_path;
 
@@ -27,15 +27,15 @@ namespace Leapod {
 		public Library (Controller controller) {
 		    this.controller = controller;
 
-		    leapod_config_dir =
-		        GLib.Environment.get_user_config_dir () + """/leapod""";
-		    this.db_directory = leapod_config_dir + """/database""";
-		    this.db_location = this.db_directory + """/leapod.db""";
+		    leopod_config_dir =
+		        GLib.Environment.get_user_config_dir () + """/leopod""";
+		    this.db_directory = leopod_config_dir + """/database""";
+		    this.db_location = this.db_directory + """/leopod.db""";
 		    info (db_location);
 
 		    podcasts = new Gee.ArrayList<Podcast> ();
 
-		    settings = new GLib.Settings ("com.github.leggettc18.leapod");
+		    settings = new GLib.Settings ("com.github.leggettc18.leopod");
 
 		    // Set the local library directory and replace ~ with absolute path
 		    local_library_path = settings.get_string("library-location").replace (
@@ -236,7 +236,7 @@ namespace Leapod {
 		/*
 		 * Adds a podcast to the database and the active podcast list
 		 */
-		public bool add_podcast (Podcast podcast) throws LeapodLibraryError {
+		public bool add_podcast (Podcast podcast) throws LeopodLibraryError {
 		    info ("Podcast %s is being added to the library", podcast.name);
 
 		    // Set all but the most recent episode as played
@@ -285,7 +285,7 @@ namespace Leapod {
 		}
 
 		/*
-		 * Creates Leapod's config directory, establishes a database connection
+		 * Creates Leopod's config directory, establishes a database connection
 		 * and initializes the database schema
 		 */
 		public bool setup_library () {
@@ -294,7 +294,7 @@ namespace Leapod {
 		    if (settings.get_string("library-location") == null) {
 		        settings.set_string(
 		            "library-location",
-		            GLib.Environment.get_user_data_dir () + """/leapod"""
+		            GLib.Environment.get_user_data_dir () + """/leopod"""
 		        );
 		    }
 		    local_library_path = settings.get_string("library-location").replace (
@@ -310,7 +310,7 @@ namespace Leapod {
 		    // Create the local library
 		    GLib.DirUtils.create_with_parents (local_library_path, 0775);
 
-		    // Create the leapod folder if it doesn't exist
+		    // Create the leopod folder if it doesn't exist
 		    GLib.DirUtils.create_with_parents (db_directory, 0775);
 
 		    create_db_schema ();

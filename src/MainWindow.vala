@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2021 Christopher Leggett <chris@leggett.dev>
  */
 
-namespace Leapod {
+namespace Leopod {
 
 public class MainWindow : Gtk.Window {
     // Core Components
@@ -60,8 +60,8 @@ public class MainWindow : Gtk.Window {
         this.set_application (controller.app);
         default_height = 600;
         default_width = 1000;
-        this.set_icon_name ("com.github.leggettc18.leapod");
-        title = _("Leapod");
+        this.set_icon_name ("com.github.leggettc18.leopod");
+        title = _("Leopod");
 
         info ("Creating notebook");
 
@@ -73,7 +73,7 @@ public class MainWindow : Gtk.Window {
         // Create a welcome screen and add it to the notebook whether first run or not
 
         welcome = new Granite.Widgets.Welcome (
-            _("Welcome to Leapod"),
+            _("Welcome to Leopod"),
             _("Build your library by adding podcasts.")
         );
         welcome.append (

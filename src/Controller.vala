@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2021 Christopher Leggett <chris@leggett.dev>
  */
 
-namespace Leapod {
+namespace Leopod {
 	public class Controller : GLib.Object {
 	    public bool first_run = true;
 		public MainWindow window = null;

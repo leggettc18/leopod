@@ -1,5 +1,5 @@
 # project name and programming language
-project('com.github.leggettc18.leapod', 'vala', 'c')
+project('com.github.leggettc18.leopod', 'vala', 'c')
 
 # Include the translations module
 i18n = import('i18n')
@@ -14,7 +14,7 @@ executable(
     'src' / 'MainWindow.vala',
     'src' / 'Controller.vala',
     'src' / 'Library.vala',
-    'src' / 'LeapodSettings.vala',
+    'src' / 'LeopodSettings.vala',
     'src' / 'Utils' / 'SoupClient.vala',
     'src' / 'Utils' / 'FeedParser.vala',
     'src' / 'Utils' / 'XmlUtils.vala',
@@ -36,7 +36,7 @@ executable(
 
 #Translate and install our .desktop file
 i18n.merge_file(
-    input: 'data' / 'leapod.desktop.in',
+    input: 'data' / 'leopod.desktop.in',
     output: meson.project_name() + '.desktop',
     po_dir: meson.source_root() / 'po',
     type: 'desktop',
@@ -46,7 +46,7 @@ i18n.merge_file(
 
 #Translate and install our .appdata file
 i18n.merge_file(
-    input: 'data' / 'leapod.appdata.xml.in',
+    input: 'data' / 'leopod.appdata.xml.in',
     output: meson.project_name() + '.appdata.xml',
     po_dir: meson.source_root() / 'po',
     install: true,

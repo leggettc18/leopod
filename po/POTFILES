@@ -1,5 +1,5 @@
 src/Application.vala
 src/MainWindow.vala
 src/Widgets/AddPodcastDialog.vala
-data/leapod.desktop.in
-data/leapod.appdata.xml.in
+data/leopod.desktop.in
+data/leopod.appdata.xml.in

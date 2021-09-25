@@ -3,19 +3,19 @@
  * SPDX-FileCopyrightText: 2021 Christopher Leggett <chris@leggett.dev>
  */
 
-namespace Leapod {
+namespace Leopod {
 
 public class MyApp : Gtk.Application {
     public Gtk.HeaderBar header_bar;
 	public MyApp () {
         Object (
-            application_id: "com.github.leggettc18.leapod",
+            application_id: "com.github.leggettc18.leopod",
             flags: ApplicationFlags.FLAGS_NONE
         );
     }
 
     protected override void activate () {
-        Granite.Services.Logger.initialize ("Leapod");
+        Granite.Services.Logger.initialize ("Leopod");
         Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO;
         info ("Starting activation");
         

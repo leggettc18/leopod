@@ -1,0 +1,24 @@
+/*
+ * SPDX-License-Identifier: MIT
+ * SPDX-FileCopyrightText: 2021 Christopher Leggett <chris@leggett.dev>
+ */
+
+namespace Leopod {
+    public class LeopodSettings : GLib.Settings {
+        private static LeopodSettings _default_instance = null;
+        
+        public string library_location { get; set; }
+        
+        private LeopodSettings () {
+            Object (schema_id: "com.github.leggettc18.leopod");
+        }
+        
+        public static LeopodSettings get_default_instance () {
+            if (_default_instance == null) {
+                _default_instance = new LeopodSettings ();
+            }
+            
+            return _default_instance;
+        }
+    }
+}

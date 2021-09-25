@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2021 Christopher Leggett <chris@leggett.dev>
  */
 
-namespace Leapod {
+namespace Leopod {
     public class AddPodcastDialog : Gtk.Dialog {
         public Gtk.Entry podcast_uri_entry;
         private Gtk.Widget add_podcast_button;

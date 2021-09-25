@@ -2,7 +2,7 @@
  * SPDX-License-Identifier: MIT
  * SPDX-FileCopyrightText: 2021 Christopher Leggett <chris@leggett.dev>
  */
-namespace Leapod {
+namespace Leopod {
 public class SoupClient {
     private Soup.Session soup_session = null;
 

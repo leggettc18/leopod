@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2021 Christopher Leggett <chris@leggett.dev>
  */
 
-namespace Leapod {
+namespace Leopod {
 	public class Episode : GLib.Object {
 
         public string guid = null;

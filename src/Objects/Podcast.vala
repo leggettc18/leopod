@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2021 Christopher Leggett <chris@leggett.dev>
  */
 
-namespace Leapod {
+namespace Leopod {
 	public class Podcast {
 	
 	    public Gee.ArrayList<Episode> episodes = null;
@@ -36,7 +36,7 @@ namespace Leapod {
                 }
                 // In rare instances where album art is not available at all, provide a "missing art" image to use
                 // in library view
-                return "resource:///com/github/leggettc18/leapod/missing.png";
+                return "resource:///com/github/leggettc18/leopod/missing.png";
             }
 
             // If the URI begins with "file://" set local uri, otherwise set the remote uri

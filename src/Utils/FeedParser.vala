@@ -3,9 +3,9 @@
  * SPDX-FileCopyrightText: 2021 Christopher Leggett <chris@leggett.dev>
  */
 
-namespace Leapod {
+namespace Leopod {
 
-    errordomain LeapodUpdateError {
+    errordomain LeopodUpdateError {
         NETWORK_ERROR, EMPTY_ADDRESS_ERROR;
     }
 
@@ -336,7 +336,7 @@ namespace Leapod {
             }
 
             if (podcast.coverart_uri == null || podcast.coverart_uri.length < 1) {
-                podcast.coverart_uri = "resource:///com/github/leggettc18/leapod/banner.png";
+                podcast.coverart_uri = "resource:///com/github/leggettc18/leopod/banner.png";
             }
 
             if (podcast.feed_uri == null || podcast.feed_uri.length < 1) {
@@ -352,7 +352,7 @@ namespace Leapod {
         /*
          * Parses an OPML file and returns an array listing each feed discovered within
          */
-        public string[] parse_feeds_from_OPML (string path, bool raw_data = false) throws LeapodLibraryError {  // vala-lint=naming-convention
+        public string[] parse_feeds_from_OPML (string path, bool raw_data = false) throws LeopodLibraryError {  // vala-lint=naming-convention
             var feeds = new Gee.ArrayList<string> ();
 
             queue.clear ();
@@ -384,7 +384,7 @@ namespace Leapod {
 
             // Make sure that it didn't return a null reference
             if (doc == null) {
-                throw new LeapodLibraryError.IMPORT_ERROR (
+                throw new LeopodLibraryError.IMPORT_ERROR (
                     _ ("Selected file doesn't appear to contain podcast subscriptions.")
                 );
             }
@@ -494,7 +494,7 @@ namespace Leapod {
 
                 // Make sure that it didn't return a null reference
                 if (doc == null) {
-                    throw new LeapodUpdateError.NETWORK_ERROR (
+                    throw new LeopodUpdateError.NETWORK_ERROR (
                         "Error opening file %s. Parser returned null.".printf (path)
                     );
                 }
@@ -508,7 +508,7 @@ namespace Leapod {
 
                 // If it did, free the document manually (since unowned)
                 delete doc;
-                throw new LeapodUpdateError.NETWORK_ERROR ("The XML file '%s' is empty".printf (path));
+                throw new LeopodUpdateError.NETWORK_ERROR ("The XML file '%s' is empty".printf (path));
             }
 
 
