@@ -39,7 +39,9 @@ namespace Leopod {
                 Gtk.IconSize.BUTTON
             );
             
-            buttons_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5);
+            buttons_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5) {
+                no_show_all = true
+            };
             if (this.episode.current_download_status == DownloadStatus.NOT_DOWNLOADED) {
                 buttons_box.pack_start (download_button);
             } else if (this.episode.current_download_status == DownloadStatus.DOWNLOADED){
