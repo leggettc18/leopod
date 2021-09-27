@@ -23,7 +23,11 @@ namespace Leopod {
 		public DownloadStatus current_download_status;
 
 		public Episode () {
-
+		    parent = null;
+		    local_uri = null;
+		    status = EpisodeStatus.UNPLAYED;
+            current_download_status = DownloadStatus.NOT_DOWNLOADED;
+            last_played_position = 0;
 		}
 
 		/*
@@ -59,6 +63,7 @@ namespace Leopod {
      * Possible episode download statuses, either downloaded or not downloaded.
      */
     public enum DownloadStatus {
-        DOWNLOADED, NOT_DOWNLOADED;
+        DOWNLOADED,
+        NOT_DOWNLOADED;
     }
 }

@@ -180,12 +180,7 @@ public class MainWindow : Gtk.Window {
             max_width_chars = 25
         });
         foreach (Episode episode in podcast.episodes) {
-            right_box.add (new Gtk.Button () {
-                label = episode.title,
-                relief = Gtk.ReliefStyle.NONE,
-                halign = Gtk.Align.START,
-                margin = 5
-            });
+            right_box.add (new EpisodeListItem (episode));
         }
         episodes_scrolled.show_all ();
         switch_visible_page(episodes_scrolled);

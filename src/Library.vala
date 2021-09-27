@@ -172,7 +172,7 @@ namespace Leopod {
                 } else if (column_name == "download_status") {
                     if (val == "downloaded") {
                         episode.current_download_status = DownloadStatus.DOWNLOADED;
-                    } else {
+                    } else if (val == "not_downloaded") {
                         episode.current_download_status = DownloadStatus.NOT_DOWNLOADED;
                     }
                 } else if (column_name == "play_status") {
@@ -196,7 +196,7 @@ namespace Leopod {
                     episode.link = val;
                 }
             }
-            
+            info ("%s: %s", episode.title, episode.current_download_status.to_string ());
             return episode;
         }
 
