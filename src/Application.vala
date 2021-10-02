@@ -6,7 +6,6 @@
 namespace Leopod {
 
 public class MyApp : Gtk.Application {
-    public Gtk.HeaderBar header_bar;
 	public MyApp () {
         Object (
             application_id: "com.github.leggettc18.leopod",
@@ -18,9 +17,9 @@ public class MyApp : Gtk.Application {
         Granite.Services.Logger.initialize ("Leopod");
         Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO;
         info ("Starting activation");
-        
+
         var controller = new Controller(this);
-        
+
     }
 
     public static int main (string[] args) {

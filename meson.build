@@ -30,6 +30,7 @@ executable(
         dependency('libxml-2.0'),
         dependency('gee-0.8'),
         dependency('sqlite3'),
+        dependency('libhandy-1')
     ],
     install: true
 )
