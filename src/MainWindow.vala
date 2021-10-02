@@ -225,10 +225,10 @@ public class MainWindow : Hdy.ApplicationWindow {
         // Sets the back_button in certain scenarios
         if ((current_widget != all_scrolled) && (current_widget != welcome)) {
             var back_widget = all_scrolled;
-            var back_text = _("All Scrolled");
+            var back_text = _("All Podcasts");
             if (current_widget == episodes_scrolled) {
                 back_widget = all_scrolled;
-                back_text = _("All Scrolled");
+                back_text = _("All Podcasts");
             }
             back_button = new Gtk.Button () {
                 label = back_text,
