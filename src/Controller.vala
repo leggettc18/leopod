@@ -29,7 +29,6 @@ namespace Leopod {
 			
 			info ("initializing the main window");
 			window = new MainWindow (this);
-			window.set_titlebar (this.app.header_bar);
 			info ("showing main window");
 			
 			post_creation_sequence ();
@@ -41,7 +40,9 @@ namespace Leopod {
 		        window.switch_visible_page (window.welcome);
 		    } else {
 		        window.populate_views ();
+		        info ("Showing main window");
 		        window.show_all ();
+		        info ("switching to all_scrolled view");
 		        window.switch_visible_page (window.all_scrolled);
 		    }
 		}

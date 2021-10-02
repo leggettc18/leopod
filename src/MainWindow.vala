@@ -5,9 +5,10 @@
 
 namespace Leopod {
 
-public class MainWindow : Gtk.Window {
+public class MainWindow : Hdy.ApplicationWindow {
     // Core Components
     private Controller controller;
+    public Hdy.HeaderBar header_bar;
     public Gtk.FlowBox all_flowbox;
     public Gtk.ScrolledWindow all_scrolled;
     public Gtk.Box episodes_box;
@@ -24,6 +25,7 @@ public class MainWindow : Gtk.Window {
 
 
     public MainWindow (Controller controller) {
+        Hdy.init ();
         var width = 0, height = 0;
         var granite_settings = Granite.Settings.get_default ();
         var gtk_settings = Gtk.Settings.get_default ();
@@ -48,10 +50,10 @@ public class MainWindow : Gtk.Window {
             action_name = "app.add-podcast"
         };
 
-        this.controller.app.header_bar = new Gtk.HeaderBar () {
+        header_bar = new Hdy.HeaderBar () {
             show_close_button = true
         };
-        this.controller.app.header_bar.pack_end (button);
+        header_bar.pack_end (button);
 
         add_podcast_action.activate.connect (() => {
             on_add_podcast_clicked ();
@@ -62,6 +64,9 @@ public class MainWindow : Gtk.Window {
         default_width = 1000;
         this.set_icon_name ("com.github.leggettc18.leopod");
         title = _("Leopod");
+        
+        Gtk.Grid main_layout = new Gtk.Grid();
+        main_layout.attach(header_bar, 0, 0);
 
         info ("Creating notebook");
 
@@ -119,8 +124,13 @@ public class MainWindow : Gtk.Window {
         notebook.add_titled(all_scrolled, "all", _("All Podcasts"));
         notebook.add_titled(welcome, "welcome", _("Welcome"));
         notebook.add_titled(episodes_scrolled, "podcast-episodes", _("Episodes"));
-
-        add (notebook);
+        
+        main_layout.attach (notebook, 0, 1);
+        
+        var window_handle = new Hdy.WindowHandle ();
+        window_handle.add (main_layout);
+        
+        add (window_handle);
 
         add_podcast.response.connect (on_add_podcast);
     }
@@ -212,10 +222,10 @@ public class MainWindow : Gtk.Window {
         // Sets the back_button in certain scenarios
         if ((current_widget != all_scrolled) && (current_widget != welcome)) {
             var back_widget = all_scrolled;
-            var back_text = _("All Scrolled");
+            var back_text = _("All Podcasts");
             if (current_widget == episodes_scrolled) {
                 back_widget = all_scrolled;
-                back_text = _("All Scrolled");
+                back_text = _("All Podcasts");
             }
             back_button = new Gtk.Button () {
                 label = back_text,
@@ -223,10 +233,10 @@ public class MainWindow : Gtk.Window {
             back_button.get_style_context ().add_class ("back-button");
             back_button.clicked.connect (() => {
                 episodes_box.foreach ((child) => episodes_box.remove (child));
-                this.controller.app.header_bar.remove (back_button);
+                header_bar.remove (back_button);
                 switch_visible_page (back_widget);
             });
-            this.controller.app.header_bar.pack_start (back_button);
+            header_bar.pack_start (back_button);
             back_button.show_all ();
         } else {
             back_button.destroy ();
