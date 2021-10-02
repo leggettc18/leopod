@@ -36,12 +36,16 @@ namespace Leopod {
 		    podcasts = new Gee.ArrayList<Podcast> ();
 
 		    settings = new GLib.Settings ("com.github.leggettc18.leopod");
+		    
+		    info (settings.get_string("library-location"));
 
 		    // Set the local library directory and replace ~ with absolute path
 		    local_library_path = settings.get_string("library-location").replace (
 		        "~",
 		        GLib.Environment.get_home_dir ()
 		    );
+		    
+		    info (local_library_path);
 		}
 
 		/*
@@ -196,7 +200,6 @@ namespace Leopod {
                     episode.link = val;
                 }
             }
-            info ("%s: %s", episode.title, episode.current_download_status.to_string ());
             return episode;
         }
 
@@ -205,7 +208,7 @@ namespace Leopod {
          * already exist.
          */
          public void cache_album_art (Podcast podcast) {
-             string podcast_path = local_library_path + "/%s".printf (
+            string podcast_path = local_library_path + "/%s".printf (
  		        podcast.name.replace ("%27", "'").replace ("%", "_")
  		    );
  
@@ -299,7 +302,7 @@ namespace Leopod {
 		    }
 		    local_library_path = settings.get_string("library-location").replace (
 		        "~",
-		        GLib.Environment.get_user_data_dir ()
+		        GLib.Environment.get_home_dir ()
 		    );
 
 		    // If the local library path has been modified, update the setting
@@ -490,6 +493,44 @@ namespace Leopod {
 		    }
 
 		    return true;
+		}
+		
+		/*
+		 * Downloads an episode to the filesystem
+		 */
+		public bool download_episode (Episode episode) throws LeopodLibraryError {
+		    string podcast_path = local_library_path + "/%s".printf (
+ 		        episode.parent.name.replace ("%27", "'").replace ("%", "_")
+ 		    );
+ 		    
+ 		    info (podcast_path);
+ 
+ 		    // Create a directory for downloads if it doesn't already exist.
+ 		    GLib.DirUtils.create_with_parents (podcast_path, 0775);
+ 
+ 		    // Locally cache the album art if necessary
+ 		    try {
+ 		        //Check if the remote file exists 
+ 		        GLib.File remote_episode = GLib.File.new_for_uri (episode.uri);
+ 		        if (remote_episode.query_exists ()) {
+ 		            // If the episode file exists, set path for new file and create object for the local file
+ 		            string episode_path = 
+ 		                podcast_path + "/" + 
+ 		                remote_episode.get_basename ().replace ("%", "_");
+ 		            GLib.File local_episode = GLib.File.new_for_path (episode_path);
+ 
+ 		            if (!local_episode.query_exists ()) {
+ 		                // Download the episode
+ 		                remote_episode.copy (local_episode, FileCopyFlags.NONE);
+ 		            }
+ 		            // Mark the local path on the episode.
+ 		            episode.local_uri = "file://" + episode_path;
+ 		            episode.current_download_status = DownloadStatus.DOWNLOADED;
+ 		        }
+ 		    } catch (Error e) {
+ 		        error ("unable to save a local copy of episode. %s", e.message);
+ 		    }
+ 		    return true;
 		}
 	}
 }

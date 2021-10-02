@@ -163,16 +163,14 @@ public class MainWindow : Gtk.Window {
     public async void on_podcast_clicked (Podcast podcast) {
         Gtk.Box left_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
             halign = Gtk.Align.FILL,
-            valign = Gtk.Align.FILL,
             margin = 20
         };
-        Gtk.Box right_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
+        Gtk.Box right_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 10) {
             halign = Gtk.Align.FILL,
-            valign = Gtk.Align.FILL,
             margin = 10,
         };
         episodes_box.pack_start (left_box);
-        episodes_box.pack_end (right_box);
+        episodes_box.add (right_box);
         CoverArt coverart = new CoverArt.with_podcast (podcast);
         left_box.add (coverart);
         left_box.add (new Gtk.Label (podcast.description) {
@@ -180,7 +178,11 @@ public class MainWindow : Gtk.Window {
             max_width_chars = 25
         });
         foreach (Episode episode in podcast.episodes) {
-            right_box.add (new EpisodeListItem (episode));
+            var episode_list_item = new EpisodeListItem (episode);
+            right_box.add (episode_list_item);
+            episode_list_item.download_clicked.connect ((episode) => {
+                controller.library.download_episode (episode);
+            });
         }
         episodes_scrolled.show_all ();
         switch_visible_page(episodes_scrolled);

@@ -78,7 +78,7 @@ namespace Leopod {
      * already exist.
      */
      private void cache_album_art (Podcast podcast) {
-        GLib.Settings settings = new GLib.Settings ("com.github.leggettc18.leapod");
+        GLib.Settings settings = new GLib.Settings ("com.github.leggettc18.leopod");
         info (settings.get_string("library-location"));
 
 	    // Set the local library directory and replace ~ with absolute path
