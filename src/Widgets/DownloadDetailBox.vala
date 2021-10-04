@@ -133,8 +133,7 @@ public class DownloadDetailBox : Gtk.Box {
             return;
         }
         
-        percentage = ((double) current_num_bytes / (double) total_num_bytes);
-        info ("%f", percentage);
+        percentage = ((double)current_num_bytes / (double)total_num_bytes);
         double mb_downloaded = (double) current_num_bytes / 1000000;
         double mb_total = (double) total_num_bytes / 1000000;
         double mb_remaining = mb_total - mb_downloaded;
@@ -159,7 +158,7 @@ public class DownloadDetailBox : Gtk.Box {
             GLib.format_size (current_num_bytes),
             GLib.format_size (total_num_bytes)
         );
-        time_output = """, about %d, %s remaining.""".printf (time_val_to_display, units);
+        time_output = """, about %d %s remaining.""".printf (time_val_to_display, units);
         
         //Always use the "outdated" time when setting the label.
         //A timer (see constructor) updates this value every second,
