@@ -498,7 +498,7 @@ namespace Leopod {
 		/*
 		 * Downloads an episode to the filesystem
 		 */
-		public bool download_episode (Episode episode) throws LeopodLibraryError {
+		public DownloadDetailBox download_episode (Episode episode) throws LeopodLibraryError {
 		    string podcast_path = local_library_path + "/%s".printf (
  		        episode.parent.name.replace ("%27", "'").replace ("%", "_")
  		    );
@@ -507,6 +507,8 @@ namespace Leopod {
  
  		    // Create a directory for downloads if it doesn't already exist.
  		    GLib.DirUtils.create_with_parents (podcast_path, 0775);
+ 		    DownloadDetailBox detail_box = null;
+ 		    
  
  		    // Locally cache the album art if necessary
  		    try {
@@ -520,17 +522,28 @@ namespace Leopod {
  		            GLib.File local_episode = GLib.File.new_for_path (episode_path);
  
  		            if (!local_episode.query_exists ()) {
+ 		                //Create the DownloadDetailBox and GLib.Cancellable
+ 		                detail_box = new DownloadDetailBox (episode);
+ 		                FileProgressCallback callback = detail_box.download_delegate;
+ 		                GLib.Cancellable cancellable = new GLib.Cancellable ();
  		                // Download the episode
- 		                remote_episode.copy (local_episode, FileCopyFlags.NONE);
+ 		                remote_episode.copy_async (
+ 		                    local_episode,
+ 		                    FileCopyFlags.OVERWRITE,
+ 		                    GLib.Priority.DEFAULT,
+ 		                    cancellable,
+ 		                    callback
+ 		                );
  		            }
  		            // Mark the local path on the episode.
  		            episode.local_uri = "file://" + episode_path;
  		            episode.current_download_status = DownloadStatus.DOWNLOADED;
+ 		            write_episode_to_database (episode);
  		        }
  		    } catch (Error e) {
  		        error ("unable to save a local copy of episode. %s", e.message);
  		    }
- 		    return true;
+ 		    return detail_box;
 		}
 	}
 }

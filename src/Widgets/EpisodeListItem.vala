@@ -20,7 +20,6 @@ namespace Leopod {
 
         // Constructors
         public EpisodeListItem (Episode episode) {
-            info ("%s: %s", episode.title, episode.current_download_status.to_string ());
             add_events (
                 Gdk.EventMask.ENTER_NOTIFY_MASK |
                 Gdk.EventMask.LEAVE_NOTIFY_MASK

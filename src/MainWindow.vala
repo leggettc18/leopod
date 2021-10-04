@@ -173,6 +173,8 @@ public class MainWindow : Hdy.ApplicationWindow {
     public async void on_podcast_clicked (Podcast podcast) {
         Gtk.Box left_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
             halign = Gtk.Align.FILL,
+            valign = Gtk.Align.START,
+            vexpand = false,
             margin = 20
         };
         Gtk.Box right_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 10) {
@@ -191,7 +193,9 @@ public class MainWindow : Hdy.ApplicationWindow {
             var episode_list_item = new EpisodeListItem (episode);
             right_box.add (episode_list_item);
             episode_list_item.download_clicked.connect ((episode) => {
-                controller.library.download_episode (episode);
+                DownloadDetailBox detail_box = controller.library.download_episode (episode);
+                left_box.add (detail_box);
+                detail_box.show_all ();
             });
         }
         episodes_scrolled.show_all ();
