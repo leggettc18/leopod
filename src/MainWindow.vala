@@ -203,6 +203,9 @@ public class MainWindow : Hdy.ApplicationWindow {
                 downloads.add_download (detail_box);
                 detail_box.show_all ();
             });
+            episode_list_item.delete_requested.connect ((episode) => {
+                controller.library.delete_episode (episode);
+            });
         }
         episodes_scrolled.show_all ();
         switch_visible_page(episodes_scrolled);

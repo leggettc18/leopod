@@ -14,9 +14,10 @@ namespace Leopod {
         public Gtk.Button play_button;
         public Gtk.Button delete_button;
         public Gtk.Label title;
-        
+
         // Signals
         public signal void download_clicked (Episode episode);
+        public signal void delete_requested (Episode episode);
 
         // Constructors
         public EpisodeListItem (Episode episode) {
@@ -32,33 +33,54 @@ namespace Leopod {
                 halign = Gtk.Align.START
             };
             add (title);
+
+            buttons_box = create_buttons_box ();
+            add (buttons_box);
+            buttons_box.show_all ();
+
+            episode.download_status_changed.connect (() => {
+                buttons_box.destroy ();
+                buttons_box = create_buttons_box ();
+                add (buttons_box);
+                buttons_box.show_all ();
+            });
+        }
+
+        private Gtk.Box create_buttons_box () {
+            buttons_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0) {
+                margin = 5
+            };
             download_button = new Gtk.Button.from_icon_name (
                 "browser-download-symbolic",
                 Gtk.IconSize.BUTTON
             );
+
+            download_button.clicked.connect (() => {
+                download_clicked (episode);
+            });
+
             play_button = new Gtk.Button.from_icon_name (
                 "media-playback-start-symbolic",
                 Gtk.IconSize.BUTTON
             );
+
             delete_button = new Gtk.Button.from_icon_name (
                 "edit-delete-symbolic",
                 Gtk.IconSize.BUTTON
             );
 
-            buttons_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0) {
-               margin = 5
-            };
-            if (this.episode.current_download_status == DownloadStatus.NOT_DOWNLOADED) {
+            delete_button.clicked.connect (() => {
+                delete_requested (episode);
+            });
+
+            if (episode.current_download_status == DownloadStatus.NOT_DOWNLOADED) {
                 buttons_box.pack_start (download_button);
-                download_button.clicked.connect (() => {
-                    download_clicked (episode);
-                });
-            } else if (this.episode.current_download_status == DownloadStatus.DOWNLOADED){
+            } else {
                 buttons_box.pack_start (play_button);
                 buttons_box.pack_end (delete_button);
             }
-            add (buttons_box);
-            buttons_box.show ();
+
+            return buttons_box;
         }
     }
 }

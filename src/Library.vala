@@ -526,6 +526,21 @@ namespace Leopod {
  		                detail_box = new DownloadDetailBox (episode);
  		                FileProgressCallback callback = detail_box.download_delegate;
  		                GLib.Cancellable cancellable = new GLib.Cancellable ();
+ 		                
+ 		                detail_box.cancel_requested.connect ((episode) => {
+ 		                    cancellable.cancel ();
+ 		                    if (local_episode.query_exists ()) {
+ 		                        try {
+ 		                            local_episode.delete ();
+ 		                        } catch (Error e) {
+ 		                            error ("unable to delete file.");
+ 		                        }
+ 		                    }
+ 		                });
+ 		                
+ 		                detail_box.download_completed.connect ((episode) => {
+ 		                    episode.download_status_changed ();
+ 		                });
  		                // Download the episode
  		                remote_episode.copy_async (
  		                    local_episode,
@@ -544,6 +559,20 @@ namespace Leopod {
  		        error ("unable to save a local copy of episode. %s", e.message);
  		    }
  		    return detail_box;
+		}
+		
+		public void delete_episode (Episode episode) {
+		    GLib.File local_file = GLib.File.new_for_uri (episode.local_uri);
+		    if (local_file.query_exists ()) {
+		        try {
+		            local_file.delete ();
+		        } catch (Error e) {
+		            error ("unable to delete file.");
+		        }
+		    }
+		    episode.current_download_status = DownloadStatus.NOT_DOWNLOADED;
+		    episode.download_status_changed ();
+		    write_episode_to_database (episode);
 		}
 	}
 }

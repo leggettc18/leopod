@@ -21,6 +21,8 @@ namespace Leopod {
 
 		public EpisodeStatus status;
 		public DownloadStatus current_download_status;
+		
+		public signal void download_status_changed ();
 
 		public Episode () {
 		    parent = null;
