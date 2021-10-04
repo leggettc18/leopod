@@ -19,6 +19,7 @@ public class MainWindow : Hdy.ApplicationWindow {
     private Gtk.Stack notebook;
 
     public AddPodcastDialog add_podcast;
+    private DownloadsPopover downloads;
 
     public Gtk.Widget current_widget;
     public Gtk.Widget previous_widget;
@@ -46,14 +47,19 @@ public class MainWindow : Hdy.ApplicationWindow {
         this.controller.app.add_action (add_podcast_action);
         this.controller.app.set_accels_for_action ("app.add-podcast", {"<Control>a"});
 
-        var button = new Gtk.Button.from_icon_name ("list-add", Gtk.IconSize.LARGE_TOOLBAR) {
+        var add_podcast_button = new Gtk.Button.from_icon_name ("list-add", Gtk.IconSize.LARGE_TOOLBAR) {
             action_name = "app.add-podcast"
         };
+        var download_button = new Gtk.Button.from_icon_name ("browser-download", Gtk.IconSize.LARGE_TOOLBAR);
+        download_button.clicked.connect (show_downloads_popover);
 
         header_bar = new Hdy.HeaderBar () {
             show_close_button = true
         };
-        header_bar.pack_end (button);
+        header_bar.pack_end (add_podcast_button);
+        header_bar.pack_end (download_button);
+
+        downloads = new DownloadsPopover(download_button);
 
         add_podcast_action.activate.connect (() => {
             on_add_podcast_clicked ();
@@ -64,7 +70,7 @@ public class MainWindow : Hdy.ApplicationWindow {
         default_width = 1000;
         this.set_icon_name ("com.github.leggettc18.leopod");
         title = _("Leopod");
-        
+
         Gtk.Grid main_layout = new Gtk.Grid();
         main_layout.attach(header_bar, 0, 0);
 
@@ -124,12 +130,12 @@ public class MainWindow : Hdy.ApplicationWindow {
         notebook.add_titled(all_scrolled, "all", _("All Podcasts"));
         notebook.add_titled(welcome, "welcome", _("Welcome"));
         notebook.add_titled(episodes_scrolled, "podcast-episodes", _("Episodes"));
-        
+
         main_layout.attach (notebook, 0, 1);
-        
+
         var window_handle = new Hdy.WindowHandle ();
         window_handle.add (main_layout);
-        
+
         add (window_handle);
 
         add_podcast.response.connect (on_add_podcast);
@@ -194,7 +200,7 @@ public class MainWindow : Hdy.ApplicationWindow {
             right_box.add (episode_list_item);
             episode_list_item.download_clicked.connect ((episode) => {
                 DownloadDetailBox detail_box = controller.library.download_episode (episode);
-                left_box.add (detail_box);
+                downloads.add_download (detail_box);
                 detail_box.show_all ();
             });
         }
@@ -272,6 +278,13 @@ public class MainWindow : Hdy.ApplicationWindow {
         }
         add_podcast.destroy ();
         switch_visible_page (all_scrolled);
+    }
+
+    /*
+     * Shows the downloads popover
+     */
+    public void show_downloads_popover () {
+        this.downloads.show_all ();
     }
 }
 

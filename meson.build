@@ -24,6 +24,7 @@ executable(
     'src' / 'Widgets' / 'AddPodcastDialog.vala',
     'src' / 'Widgets' / 'EpisodeListItem.vala',
     'src' / 'Widgets' / 'DownloadDetailBox.vala',
+    'src' / 'Widgets' / 'DownloadsPopover.vala',
     dependencies: [
         dependency('gtk+-3.0'),
         dependency('granite'),
