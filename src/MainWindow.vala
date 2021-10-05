@@ -23,7 +23,7 @@ public class MainWindow : Hdy.ApplicationWindow {
 
     public Gtk.Widget current_widget;
     public Gtk.Widget previous_widget;
-    
+
     private int width;
     private int height;
 
@@ -108,7 +108,7 @@ public class MainWindow : Hdy.ApplicationWindow {
         all_flowbox = new Gtk.FlowBox () {
             row_spacing = 20,
             column_spacing = 20,
-            halign = Gtk.Align.CENTER,
+            halign = Gtk.Align.FILL,
             valign = Gtk.Align.START,
             margin = 10,
             selection_mode = Gtk.SelectionMode.NONE
@@ -117,15 +117,9 @@ public class MainWindow : Hdy.ApplicationWindow {
         all_scrolled = new Gtk.ScrolledWindow (null, null);
         all_scrolled.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
         all_scrolled.add(all_flowbox);
-        
+
         episodes_scrolled = new Gtk.ScrolledWindow (null, null);
         episodes_scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
-
-        size_allocate.connect (() => {
-            get_size (out width, out height);
-            all_flowbox.set_size_request (width - 20, height - 20);
-            episodes_box.set_size_request (width - 20, height - 20);
-        });
 
         notebook.add_titled(all_scrolled, "all", _("All Podcasts"));
         notebook.add_titled(welcome, "welcome", _("Welcome"));
@@ -178,7 +172,6 @@ public class MainWindow : Hdy.ApplicationWindow {
      */
     public async void on_podcast_clicked (Podcast podcast) {
         episodes_box = new PodcastView (podcast);
-        episodes_box.set_size_request(width - 20, height - 20);
         episodes_scrolled.add (episodes_box);
         episodes_box.episode_download_requested.connect ((episode) => {
             DownloadDetailBox detail_box = controller.library.download_episode (episode);
@@ -235,7 +228,9 @@ public class MainWindow : Hdy.ApplicationWindow {
             header_bar.pack_start (back_button);
             back_button.show_all ();
         } else {
-            back_button.destroy ();
+            if (back_button != null) {
+                back_button.destroy ();
+            }
         }
     }
 
