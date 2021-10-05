@@ -53,7 +53,9 @@ namespace Leopod {
             download_button = new Gtk.Button.from_icon_name (
                 "browser-download-symbolic",
                 Gtk.IconSize.BUTTON
-            );
+            ){
+            	tooltip_text = _("Download")
+            };
 
             download_button.clicked.connect (() => {
                 download_clicked (episode);
@@ -62,12 +64,16 @@ namespace Leopod {
             play_button = new Gtk.Button.from_icon_name (
                 "media-playback-start-symbolic",
                 Gtk.IconSize.BUTTON
-            );
+            ){
+            	tooltip_text = _("Play")
+            };
 
             delete_button = new Gtk.Button.from_icon_name (
                 "edit-delete-symbolic",
                 Gtk.IconSize.BUTTON
-            );
+            ){
+            	tooltip_text = _("Delete")
+            };
 
             delete_button.clicked.connect (() => {
                 delete_requested (episode);

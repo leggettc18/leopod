@@ -81,7 +81,9 @@ public class DownloadDetailBox : Gtk.Box {
         var cancel_button = new Gtk.Button.from_icon_name (
             "process-stop-symbolic",
             Gtk.IconSize.BUTTON
-        );
+        ){
+        	tooltip_text = _("Cancel Download")
+        };
         cancel_button.get_style_context ().add_class ("flat");
         cancel_button.tooltip_text = _("Cancel Download");
         cancel_button.clicked.connect (() => {

@@ -19,7 +19,8 @@ namespace Leopod {
             name.no_show_all = true;
             name.margin = 5;
             Gtk.Button button = new Gtk.Button () {
-                always_show_image = true
+                always_show_image = true,
+                tooltip_text = _("Browse Podcast Episodes")
             };
             
             try {

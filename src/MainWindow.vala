@@ -48,9 +48,12 @@ public class MainWindow : Hdy.ApplicationWindow {
         this.controller.app.set_accels_for_action ("app.add-podcast", {"<Control>a"});
 
         var add_podcast_button = new Gtk.Button.from_icon_name ("list-add", Gtk.IconSize.LARGE_TOOLBAR) {
-            action_name = "app.add-podcast"
+            action_name = "app.add-podcast",
+            tooltip_text = _("Add Podcast")
         };
-        var download_button = new Gtk.Button.from_icon_name ("browser-download", Gtk.IconSize.LARGE_TOOLBAR);
+        var download_button = new Gtk.Button.from_icon_name ("browser-download", Gtk.IconSize.LARGE_TOOLBAR) {
+            tooltip_text = _("Downloads")
+        };
         download_button.clicked.connect (show_downloads_popover);
 
         header_bar = new Hdy.HeaderBar () {
@@ -104,6 +107,7 @@ public class MainWindow : Hdy.ApplicationWindow {
             halign = Gtk.Align.CENTER,
             valign = Gtk.Align.START,
             margin = 10,
+            selection_mode = Gtk.SelectionMode.NONE
         };
 
         all_scrolled = new Gtk.ScrolledWindow (null, null);
