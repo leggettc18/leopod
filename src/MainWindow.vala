@@ -11,7 +11,7 @@ public class MainWindow : Hdy.ApplicationWindow {
     public Hdy.HeaderBar header_bar;
     public Gtk.FlowBox all_flowbox;
     public Gtk.ScrolledWindow all_scrolled;
-    public Gtk.Box episodes_box;
+    public PodcastView episodes_box;
     public Gtk.ScrolledWindow episodes_scrolled;
     public Gtk.Button back_button;
 
@@ -23,11 +23,15 @@ public class MainWindow : Hdy.ApplicationWindow {
 
     public Gtk.Widget current_widget;
     public Gtk.Widget previous_widget;
+    
+    private int width;
+    private int height;
 
 
     public MainWindow (Controller controller) {
         Hdy.init ();
-        var width = 0, height = 0;
+        width = 0;
+        height = 0;
         var granite_settings = Granite.Settings.get_default ();
         var gtk_settings = Gtk.Settings.get_default ();
 
@@ -113,23 +117,15 @@ public class MainWindow : Hdy.ApplicationWindow {
         all_scrolled = new Gtk.ScrolledWindow (null, null);
         all_scrolled.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
         all_scrolled.add(all_flowbox);
+        
+        episodes_scrolled = new Gtk.ScrolledWindow (null, null);
+        episodes_scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
 
         size_allocate.connect (() => {
             get_size (out width, out height);
             all_flowbox.set_size_request (width - 20, height - 20);
             episodes_box.set_size_request (width - 20, height - 20);
         });
-
-        info ("Creating the podcast episodes view");
-        // Create the view that will display all the episodes of a given podcast.
-        episodes_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5){
-            halign = Gtk.Align.FILL,
-            valign = Gtk.Align.FILL
-        };
-
-        episodes_scrolled = new Gtk.ScrolledWindow (null, null);
-        episodes_scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
-        episodes_scrolled.add (episodes_box);
 
         notebook.add_titled(all_scrolled, "all", _("All Podcasts"));
         notebook.add_titled(welcome, "welcome", _("Welcome"));
@@ -181,36 +177,17 @@ public class MainWindow : Hdy.ApplicationWindow {
      * Handles what happens when a podcast coverart is clicked
      */
     public async void on_podcast_clicked (Podcast podcast) {
-        Gtk.Box left_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
-            halign = Gtk.Align.FILL,
-            valign = Gtk.Align.START,
-            vexpand = false,
-            margin = 20
-        };
-        Gtk.Box right_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 10) {
-            halign = Gtk.Align.FILL,
-            margin = 10,
-        };
-        episodes_box.pack_start (left_box);
-        episodes_box.add (right_box);
-        CoverArt coverart = new CoverArt.with_podcast (podcast);
-        left_box.add (coverart);
-        left_box.add (new Gtk.Label (podcast.description) {
-            wrap = true,
-            max_width_chars = 25
+        episodes_box = new PodcastView (podcast);
+        episodes_box.set_size_request(width - 20, height - 20);
+        episodes_scrolled.add (episodes_box);
+        episodes_box.episode_download_requested.connect ((episode) => {
+            DownloadDetailBox detail_box = controller.library.download_episode (episode);
+            downloads.add_download (detail_box);
+            detail_box.show_all ();
         });
-        foreach (Episode episode in podcast.episodes) {
-            var episode_list_item = new EpisodeListItem (episode);
-            right_box.add (episode_list_item);
-            episode_list_item.download_clicked.connect ((episode) => {
-                DownloadDetailBox detail_box = controller.library.download_episode (episode);
-                downloads.add_download (detail_box);
-                detail_box.show_all ();
-            });
-            episode_list_item.delete_requested.connect ((episode) => {
-                controller.library.delete_episode (episode);
-            });
-        }
+        episodes_box.episode_delete_requested.connect ((episode) => {
+            controller.library.delete_episode (episode);
+        });
         episodes_scrolled.show_all ();
         switch_visible_page(episodes_scrolled);
     }
@@ -249,7 +226,9 @@ public class MainWindow : Hdy.ApplicationWindow {
             };
             back_button.get_style_context ().add_class ("back-button");
             back_button.clicked.connect (() => {
+                episodes_scrolled.remove (episodes_box);
                 episodes_box.foreach ((child) => episodes_box.remove (child));
+                episodes_box.destroy ();
                 header_bar.remove (back_button);
                 switch_visible_page (back_widget);
             });
