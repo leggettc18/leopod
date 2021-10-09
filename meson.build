@@ -18,6 +18,8 @@ executable(
     'src' / 'Utils' / 'SoupClient.vala',
     'src' / 'Utils' / 'FeedParser.vala',
     'src' / 'Utils' / 'XmlUtils.vala',
+    'src' / 'Utils' / 'Player.vala',
+    'src' / 'Utils' / 'MPRIS.vala',
     'src' / 'Objects' / 'Podcast.vala',
     'src' / 'Objects' / 'Episode.vala',
     'src' / 'Widgets' / 'CoverArt.vala',
@@ -26,6 +28,7 @@ executable(
     'src' / 'Widgets' / 'DownloadDetailBox.vala',
     'src' / 'Widgets' / 'DownloadsPopover.vala',
     'src' / 'Widgets' / 'PodcastView.vala',
+    'src' / 'Widgets' / 'PlaybackBox.vala',
     dependencies: [
         dependency('gtk+-3.0'),
         dependency('granite'),
@@ -34,7 +37,11 @@ executable(
         dependency('libxml-2.0'),
         dependency('gee-0.8'),
         dependency('sqlite3'),
-        dependency('libhandy-1')
+        dependency('libhandy-1'),
+        dependency('clutter-1.0'),
+        dependency('clutter-gst-3.0'),
+        dependency('gstreamer-1.0'),
+        dependency('gstreamer-pbutils-1.0')
     ],
     install: true
 )

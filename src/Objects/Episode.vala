@@ -21,8 +21,52 @@ namespace Leopod {
 
 		public EpisodeStatus status;
 		public DownloadStatus current_download_status;
-		
+
 		public signal void download_status_changed ();
+
+		/*
+		 * Gets the playback uri based on whether the file is local or remote
+		 * Sets the playback uri based on whether it's local or remote
+		 */
+		public string playback_uri {
+			get {
+				GLib.File local;
+
+				if (local_uri != null) {
+					if (local_uri.contains ("file://")) {
+						local = GLib.File.new_for_uri (local_uri);
+					} else {
+						local = GLib.File.new_for_uri ("file://" + local_uri);
+					}
+
+					if (local.query_exists ()) {
+						if (local_uri.contains ("file://")) {
+							return local_uri;
+						} else {
+							local_uri = "file://" + local_uri;
+							return local_uri;
+						}
+					} else {
+						return uri;
+					}
+				} else {
+					return uri;
+				}
+			}
+
+			set {
+				string[] split = value.split (":");
+				if (split[0] == "http" || split[0] == "HTTP") {
+					uri = value;
+				} else {
+					if (!value.contains ("file://")) {
+						local_uri = """file://""" + value;
+					} else {
+						local_uri = value;
+					}
+				}
+			}
+		}
 
 		public Episode () {
 		    parent = null;
@@ -60,7 +104,7 @@ namespace Leopod {
     public enum EpisodeStatus {
         PLAYED, UNPLAYED;
     }
-    
+
     /*
      * Possible episode download statuses, either downloaded or not downloaded.
      */

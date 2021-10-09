@@ -19,6 +19,7 @@ public class MainWindow : Hdy.ApplicationWindow {
     private Gtk.Stack notebook;
 
     public AddPodcastDialog add_podcast;
+    public PlaybackBox playback_box;
     private DownloadsPopover downloads;
 
     public Gtk.Widget current_widget;
@@ -126,6 +127,10 @@ public class MainWindow : Hdy.ApplicationWindow {
         notebook.add_titled(episodes_scrolled, "podcast-episodes", _("Episodes"));
 
         main_layout.attach (notebook, 0, 1);
+
+        playback_box = new PlaybackBox ();
+
+        main_layout.attach (playback_box, 0, 2);
 
         var window_handle = new Hdy.WindowHandle ();
         window_handle.add (main_layout);
