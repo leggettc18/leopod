@@ -8,19 +8,30 @@ namespace Leopod {
 public class PlaybackBox : Gtk.Box {
 
     public signal void scale_changed ();
+    public signal void playpause_clicked ();
+    public signal void seek_backward_clicked ();
+    public signal void seek_forward_clicked ();
 
     public Gtk.Label episode_label;
     public Gtk.Label podcast_label;
+    public Gtk.Button seek_back_button;
+    public Gtk.Button playpause_button;
+    public Gtk.Button seek_forward_button;
     public Gtk.EventBox artwork;
     public Gtk.Image artwork_image;
+    private Gtk.Image play_image;
+    private Gtk.Image pause_image;
     private Gtk.ProgressBar progress_bar;
     private Gtk.Scale scale;
     private Gtk.Grid scale_grid;
     private Gtk.Label left_time;
     private Gtk.Label right_time;
     public Gtk.Button volume_button;
+    private bool playing = false;
 
     public PlaybackBox () {
+        play_image = new Gtk.Image.from_icon_name("media-playback-start-symbolic", Gtk.IconSize.LARGE_TOOLBAR);
+        pause_image = new Gtk.Image.from_icon_name("media-playback-pause-symbolic", Gtk.IconSize.LARGE_TOOLBAR);
         this.get_style_context ().add_class ("seek-bar");
         orientation = Gtk.Orientation.HORIZONTAL;
 
@@ -47,6 +58,34 @@ public class PlaybackBox : Gtk.Box {
         podcast_label.set_ellipsize (Pango.EllipsizeMode.END);
         podcast_label.xalign = 0.0f;
         podcast_label.width_chars = 10;
+
+        seek_back_button = new Gtk.Button.from_icon_name (
+            "media-seek-backward-symbolic",
+            Gtk.IconSize.LARGE_TOOLBAR
+        );
+
+        seek_back_button.clicked.connect (() => {
+            seek_backward_clicked ();
+        });
+
+        playpause_button = new Gtk.Button.from_icon_name (
+            "media-playback-start-symbolic",
+            Gtk.IconSize.LARGE_TOOLBAR
+        );
+
+        playpause_button.clicked.connect (() => {
+            playpause_clicked ();
+            toggle_playpause ();
+        });
+
+        seek_forward_button = new Gtk.Button.from_icon_name (
+            "media-seek-forward-symbolic",
+            Gtk.IconSize.LARGE_TOOLBAR
+        );
+
+        seek_forward_button.clicked.connect (() => {
+            seek_forward_clicked ();
+        });
 
         progress_bar = new Gtk.ProgressBar ();
 
@@ -83,6 +122,11 @@ public class PlaybackBox : Gtk.Box {
         label_box.valign = Gtk.Align.CENTER;
         label_box.halign = Gtk.Align.START;
 
+        var button_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 3);
+        button_box.add (seek_back_button);
+        button_box.add (playpause_button);
+        button_box.add (seek_forward_button);
+
         volume_button = new Gtk.Button.from_icon_name ("audio-volume-high-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
         volume_button.relief = Gtk.ReliefStyle.NONE;
         volume_button.margin_end = 12;
@@ -90,9 +134,23 @@ public class PlaybackBox : Gtk.Box {
         artwork.add (artwork_image);
         add (artwork);
         add (label_box);
+        add (button_box);
         add (scale_grid);
         add (volume_button);
     }
+
+    /*
+     * Toggles the icon for the playpause_button
+     */
+     public void toggle_playpause () {
+         if (playing) {
+             playpause_button.image = play_image;
+             playing = false;
+         } else {
+             playpause_button.image = pause_image;
+             playing = true;
+         }
+     }
 
     /*
      * Returns the percentage that the progress_bar has been filled
