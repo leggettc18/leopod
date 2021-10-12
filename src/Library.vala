@@ -62,19 +62,19 @@ namespace Leopod {
         public bool empty () {
             return podcasts.size == 0;
         }
-        
+
         public async Gee.ArrayList<Episode> check_for_updates () {
             SourceFunc callback = check_for_updates.callback;
             Gee.ArrayList<Episode> new_episodes = new Gee.ArrayList<Episode> ();
-            
+
             FeedParser parser = new FeedParser ();
-            
+
             ThreadFunc<void*> run = () => {
                 foreach (Podcast podcast in podcasts) {
                     int added = -1;
                     if (podcast.feed_uri != null && podcast.feed_uri.length > 4) {
                         info ("updating feed %s", podcast.feed_uri);
-                        
+
                         try {
                             added = parser.update_feed (podcast);
                         } catch (Error e) {
@@ -85,15 +85,15 @@ namespace Leopod {
                             continue;
                         }
                     }
-                    
+
                     while (added > 0) {
                         int index = podcast.episodes.size - added;
-                        
+
                         new_episodes.add (podcast.episodes[index]);
                         write_episode_to_database (podcast.episodes[index]);
                         added--;
                     }
-                    
+
                     if (added == -1) {
                         critical ("Unable to update podcast due to missing feed url");
                     }
@@ -102,9 +102,9 @@ namespace Leopod {
                 return null;
             };
             Thread.create<void*> (run, false);
-            
+
             yield;
-            
+
             return new_episodes;
         }
 
@@ -598,6 +598,11 @@ namespace Leopod {
  		                    cancellable,
  		                    callback
  		                );
+ 		            } else {
+ 		                episode.current_download_status = DownloadStatus.DOWNLOADED;
+ 		                episode.download_status_changed ();
+ 		                write_episode_to_database (episode);
+ 		                return null;
  		            }
  		        }
  		    } catch (Error e) {

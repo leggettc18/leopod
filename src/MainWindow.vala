@@ -183,8 +183,11 @@ public class MainWindow : Hdy.ApplicationWindow {
         episodes_scrolled.add (episodes_box);
         episodes_box.episode_download_requested.connect ((episode) => {
             DownloadDetailBox detail_box = controller.library.download_episode (episode);
-            downloads.add_download (detail_box);
-            detail_box.show_all ();
+            if (detail_box != null) {
+                downloads.add_download (detail_box);
+                detail_box.show_all ();
+            }
+
         });
         episodes_box.episode_delete_requested.connect ((episode) => {
             controller.library.delete_episode (episode);
