@@ -52,12 +52,12 @@ public class PlaybackBox : Gtk.Box {
         episode_label.set_ellipsize (Pango.EllipsizeMode.END);
         episode_label.xalign = 0.0f;
         episode_label.get_style_context ().add_class ("h3");
-        episode_label.width_chars = 10;
+        episode_label.max_width_chars = 20;
 
         podcast_label = new Gtk.Label ("");
         podcast_label.set_ellipsize (Pango.EllipsizeMode.END);
         podcast_label.xalign = 0.0f;
-        podcast_label.width_chars = 10;
+        podcast_label.max_width_chars = 20;
 
         seek_back_button = new Gtk.Button.from_icon_name (
             "media-seek-backward-symbolic",
