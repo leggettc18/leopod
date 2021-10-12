@@ -31,7 +31,8 @@ namespace Leopod {
             this.episode = episode;
             title = new Gtk.Label (episode.title) {
                 expand = true,
-                halign = Gtk.Align.START
+                halign = Gtk.Align.START,
+                ellipsize = Pango.EllipsizeMode.END
             };
             add (title);
 
