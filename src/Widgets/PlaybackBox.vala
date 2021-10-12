@@ -144,11 +144,11 @@ public class PlaybackBox : Gtk.Box {
      */
      public void set_playing (bool playing) {
          if (playing) {
-             playpause_button.image = play_image;
-             playing = false;
-         } else {
              playpause_button.image = pause_image;
-             playing = true;
+             currently_playing = true;
+         } else {
+             playpause_button.image = play_image;
+             currently_playing = false;
          }
      }
 
