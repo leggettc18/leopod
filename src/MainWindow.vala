@@ -129,6 +129,9 @@ public class MainWindow : Hdy.ApplicationWindow {
         main_layout.attach (notebook, 0, 1);
 
         playback_box = new PlaybackBox ();
+        playback_box.playpause_clicked.connect (()=> {
+            controller.play_pause ();
+        });
 
         main_layout.attach (playback_box, 0, 2);
 
@@ -185,6 +188,11 @@ public class MainWindow : Hdy.ApplicationWindow {
         });
         episodes_box.episode_delete_requested.connect ((episode) => {
             controller.library.delete_episode (episode);
+        });
+        episodes_box.episode_play_requested.connect ((episode) => {
+            controller.current_episode = episode;
+            playback_box.set_playing (true);
+            controller.play ();
         });
         episodes_scrolled.show_all ();
         switch_visible_page(episodes_scrolled);

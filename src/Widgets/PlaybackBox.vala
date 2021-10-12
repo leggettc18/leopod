@@ -27,7 +27,7 @@ public class PlaybackBox : Gtk.Box {
     private Gtk.Label left_time;
     private Gtk.Label right_time;
     public Gtk.Button volume_button;
-    private bool playing = false;
+    private bool currently_playing = false;
 
     public PlaybackBox () {
         play_image = new Gtk.Image.from_icon_name("media-playback-start-symbolic", Gtk.IconSize.LARGE_TOOLBAR);
@@ -75,7 +75,7 @@ public class PlaybackBox : Gtk.Box {
 
         playpause_button.clicked.connect (() => {
             playpause_clicked ();
-            toggle_playpause ();
+            set_playing (!currently_playing);
         });
 
         seek_forward_button = new Gtk.Button.from_icon_name (
@@ -142,7 +142,7 @@ public class PlaybackBox : Gtk.Box {
     /*
      * Toggles the icon for the playpause_button
      */
-     public void toggle_playpause () {
+     public void set_playing (bool playing) {
          if (playing) {
              playpause_button.image = play_image;
              playing = false;

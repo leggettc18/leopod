@@ -18,6 +18,7 @@ namespace Leopod {
         // Signals
         public signal void download_clicked (Episode episode);
         public signal void delete_requested (Episode episode);
+        public signal void play_requested (Episode episode);
 
         // Constructors
         public EpisodeListItem (Episode episode) {
@@ -67,6 +68,9 @@ namespace Leopod {
             ){
             	tooltip_text = _("Play")
             };
+            play_button.clicked.connect (() => {
+                play_requested (episode);
+            });
 
             delete_button = new Gtk.Button.from_icon_name (
                 "edit-delete-symbolic",

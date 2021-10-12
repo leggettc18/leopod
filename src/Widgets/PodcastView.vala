@@ -9,6 +9,7 @@ public class PodcastView : Gtk.Box {
     // Signals
     public signal void episode_download_requested (Episode episode);
     public signal void episode_delete_requested (Episode episode);
+    public signal void episode_play_requested (Episode episode);
     
     // Widgets
     public Gtk.ListBox episodes_list;
@@ -51,6 +52,9 @@ public class PodcastView : Gtk.Box {
             });
             episode_list_item.delete_requested.connect ((episode) => {
                 episode_delete_requested (episode);
+            });
+            episode_list_item.play_requested.connect ((episode) => {
+                episode_play_requested (episode);
             });
         }
     }
