@@ -10,13 +10,13 @@ public class PodcastView : Gtk.Box {
     public signal void episode_download_requested (Episode episode);
     public signal void episode_delete_requested (Episode episode);
     public signal void episode_play_requested (Episode episode);
-    
+
     // Widgets
     public Gtk.ListBox episodes_list;
-    
+
     // Data
     public Gee.ArrayList<EpisodeListItem> episodes;
-    
+
     public PodcastView (Podcast podcast) {
         info ("Creating the podcast episodes view");
         // Create the view that will display all the episodes of a given podcast.
@@ -53,8 +53,8 @@ public class PodcastView : Gtk.Box {
             episode_list_item.delete_requested.connect ((episode) => {
                 episode_delete_requested (episode);
             });
-            episode_list_item.play_requested.connect ((episode) => {
-                episode_play_requested (episode);
+            episode_list_item.play_requested.connect ((e) => {
+                episode_play_requested (e);
             });
         }
     }

@@ -363,9 +363,9 @@ namespace Leopod {
             // TODO:
             // I believe this is outdate code, but I'm leaving it commented out in case it is necessary.
             // I can test it with the Ubuntu UK feed, if memory serves correctly
-            
+
             Xml.Doc* doc;
-            
+
             // If bracket character is in the path, assume it's the raw data, not a path
             if (path.contains("<")) {
                 doc = Xml.Parser.parse_memory (path, path.length);
@@ -373,9 +373,9 @@ namespace Leopod {
                 doc = Xml.Parser.parse_file (path);
             }
             */
-            
+
             Xml.Doc* doc;
-            
+
             if (!raw_data) {
 				doc = Xml.Parser.parse_file (path);
         	} else {

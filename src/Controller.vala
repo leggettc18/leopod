@@ -180,23 +180,27 @@ namespace Leopod {
 
 		        if (player.current_episode != current_episode) {
 		            if (player.current_episode != null) {
-		                //library.set_episode_playback_position (player.current_episode);
+		                player.current_episode.last_played_position = (int) player.get_position ();
+		                library.set_episode_playback_position (player.current_episode);
 		            }
+
+		            player.set_episode (current_episode);
 		        }
 
-		        player.set_episode (current_episode);
-
 		        //TODO: handle video content
-
-		        player.play ();
-		        playback_status_changed ("Playing");
 
 		        if (
 		            current_episode.last_played_position > 0 &&
 		            current_episode.last_played_position > player.get_position ()
 		        ) {
-		            player.set_position (current_episode.last_played_position);
+		            GLib.Timeout.add (1000, () => {
+		                player.set_position (current_episode.last_played_position);
+		                return false;
+		            });
 		        }
+		        player.play ();
+                playback_status_changed ("Playing");
+
 
 		        window.playback_box.set_info_title (
 		            current_episode.title.replace ("%27", "'"),
@@ -213,7 +217,8 @@ namespace Leopod {
 	            playback_status_changed ("Paused");
 
 	            current_episode.last_played_position = (int) player.get_position ();
-	            //library.set_episode_playback_position (player.current_episode);
+	            info ("%d", current_episode.last_played_position);
+	            library.set_episode_playback_position (current_episode);
 
 	            window.playback_box.set_info_title (
 	                current_episode.title.replace ("%27", "'"),

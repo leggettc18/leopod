@@ -24,7 +24,7 @@ public class MyApp : Gtk.Application {
 
     }
 
-    public static int main (string[] args) {
+    public static void main (string[] args) {
         // Initialize Clutter
         var err = Clutter.init (ref args);
         if (err != Clutter.InitError.SUCCESS) {
@@ -39,7 +39,9 @@ public class MyApp : Gtk.Application {
         // Set the media role
         GLib.Environ.set_variable ({"PULSE_PROP_media.role"}, "audio", "true");
 
-        return new MyApp ().run (args);
+        var app = new MyApp ();
+        app.args = args;
+        app.run (args);
     }
 }
 

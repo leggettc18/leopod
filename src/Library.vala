@@ -138,7 +138,7 @@ namespace Leopod {
                     FROM Episode e
                     LEFT JOIN Podcast p on p.feed_uri = e.podcast_uri
                     WHERE podcast_uri = '%s'
-                    ORDER BY e.rowid DESC;
+                    ORDER BY e.rowid ASC;
                 """.printf (podcast.feed_uri);;
                 ec = db.prepare_v2 (prepared_query, prepared_query.length, out stmt);
                 if (ec != Sqlite.OK) {
@@ -622,6 +622,10 @@ namespace Leopod {
 		    }
 		    episode.current_download_status = DownloadStatus.NOT_DOWNLOADED;
 		    episode.download_status_changed ();
+		    write_episode_to_database (episode);
+		}
+
+		public void set_episode_playback_position (Episode episode) {
 		    write_episode_to_database (episode);
 		}
 	}
