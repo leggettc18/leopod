@@ -132,6 +132,12 @@ public class MainWindow : Hdy.ApplicationWindow {
         playback_box.playpause_clicked.connect (()=> {
             controller.play_pause ();
         });
+        playback_box.seek_forward_clicked.connect (() => {
+            controller.seek_forward ();
+        });
+        playback_box.seek_backward_clicked.connect (() => {
+            controller.seek_backward ();
+        });
 
         main_layout.attach (playback_box, 0, 2);
 
