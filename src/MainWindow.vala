@@ -138,6 +138,10 @@ public class MainWindow : Hdy.ApplicationWindow {
         playback_box.seek_backward_clicked.connect (() => {
             controller.seek_backward ();
         });
+        playback_box.scale_changed.connect (() => {
+            var new_progress = playback_box.get_progress_bar_fill ();
+            controller.player.set_progress (new_progress);
+        });
 
         main_layout.attach (playback_box, 0, 2);
 
