@@ -98,6 +98,7 @@ namespace Leopod {
 		        window.populate_views ();
 		        info ("Showing main window");
 		        window.show_all ();
+		        window.playback_box.hide ();
 		        info ("switching to all_scrolled view");
 		        window.switch_visible_page (window.all_scrolled);
 		    }
@@ -176,6 +177,7 @@ namespace Leopod {
 		 */
 		public void play () {
 		    if (current_episode != null) {
+		        window.playback_box.show ();
 		        //library.mark_epiosde_as_played (current_episode);
 
 		        if (player.current_episode != current_episode) {
