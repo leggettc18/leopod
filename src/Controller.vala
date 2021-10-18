@@ -94,14 +94,18 @@ namespace Leopod {
 		        window.show_all ();
 		        window.switch_visible_page (window.welcome);
 		    } else {
-		        on_update_request ();
-		        window.populate_views ();
+		        window.populate_views_async ();
 		        info ("Showing main window");
 		        window.show_all ();
 		        window.playback_box.hide ();
 		        info ("switching to all_scrolled view");
 		        window.switch_visible_page (window.all_scrolled);
 		    }
+
+		    GLib.Timeout.add (300000, () => {
+		        on_update_request ();
+		        return true;
+		    });
 		}
 
 		public void add_podcast (string podcast_uri) {
@@ -153,10 +157,10 @@ namespace Leopod {
 
 		        new_episodes = null;
 
-		        // if (new_episode_count > 0) {
-		        //     info ("Repopulating views after update is finished");
-		        //     window.populate_views_async ();
-		        // }
+		        if (new_episode_count > 0) {
+		            info ("Repopulating views after update is finished");
+		            window.populate_views_async ();
+		        }
 		    } else {
 		        info ("Leopod is already updating.");
 		    }

@@ -160,6 +160,14 @@ public class MainWindow : Hdy.ApplicationWindow {
     }
 
     public void populate_views () {
+        if (all_flowbox != null) {
+            info ("Clearing existing podcast list.");
+            all_flowbox.foreach ((child) => {
+                info ("Removing CoverArt");
+                all_flowbox.remove (child);
+            });
+        }
+        info ("Adding updated podcast lists.");
         foreach (Podcast podcast in controller.library.podcasts) {
             add_podcast_feed (podcast);
         }
