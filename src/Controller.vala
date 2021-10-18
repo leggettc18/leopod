@@ -94,7 +94,7 @@ namespace Leopod {
 		        window.show_all ();
 		        window.switch_visible_page (window.welcome);
 		    } else {
-		        window.populate_views_async ();
+		        window.populate_views();
 		        info ("Showing main window");
 		        window.show_all ();
 		        window.playback_box.hide ();
@@ -106,6 +106,7 @@ namespace Leopod {
 		        on_update_request ();
 		        return true;
 		    });
+		    on_update_request ();
 		}
 
 		public void add_podcast (string podcast_uri) {
@@ -159,7 +160,7 @@ namespace Leopod {
 
 		        if (new_episode_count > 0) {
 		            info ("Repopulating views after update is finished");
-		            window.populate_views_async ();
+		            window.populate_views ();
 		        }
 		    } else {
 		        info ("Leopod is already updating.");

@@ -15,6 +15,8 @@ public class MainWindow : Hdy.ApplicationWindow {
     public Gtk.ScrolledWindow episodes_scrolled;
     public Gtk.Button back_button;
 
+    private Gee.ArrayList<CoverArt> coverarts;
+
     public Granite.Widgets.Welcome welcome;
     private Gtk.Stack notebook;
 
@@ -47,6 +49,8 @@ public class MainWindow : Hdy.ApplicationWindow {
 
         this.controller = controller;
 
+        coverarts = new Gee.ArrayList<CoverArt> ();
+
         var add_podcast_action = new SimpleAction ("add-podcast", null);
 
         this.controller.app.add_action (add_podcast_action);
@@ -66,6 +70,15 @@ public class MainWindow : Hdy.ApplicationWindow {
         };
         header_bar.pack_end (add_podcast_button);
         header_bar.pack_end (download_button);
+
+        //Only for testing purposes
+        // var repopulate_button = new Gtk.Button.from_icon_name ("document-page-setup", Gtk.IconSize.LARGE_TOOLBAR) {
+        //     tooltip_text = _("Rebuild UI")
+        // };
+        // repopulate_button.clicked.connect (() => {
+        //     populate_views ();
+        // });
+        // header_bar.pack_end (repopulate_button);
 
         downloads = new DownloadsPopover(download_button);
 
@@ -156,16 +169,18 @@ public class MainWindow : Hdy.ApplicationWindow {
     public void add_podcast_feed (Podcast podcast) {
         var coverart = new CoverArt.with_podcast (podcast);
         coverart.clicked.connect (on_podcast_clicked);
+        coverarts.add (coverart);
         all_flowbox.add (coverart);
     }
 
     public void populate_views () {
         if (all_flowbox != null) {
             info ("Clearing existing podcast list.");
-            all_flowbox.foreach ((child) => {
-                info ("Removing CoverArt");
-                all_flowbox.remove (child);
-            });
+            for (int i = 0; i < coverarts.size; i++) {
+                info ("Removing CoverArt %s", coverarts[i].podcast.name);
+                all_flowbox.remove (all_flowbox.get_child_at_index (0));
+            }
+            coverarts.clear ();
         }
         info ("Adding updated podcast lists.");
         foreach (Podcast podcast in controller.library.podcasts) {
