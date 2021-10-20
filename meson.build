@@ -29,6 +29,7 @@ executable(
     'src' / 'Widgets' / 'DownloadsPopover.vala',
     'src' / 'Widgets' / 'PodcastView.vala',
     'src' / 'Widgets' / 'PlaybackBox.vala',
+    'src' / 'Widgets' / 'NewEpisodesView.vala',
     dependencies: [
         dependency('gtk+-3.0'),
         dependency('granite'),

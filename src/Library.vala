@@ -628,7 +628,7 @@ namespace Leopod {
 		public void set_episode_playback_position (Episode episode) {
 		    write_episode_to_database (episode);
 		}
-		
+
 		public void mark_episode_as_played (Episode episode) {
 		    episode.status = EpisodeStatus.PLAYED;
 		    write_episode_to_database (episode);

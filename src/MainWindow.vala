@@ -23,6 +23,7 @@ public class MainWindow : Hdy.ApplicationWindow {
     public AddPodcastDialog add_podcast;
     public PlaybackBox playback_box;
     private DownloadsPopover downloads;
+    public NewEpisodesView new_episodes;
 
     public Gtk.Widget current_widget;
     public Gtk.Widget previous_widget;
@@ -64,12 +65,21 @@ public class MainWindow : Hdy.ApplicationWindow {
             tooltip_text = _("Downloads")
         };
         download_button.clicked.connect (show_downloads_popover);
+        
+        var new_episodes_button = new Gtk.Button.from_icon_name (
+            "mail-unread",
+            Gtk.IconSize.LARGE_TOOLBAR
+        ) {
+            tooltip_text = _("New Episodes")
+        };
+        new_episodes_button.clicked.connect (() => switch_visible_page(new_episodes));
 
         header_bar = new Hdy.HeaderBar () {
             show_close_button = true
         };
         header_bar.pack_end (add_podcast_button);
         header_bar.pack_end (download_button);
+        header_bar.pack_end (new_episodes_button);
 
         //Only for testing purposes
         // var repopulate_button = new Gtk.Button.from_icon_name ("document-page-setup", Gtk.IconSize.LARGE_TOOLBAR) {
@@ -134,10 +144,13 @@ public class MainWindow : Hdy.ApplicationWindow {
 
         episodes_scrolled = new Gtk.ScrolledWindow (null, null);
         episodes_scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
+        
+        new_episodes = new NewEpisodesView (controller.library);
 
-        notebook.add_titled(all_scrolled, "all", _("All Podcasts"));
-        notebook.add_titled(welcome, "welcome", _("Welcome"));
-        notebook.add_titled(episodes_scrolled, "podcast-episodes", _("Episodes"));
+        notebook.add_titled (all_scrolled, "all", _("All Podcasts"));
+        notebook.add_titled (welcome, "welcome", _("Welcome"));
+        notebook.add_titled (episodes_scrolled, "podcast-episodes", _("Episodes"));
+        notebook.add_titled (new_episodes, "new-episodes", _("New Episodes"));
 
         main_layout.attach (notebook, 0, 1);
 
@@ -251,6 +264,9 @@ public class MainWindow : Hdy.ApplicationWindow {
         } else if (widget == episodes_scrolled) {
             notebook.set_visible_child (episodes_scrolled);
             current_widget = episodes_scrolled;
+        } else if (widget == new_episodes) {
+            notebook.set_visible_child (new_episodes);
+            current_widget = new_episodes;
         } else {
             info ("Attempted to switch to a page that doesn't exist.");
         }
