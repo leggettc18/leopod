@@ -7,13 +7,24 @@ namespace Leopod {
     public class EpisodeListItem : Gtk.Box {
         // Data
         public Episode episode;
+        public int desc_lines {
+            get {
+                return desc.lines;
+            }
+
+            set {
+                desc.lines = value;
+            }
+        } //Amount of lines the description is allowed to be.
 
         // Widgets
         public Gtk.Box buttons_box;
+        public Gtk.Box title_box;
         public Gtk.Button download_button;
         public Gtk.Button play_button;
         public Gtk.Button delete_button;
         public Gtk.Label title;
+        public Gtk.Label desc;
 
         // Signals
         public signal void download_clicked (Episode episode);
@@ -26,15 +37,29 @@ namespace Leopod {
                 Gdk.EventMask.ENTER_NOTIFY_MASK |
                 Gdk.EventMask.LEAVE_NOTIFY_MASK
             );
-            margin_right = 10;
+            margin = 10;
             halign = Gtk.Align.FILL;
             this.episode = episode;
+            title_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
+                expand = true
+            };
             title = new Gtk.Label (episode.title) {
-                expand = true,
+                vexpand = false,
+                hexpand = true,
                 halign = Gtk.Align.START,
                 ellipsize = Pango.EllipsizeMode.END
             };
-            add (title);
+            title.get_style_context ().add_class ("h3");
+            desc = new Gtk.Label (Utils.html_to_markup (episode.description)) {
+            	valign = Gtk.Align.START,
+            	ellipsize = Pango.EllipsizeMode.END,
+            	use_markup = true,
+            	wrap = true,
+            	lines = 3,
+            };
+            title_box.add (title);
+            title_box.add (desc);
+            add (title_box);
 
             buttons_box = create_buttons_box ();
             add (buttons_box);

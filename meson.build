@@ -20,6 +20,7 @@ executable(
     'src' / 'Utils' / 'XmlUtils.vala',
     'src' / 'Utils' / 'Player.vala',
     'src' / 'Utils' / 'MPRIS.vala',
+    'src' / 'Utils' / 'Utils.vala',
     'src' / 'Objects' / 'Podcast.vala',
     'src' / 'Objects' / 'Episode.vala',
     'src' / 'Widgets' / 'CoverArt.vala',

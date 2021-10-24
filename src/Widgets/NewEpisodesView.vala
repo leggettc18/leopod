@@ -27,7 +27,9 @@ public class NewEpisodesView : Gtk.ScrolledWindow {
         Gee.ArrayList<Episode> episodes = get_new_episodes(library.podcasts);
         foreach (Episode episode in episodes) {
             var coverart = new CoverArt.with_podcast (episode.parent);
-            var list_item = new EpisodeListItem (episode);
+            var list_item = new EpisodeListItem (episode) {
+                desc_lines = 8
+            };
             var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5);
             box.add (coverart);
             box.add (list_item);
