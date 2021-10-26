@@ -59,6 +59,9 @@ public class PodcastView : Gtk.Box {
                 episode_play_requested (e);
             });
         }
+        episodes_list.get_children ().foreach ((child) => {
+            child.get_style_context ().add_class ("episode-list");
+        });
     }
 }
 

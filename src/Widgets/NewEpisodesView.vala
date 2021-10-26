@@ -35,6 +35,9 @@ public class NewEpisodesView : Gtk.ScrolledWindow {
             box.add (list_item);
             list_box.add (box);
         }
+        list_box.get_children ().foreach ((child) => {
+            child.get_style_context ().add_class ("episode-list");
+        });
         main_box.add (list_box);
     }
 

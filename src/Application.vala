@@ -18,6 +18,14 @@ public class MyApp : Gtk.Application {
     protected override void activate () {
         Granite.Services.Logger.initialize ("Leopod");
         Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.INFO;
+
+        var provider = new Gtk.CssProvider ();
+        provider.load_from_resource ("/com/github/leggettc18/leopod/application.css");
+        Gtk.StyleContext.add_provider_for_screen (
+          Gdk.Screen.get_default (),
+          provider,
+          Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        );
         info ("Starting activation");
 
         var controller = new Controller(this);
@@ -25,6 +33,7 @@ public class MyApp : Gtk.Application {
     }
 
     public static void main (string[] args) {
+
         // Initialize Clutter
         var err = Clutter.init (ref args);
         if (err != Clutter.InitError.SUCCESS) {
