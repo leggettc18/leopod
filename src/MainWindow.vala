@@ -14,6 +14,7 @@ public class MainWindow : Hdy.ApplicationWindow {
     public PodcastView episodes_box;
     public Gtk.ScrolledWindow episodes_scrolled;
     public Gtk.Button back_button;
+    public Gtk.Box main_box;
 
     private Gee.ArrayList<CoverArt> coverarts;
 
@@ -65,21 +66,12 @@ public class MainWindow : Hdy.ApplicationWindow {
             tooltip_text = _("Downloads")
         };
         download_button.clicked.connect (show_downloads_popover);
-        
-        var new_episodes_button = new Gtk.Button.from_icon_name (
-            "mail-unread",
-            Gtk.IconSize.LARGE_TOOLBAR
-        ) {
-            tooltip_text = _("New Episodes")
-        };
-        new_episodes_button.clicked.connect (() => switch_visible_page(new_episodes));
 
         header_bar = new Hdy.HeaderBar () {
             show_close_button = true
         };
         header_bar.pack_end (add_podcast_button);
         header_bar.pack_end (download_button);
-        header_bar.pack_end (new_episodes_button);
 
         //Only for testing purposes
         // var repopulate_button = new Gtk.Button.from_icon_name ("document-page-setup", Gtk.IconSize.LARGE_TOOLBAR) {
@@ -134,7 +126,7 @@ public class MainWindow : Hdy.ApplicationWindow {
             column_spacing = 20,
             halign = Gtk.Align.FILL,
             valign = Gtk.Align.START,
-            margin = 10,
+            margin = 5,
             selection_mode = Gtk.SelectionMode.NONE
         };
 
@@ -142,12 +134,33 @@ public class MainWindow : Hdy.ApplicationWindow {
         all_scrolled.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
         all_scrolled.add(all_flowbox);
 
+
         episodes_scrolled = new Gtk.ScrolledWindow (null, null);
         episodes_scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
-        
+
         new_episodes = new NewEpisodesView (controller.library);
 
-        notebook.add_titled (all_scrolled, "all", _("All Podcasts"));
+        var main_stack = new Gtk.Stack () {
+            transition_type = Gtk.StackTransitionType.SLIDE_LEFT_RIGHT,
+            transition_duration = 200,
+            expand = true
+        };
+
+        main_stack.add_titled (all_scrolled, "all", _("All Podcasts"));
+        main_stack.add_titled (new_episodes, "new", _("New Episodes"));
+
+        var main_switcher = new Gtk.StackSwitcher () {
+            stack = main_stack,
+            halign = Gtk.Align.CENTER,
+            margin = 10
+        };
+
+        main_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+        main_box.add (main_switcher);
+        main_box.add (main_stack);
+
+
+        notebook.add_titled (main_box, "main", _("Main"));
         notebook.add_titled (welcome, "welcome", _("Welcome"));
         notebook.add_titled (episodes_scrolled, "podcast-episodes", _("Episodes"));
         notebook.add_titled (new_episodes, "new-episodes", _("New Episodes"));
@@ -255,9 +268,9 @@ public class MainWindow : Hdy.ApplicationWindow {
             previous_widget = current_widget;
         }
 
-        if (widget == all_scrolled) {
-            notebook.set_visible_child (all_scrolled);
-            current_widget = all_scrolled;
+        if (widget == main_box) {
+            notebook.set_visible_child (main_box);
+            current_widget = main_box;
         } else if (widget == welcome) {
             notebook.set_visible_child (welcome);
             current_widget = welcome;
@@ -272,11 +285,11 @@ public class MainWindow : Hdy.ApplicationWindow {
         }
 
         // Sets the back_button in certain scenarios
-        if ((current_widget != all_scrolled) && (current_widget != welcome)) {
-            var back_widget = all_scrolled;
+        if ((current_widget != main_box) && (current_widget != welcome)) {
+            var back_widget = main_box;
             var back_text = _("All Podcasts");
             if (current_widget == episodes_scrolled) {
-                back_widget = all_scrolled;
+                back_widget = main_box;
                 back_text = _("All Podcasts");
             }
             back_button = new Gtk.Button () {

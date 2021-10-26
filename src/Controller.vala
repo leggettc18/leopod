@@ -99,7 +99,7 @@ namespace Leopod {
 		        window.show_all ();
 		        window.playback_box.hide ();
 		        info ("switching to all_scrolled view");
-		        window.switch_visible_page (window.all_scrolled);
+		        window.switch_visible_page (window.main_box);
 		    }
 
 		    GLib.Timeout.add (300000, () => {
