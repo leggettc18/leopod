@@ -30,6 +30,15 @@ public class NewEpisodesView : Gtk.ScrolledWindow {
             var list_item = new EpisodeListItem (episode) {
                 desc_lines = 8
             };
+            list_item.download_clicked.connect ((episode) => {
+                episode_download_requested (episode);
+            });
+            list_item.delete_requested.connect ((episode) => {
+                episode_delete_requested (episode);
+            });
+            list_item.play_requested.connect ((e) => {
+                episode_play_requested (e);
+            });
             var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5);
             box.add (coverart);
             box.add (list_item);

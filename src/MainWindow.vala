@@ -139,6 +139,22 @@ public class MainWindow : Hdy.ApplicationWindow {
         episodes_scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
 
         new_episodes = new NewEpisodesView (controller.library);
+        new_episodes.episode_download_requested.connect ((episode) => {
+            DownloadDetailBox detail_box = controller.library.download_episode (episode);
+            if (detail_box != null) {
+                downloads.add_download (detail_box);
+                detail_box.show_all ();
+            }
+
+        });
+        new_episodes.episode_delete_requested.connect ((episode) => {
+            controller.library.delete_episode (episode);
+        });
+        new_episodes.episode_play_requested.connect ((episode) => {
+            controller.current_episode = episode;
+            playback_box.set_playing (true);
+            controller.play ();
+        });
 
         var main_stack = new Gtk.Stack () {
             transition_type = Gtk.StackTransitionType.SLIDE_LEFT_RIGHT,
