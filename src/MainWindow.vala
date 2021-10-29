@@ -25,6 +25,7 @@ public class MainWindow : Hdy.ApplicationWindow {
     public PlaybackBox playback_box;
     private DownloadsPopover downloads;
     public NewEpisodesView new_episodes;
+    public ArtworkPopover artwork_popover;
 
     public Gtk.Widget current_widget;
     public Gtk.Widget previous_widget;
@@ -153,6 +154,7 @@ public class MainWindow : Hdy.ApplicationWindow {
         new_episodes.episode_play_requested.connect ((episode) => {
             controller.current_episode = episode;
             playback_box.set_artwork_image (episode.parent.coverart_uri);
+            artwork_popover.show_notes = episode.description;
             playback_box.set_playing (true);
             controller.play ();
         });
@@ -185,6 +187,9 @@ public class MainWindow : Hdy.ApplicationWindow {
         main_layout.attach (notebook, 0, 1);
 
         playback_box = new PlaybackBox ();
+        
+        artwork_popover = new ArtworkPopover (playback_box.artwork);
+        
         playback_box.playpause_clicked.connect (()=> {
             controller.play_pause ();
         });
@@ -197,6 +202,11 @@ public class MainWindow : Hdy.ApplicationWindow {
         playback_box.scale_changed.connect (() => {
             var new_progress = playback_box.get_progress_bar_fill ();
             controller.player.set_progress (new_progress);
+        });
+        
+        playback_box.artwork.button_press_event.connect (() => {
+            this.artwork_popover.show_all ();
+            return false;
         });
 
         main_layout.attach (playback_box, 0, 2);
@@ -271,6 +281,7 @@ public class MainWindow : Hdy.ApplicationWindow {
         episodes_box.episode_play_requested.connect ((episode) => {
             controller.current_episode = episode;
             playback_box.set_artwork_image (episode.parent.coverart_uri);
+            artwork_popover.show_notes = episode.description;
             playback_box.set_playing (true);
             controller.play ();
         });
