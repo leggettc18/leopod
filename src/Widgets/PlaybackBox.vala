@@ -235,6 +235,15 @@ public class PlaybackBox : Gtk.Box {
             artwork_image.hide ();
         }
     }
+    
+    public void set_artwork_image (string uri) {
+        info ("Setting artwork button to: " + uri);
+        artwork_image.clear ();
+    	var artwork = GLib.File.new_for_uri (uri);
+        var icon = new GLib.FileIcon (artwork);
+        artwork_image.gicon = icon;
+    	artwork_image.pixel_size = 40;
+    }
 
     public void show_volume_button () {
         if (volume_button != null) {
