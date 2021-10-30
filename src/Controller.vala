@@ -100,13 +100,13 @@ namespace Leopod {
 		        window.playback_box.hide ();
 		        info ("switching to all_scrolled view");
 		        window.switch_visible_page (window.main_box);
+		        on_update_request ();
 		    }
 
 		    GLib.Timeout.add (300000, () => {
 		        on_update_request ();
 		        return true;
 		    });
-		    on_update_request ();
 		}
 
 		public void add_podcast (string podcast_uri) {
