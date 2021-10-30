@@ -83,7 +83,7 @@ public class Player : ClutterGst.Playback {
      * Sets the currently playing media position in seconds
      */
     public void set_position (int seconds) {
-        info ("Duration: %f", duration);
+        info ("Duration: %f, Seconds: %d, Double Seconds: %f", duration, seconds, (double)seconds);
         double calculated_progress = (double)seconds / get_duration ();
         info ("calculated_progress: %f", calculated_progress);
         set_progress (calculated_progress);

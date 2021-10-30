@@ -60,7 +60,7 @@ namespace Leopod {
 
             player.new_position_available.connect (() => {
                 if (player.progress > 0) {
-                    player.current_episode.last_played_position = (int) player.get_position ();
+                    //player.current_episode.last_played_position = (int) player.get_position ();
                 }
 
                 int mins_remaining;
@@ -160,6 +160,7 @@ namespace Leopod {
 
 		        if (new_episode_count > 0) {
 		            info ("Repopulating views after update is finished");
+		            library.refill_library ();
 		            window.populate_views ();
 		        }
 		    } else {
@@ -200,9 +201,9 @@ namespace Leopod {
 		            current_episode.last_played_position > 0 &&
 		            current_episode.last_played_position > player.get_position ()
 		        ) {
-		            GLib.Timeout.add (1000, () => {
-		                player.set_position (current_episode.last_played_position);
-		                return false;
+		        	GLib.Timeout.add (2000, () => {
+		            	player.set_position (current_episode.last_played_position);
+		            	return (player.duration == 0);
 		            });
 		        }
 		        player.play ();
@@ -224,7 +225,6 @@ namespace Leopod {
 	            playback_status_changed ("Paused");
 
 	            current_episode.last_played_position = (int) player.get_position ();
-	            info ("%d", current_episode.last_played_position);
 	            library.set_episode_playback_position (current_episode);
 
 	            window.playback_box.set_info_title (
