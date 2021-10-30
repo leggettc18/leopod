@@ -153,6 +153,7 @@ public class MainWindow : Hdy.ApplicationWindow {
         });
         new_episodes.episode_play_requested.connect ((episode) => {
             controller.current_episode = episode;
+            header_bar.title = episode.title;
             playback_box.set_artwork_image (episode.parent.coverart_uri);
             artwork_popover.show_notes = episode.description;
             playback_box.set_playing (true);
@@ -280,6 +281,7 @@ public class MainWindow : Hdy.ApplicationWindow {
         });
         episodes_box.episode_play_requested.connect ((episode) => {
             controller.current_episode = episode;
+            header_bar.title = episode.title;
             playback_box.set_artwork_image (episode.parent.coverart_uri);
             artwork_popover.show_notes = episode.description;
             playback_box.set_playing (true);
