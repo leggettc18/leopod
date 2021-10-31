@@ -201,12 +201,14 @@ namespace Leopod {
 		            current_episode.last_played_position > 0 &&
 		            current_episode.last_played_position > player.get_position ()
 		        ) {
-		        	GLib.Timeout.add (2000, () => {
-		            	player.set_position (current_episode.last_played_position);
+		        	GLib.Timeout.add (500, () => {
+		            	if (player.duration != 0) {
+		            		player.set_position (current_episode.last_played_position);
+		            		player.play ();
+		            	}
 		            	return (player.duration == 0);
 		            });
 		        }
-		        player.play ();
                 playback_status_changed ("Playing");
 
 
