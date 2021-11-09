@@ -188,9 +188,9 @@ public class MainWindow : Hdy.ApplicationWindow {
         main_layout.attach (notebook, 0, 1);
 
         playback_box = new PlaybackBox ();
-        
+
         artwork_popover = new ArtworkPopover (playback_box.artwork);
-        
+
         playback_box.playpause_clicked.connect (()=> {
             controller.play_pause ();
         });
@@ -204,7 +204,7 @@ public class MainWindow : Hdy.ApplicationWindow {
             var new_progress = playback_box.get_progress_bar_fill ();
             controller.player.set_progress (new_progress);
         });
-        
+
         playback_box.artwork.button_press_event.connect (() => {
             this.artwork_popover.show_all ();
             return false;
@@ -281,7 +281,7 @@ public class MainWindow : Hdy.ApplicationWindow {
         });
         episodes_box.episode_play_requested.connect ((episode) => {
             controller.current_episode = episode;
-            header_bar.title = episode.title;
+            header_bar.title = "%s - %s".printf (episode.parent.name, episode.title);
             playback_box.set_artwork_image (episode.parent.coverart_uri);
             artwork_popover.show_notes = episode.description;
             playback_box.set_playing (true);
