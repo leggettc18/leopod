@@ -129,7 +129,7 @@ namespace Leopod {
             this.conn = conn;
 
             // Set the metadata on initialization
-            this.set_media_metadata (" ", " ", """file:///usr/share/vocal/leopod-missing.png""", 60);
+            this.set_media_metadata (" ", " ", """file:///usr/share/leopod/leopod-missing.png""", 60);
         }
 
         // MPRIS requires a mpris:trackid metadata item.
@@ -363,7 +363,7 @@ namespace Leopod {
 
         public string DesktopEntry {
             owned get {
-                return "com.github.leggettc18/leopod";
+                return "com.github.leggettc18.leopod";
             }
         }
 
