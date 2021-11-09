@@ -491,7 +491,7 @@ namespace Leopod {
 		    assert (episode.podcast_uri != null && episode.podcast_uri != "");
 
 		    string query = """
-		        INSERT OR REPLACE INTO Episode
+		        INSERT OR UPDATE INTO Episode
 		        (title, podcast_uri, uri, local_uri, released, description,
 		        latest_position, download_status, play_status, guid, link)
 		        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11);
