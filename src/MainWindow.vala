@@ -30,6 +30,8 @@ public class MainWindow : Hdy.ApplicationWindow {
     public Gtk.Widget current_widget;
     public Gtk.Widget previous_widget;
 
+    public signal void podcast_delete_requested (Podcast podcast);
+
     private int width;
     private int height;
 
@@ -287,6 +289,10 @@ public class MainWindow : Hdy.ApplicationWindow {
             artwork_popover.show_notes = episode.description;
             playback_box.set_playing (true);
             controller.play ();
+        });
+        episodes_box.podcast_delete_requested.connect ((podcast) => {
+            switch_visible_page (main_box);
+            podcast_delete_requested (podcast);
         });
         episodes_scrolled.show_all ();
         switch_visible_page(episodes_scrolled);

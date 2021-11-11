@@ -10,6 +10,7 @@ public class PodcastView : Gtk.Box {
     public signal void episode_download_requested (Episode episode);
     public signal void episode_delete_requested (Episode episode);
     public signal void episode_play_requested (Episode episode);
+    public signal void podcast_delete_requested (Podcast podcast);
 
     // Widgets
     public Gtk.ListBox episodes_list;
@@ -41,6 +42,15 @@ public class PodcastView : Gtk.Box {
         left_box.add (new Gtk.Label (podcast.description) {
             wrap = true,
             max_width_chars = 25
+        });
+        Gtk.Button podcast_delete_button = new Gtk.Button.from_icon_name ("edit-delete-symbolic", Gtk.IconSize.BUTTON) {
+            tooltip_text = _("Delete Podcast"),
+            relief = Gtk.ReliefStyle.NORMAL,
+        };
+        podcast_delete_button.get_style_context ().add_class ("danger");
+        left_box. add (podcast_delete_button);
+        podcast_delete_button.clicked.connect(() => {
+            podcast_delete_requested (podcast);
         });
         episodes_list = new Gtk.ListBox ();
         right_box.add (episodes_list);

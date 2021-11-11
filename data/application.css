@@ -1,3 +1,7 @@
 .episode-list {
     border-bottom: 0.5px solid #8a9580;
 }
+
+.danger {
+    background-color: @STRAWBERRY_700;
+}

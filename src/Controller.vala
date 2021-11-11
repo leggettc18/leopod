@@ -50,6 +50,12 @@ namespace Leopod {
 			info ("initializing the main window");
 			window = new MainWindow (this);
 
+			window.podcast_delete_requested.connect ((podcast) => {
+				library.delete_podcast (podcast);
+				library.refill_library ();
+				window.populate_views ();
+			});
+
 			info ("Connecting player signals");
 			//player.eos.connect (window.on_stream_ended);
 			//player.additional_plugins_required.connect (window.on_additional_plugins_needed);

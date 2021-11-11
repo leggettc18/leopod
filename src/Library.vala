@@ -633,5 +633,65 @@ namespace Leopod {
 		    episode.status = EpisodeStatus.PLAYED;
 		    write_episode_to_database (episode);
 		}
+
+		public void delete_podcast (Podcast podcast) {
+		    // Delete all the episodes
+		    foreach (Episode episode in podcast.episodes) {
+		        // Delete from filesystem
+		        delete_episode (episode);
+		        // Delete from database
+		        string query = """
+		            DELETE FROM Episode
+		            WHERE guid = ?1;
+		        """;
+		        Sqlite.Statement stmt;
+		        int ec = db.prepare_v2 (query, query.length, out stmt);
+
+		        if (ec != Sqlite.OK) {
+		            warning (
+		                "unable to prepare delete episode statment. %d: %s",
+		                db.errcode (),
+		                db.errmsg ()
+		            );
+		        }
+
+		        stmt.bind_text(1, episode.guid);
+
+		        ec = stmt.step ();
+
+		        if (ec != Sqlite.DONE) {
+		            warning (
+		                "unable to delete episode from db. %d: %s",
+		                db.errcode (),
+		                db.errmsg ()
+		            );
+		        }
+		    }
+		    // Delete the podcast from the database.
+		    string query = """
+		        DELETE FROM Podcast
+		        WHERE feed_uri = ?1;
+		    """;
+
+		    Sqlite.Statement stmt;
+		    int ec = db.prepare_v2 (query, query.length, out stmt);
+		    if (ec != Sqlite.OK) {
+		        warning (
+		            "unable to prepare delete podcast statement. %d: %s",
+		            db.errcode (),
+		            db.errmsg ()
+		        );
+		    }
+
+		    stmt.bind_text(1, podcast.feed_uri);
+		    ec = stmt.step ();
+		    if (ec != Sqlite.DONE) {
+		        warning (
+		            "unable to delete podcast from db. %d: %s",
+		            db.errcode (),
+		            db.errmsg ()
+		        );
+		    }
+		}
 	}
 }
