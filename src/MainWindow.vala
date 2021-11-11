@@ -273,6 +273,7 @@ public class MainWindow : Hdy.ApplicationWindow {
             if (detail_box != null) {
                 downloads.add_download (detail_box);
                 detail_box.show_all ();
+                downloads.show_all ();
             }
 
         });
