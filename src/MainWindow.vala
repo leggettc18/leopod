@@ -374,7 +374,7 @@ public class MainWindow : Hdy.ApplicationWindow {
             controller.add_podcast(add_podcast.podcast_uri_entry.get_text ());
         }
         add_podcast.destroy ();
-        switch_visible_page (all_scrolled);
+        switch_visible_page (main_box);
     }
 
     /*

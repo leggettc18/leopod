@@ -22,7 +22,7 @@ namespace Leopod {
                 always_show_image = true,
                 tooltip_text = _("Browse Podcast Episodes")
             };
-            
+
             try {
                 //Load the actual coverart
                 info (podcast.local_art_uri);
@@ -42,11 +42,11 @@ namespace Leopod {
             } catch (Error e) {
                 warning ("unable to load podcast coverart.");
             }
-            
+
             add (button);
             add (name);
         }
-            
+
         public override bool button_release_event(Gdk.EventButton event) {
             if (!this.double_click) {
                 clicked (this.podcast);
@@ -55,7 +55,7 @@ namespace Leopod {
             this.double_click = false;
             return false;
         }
-            
+
         public override bool button_press_event (Gdk.EventButton event) {
             if (event.type == Gdk.EventType.@2BUTTON_PRESS) {
                 double_clicked (this.podcast);
@@ -64,37 +64,35 @@ namespace Leopod {
             }
             return false;
         }
-        
+
         public signal void clicked (Podcast podcast);
         public signal void double_clicked (Podcast podcast);
     }
-    
+
     private async Gdk.Pixbuf load_image_async (string url) {
         var soup_client = new SoupClient ();
         return yield new Gdk.Pixbuf.from_stream_async (soup_client.request (HttpMethod.GET, url));
     }
-    
+
     /*
      * Downloads and Caches a podcast's album art if it doesn't
      * already exist.
      */
      private void cache_album_art (Podcast podcast) {
-        GLib.Settings settings = new GLib.Settings ("com.github.leggettc18.leopod");
-        info (settings.get_string("library-location"));
-
 	    // Set the local library directory and replace ~ with absolute path
-	    string local_library_path = settings.get_string ("library-location").replace (
+	    string local_library_path = GLib.Environment.get_user_data_dir () + """/leopod""";
+	    local_library_path = local_library_path.replace (
 	        "~",
 	        GLib.Environment.get_home_dir ()
 	    );
-	    
+
          string podcast_path = local_library_path + "/%s".printf (
 	        podcast.name.replace ("%27", "'").replace ("%", "_")
 	    );
- 
+
 	    // Create a directory for downloads and artwork caching
 	    GLib.DirUtils.create_with_parents (podcast_path, 0775);
- 
+
 	    // Locally cache the album art if necessary
 	    try {
 	        // Don't user the coverart_path getter, use the remote_uri
@@ -104,7 +102,7 @@ namespace Leopod {
 	            string art_path = podcast_path + "/" + remote_art.get_basename ().replace ("%", "_");
 	            info (art_path);
 	            GLib.File local_art = GLib.File.new_for_path (art_path);
- 
+
 	            if (!local_art.query_exists ()) {
 	                // Cache the art
 	                remote_art.copy (local_art, FileCopyFlags.NONE);

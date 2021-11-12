@@ -37,10 +37,9 @@ namespace Leopod {
 
 		    settings = new GLib.Settings ("com.github.leggettc18.leopod");
 
-		    info (settings.get_string("library-location"));
-
 		    // Set the local library directory and replace ~ with absolute path
-		    local_library_path = settings.get_string("library-location").replace (
+		    local_library_path = GLib.Environment.get_user_data_dir () + """/leopod""";
+		    local_library_path = local_library_path.replace (
 		        "~",
 		        GLib.Environment.get_home_dir ()
 		    );
@@ -339,21 +338,11 @@ namespace Leopod {
 		public bool setup_library () {
 		    prepare_database ();
 
-		    if (settings.get_string("library-location") == null) {
-		        settings.set_string(
-		            "library-location",
-		            GLib.Environment.get_user_data_dir () + """/leopod"""
-		        );
-		    }
-		    local_library_path = settings.get_string("library-location").replace (
+		    local_library_path = GLib.Environment.get_user_data_dir () + """/leopod""";
+		    local_library_path = local_library_path.replace (
 		        "~",
 		        GLib.Environment.get_home_dir ()
 		    );
-
-		    // If the local library path has been modified, update the setting
-		    if (settings.get_string("library-location") != local_library_path) {
-		        settings.set_string("library-location", local_library_path);
-		    }
 
 		    // Create the local library
 		    GLib.DirUtils.create_with_parents (local_library_path, 0775);
