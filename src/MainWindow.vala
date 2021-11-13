@@ -243,6 +243,8 @@ public class MainWindow : Hdy.ApplicationWindow {
             add_podcast_feed (podcast);
         }
         info ("populating main window");
+        info ("populating new episodes window");
+        new_episodes.rebuild (controller.library);
     }
 
     /*

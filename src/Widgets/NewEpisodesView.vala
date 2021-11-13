@@ -81,6 +81,38 @@ public class NewEpisodesView : Gtk.ScrolledWindow {
 	public int CompareReleaseDates (Episode first, Episode second) {
 	    return first.datetime_released.compare (second.datetime_released) * -1;
 	}
+
+	public void rebuild (Library library) {
+	    main_box.remove (list_box);
+	    list_box.get_children ().foreach ((child) => {
+	        list_box.remove (child);
+	    });
+	    Gee.ArrayList<Episode> episodes = get_new_episodes(library.podcasts);
+        foreach (Episode episode in episodes) {
+            var coverart = new CoverArt.with_podcast (episode.parent);
+            var list_item = new EpisodeListItem (episode) {
+                desc_lines = 8
+            };
+            list_item.download_clicked.connect ((episode) => {
+                episode_download_requested (episode);
+            });
+            list_item.delete_requested.connect ((episode) => {
+                episode_delete_requested (episode);
+            });
+            list_item.play_requested.connect ((e) => {
+                episode_play_requested (e);
+            });
+            var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5);
+            box.add (coverart);
+            box.add (list_item);
+            list_box.add (box);
+        }
+        list_box.get_children ().foreach ((child) => {
+            child.get_style_context ().add_class ("episode-list");
+        });
+        main_box.add (list_box);
+        main_box.show_all ();
+	}
 }
 
 }
