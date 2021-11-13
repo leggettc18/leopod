@@ -47,6 +47,9 @@ namespace Leopod {
             };
             title.get_style_context ().add_class ("h3");
             string desc_text = Utils.html_to_markup (episode.description);
+
+            Regex carriageReturns = new Regex ("\\n", RegexCompileFlags.CASELESS);
+            desc_text = carriageReturns.replace (desc_text, -1, 0, " ");
             Regex condense_spaces = new Regex ("\\s{2,}");
             desc_text = condense_spaces.replace (desc_text, -1, 0, " ").strip ();
             desc = new Gtk.Label (desc_text) {
