@@ -11,8 +11,26 @@
   </description>
   <screenshots>
     <screenshot type="default">
-
+      <image>https://github.com/leggettc18/leopod/blob/main/screenshots/screenshot1.png?raw=true</image>
+      <caption>The Podcast List</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://github.com/leggettc18/leopod/blob/main/screenshots/screenshot2.png?raw=true</image>
+      <caption>A Podcast's Episodes List</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://github.com/leggettc18/leopod/blob/main/screenshots/screenshot3.png?raw=true</image>
+      <caption>The New Episodes View</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://github.com/leggettc18/leopod/blob/main/screenshots/screenshot4.png?raw=true</image>
+      <caption>The Playback Box</caption>
     </screenshot>
   </screenshots>
+  <custom>
+    <value key="x-appcenter-suggested-price">5</value>
+    <value key="x-appcenter-color-primary">#7239b3</value>
+    <value key="x-appcenter-color-primary-text">#ffffff</value>
+    <value key="x-appcenter-stripe">pk_live_51JvETfBdM1m7QL9XepszrEq2gJFJdMLNTrkAqCdDVWnfaQ3fuzIw0tIevrdTr2yPh1n0sto2MLvJqzPyNZL0Sd9800Szrwqx1b</value>
   <content_rating type="oars-1.0" />
 </component>
