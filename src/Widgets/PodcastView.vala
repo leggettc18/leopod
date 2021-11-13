@@ -55,9 +55,7 @@ public class PodcastView : Gtk.Box {
         episodes_list = new Gtk.ListBox ();
         right_box.add (episodes_list);
         foreach (Episode episode in podcast.episodes) {
-            var episode_list_item = new EpisodeListItem (episode) {
-                desc_lines = 3
-            };
+            var episode_list_item = new EpisodeListItem (episode);
             episodes_list.prepend (episode_list_item);
             episode_list_item.download_clicked.connect ((episode) => {
                 episode_download_requested (episode);

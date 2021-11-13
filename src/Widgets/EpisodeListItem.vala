@@ -33,10 +33,6 @@ namespace Leopod {
 
         // Constructors
         public EpisodeListItem (Episode episode) {
-            add_events (
-                Gdk.EventMask.ENTER_NOTIFY_MASK |
-                Gdk.EventMask.LEAVE_NOTIFY_MASK
-            );
             margin = 10;
             halign = Gtk.Align.FILL;
             this.episode = episode;
@@ -50,12 +46,14 @@ namespace Leopod {
                 ellipsize = Pango.EllipsizeMode.END
             };
             title.get_style_context ().add_class ("h3");
-            desc = new Gtk.Label (Utils.html_to_markup (episode.description)) {
+            string desc_text = Utils.html_to_markup (episode.description);
+            desc = new Gtk.Label (desc_text) {
             	valign = Gtk.Align.START,
+            	max_width_chars = 75,
             	ellipsize = Pango.EllipsizeMode.END,
-            	use_markup = true,
             	wrap = true,
-            	lines = 3,
+            	wrap_mode = Pango.WrapMode.WORD,
+            	lines = 3
             };
             title_box.add (title);
             title_box.add (desc);
