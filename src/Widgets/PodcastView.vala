@@ -48,7 +48,7 @@ public class PodcastView : Gtk.Box {
             relief = Gtk.ReliefStyle.NORMAL,
         };
         podcast_delete_button.get_style_context ().add_class ("danger");
-        left_box. add (podcast_delete_button);
+        left_box.add (podcast_delete_button);
         podcast_delete_button.clicked.connect(() => {
             podcast_delete_requested (podcast);
         });

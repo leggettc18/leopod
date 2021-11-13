@@ -232,7 +232,8 @@ public class MainWindow : Hdy.ApplicationWindow {
     public void populate_views () {
         if (all_flowbox != null) {
             info ("Clearing existing podcast list.");
-            for (int i = 0; i < coverarts.size; i++) {
+            var size = coverarts.size;
+            for (int i = 0; i < size; i++) {
                 info ("Removing CoverArt %s", coverarts[i].podcast.name);
                 all_flowbox.remove (all_flowbox.get_child_at_index (0));
             }
@@ -295,6 +296,7 @@ public class MainWindow : Hdy.ApplicationWindow {
         episodes_box.podcast_delete_requested.connect ((podcast) => {
             switch_visible_page (main_box);
             podcast_delete_requested (podcast);
+            episodes_scrolled.remove (episodes_box);
         });
         episodes_scrolled.show_all ();
         switch_visible_page(episodes_scrolled);
