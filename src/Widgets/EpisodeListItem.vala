@@ -47,13 +47,16 @@ namespace Leopod {
             };
             title.get_style_context ().add_class ("h3");
             string desc_text = Utils.html_to_markup (episode.description);
+            Regex condense_spaces = new Regex ("\\s{2,}");
+            desc_text = condense_spaces.replace (desc_text, -1, 0, " ").strip ();
             desc = new Gtk.Label (desc_text) {
             	valign = Gtk.Align.START,
             	max_width_chars = 75,
             	ellipsize = Pango.EllipsizeMode.END,
             	wrap = true,
-            	wrap_mode = Pango.WrapMode.WORD,
-            	lines = 3
+            	use_markup = true,
+            	lines = 3,
+            	single_line_mode = true
             };
             title_box.add (title);
             title_box.add (desc);
