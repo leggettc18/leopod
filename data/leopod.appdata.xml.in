@@ -4,8 +4,15 @@
   <id>com.github.leggettc18.leopod</id>
   <metadata_license>MIT</metadata_license>
   <name>Leopod</name>
+  <developer_name>Christopher Leggett</developer_name>
   <summary>Organize and listen to your podcasts!</summary>
   <description>
     <p>Subscribe to podcasts, organize them, and listen to them.</p>
   </description>
+  <screenshots>
+    <screenshot type="default">
+
+    </screenshot>
+  </screenshots>
+  <content_rating type="oars-1.0" />
 </component>
