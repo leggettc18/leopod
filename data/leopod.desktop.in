@@ -2,7 +2,7 @@
 Name=Leopod
 GenericName=Podcast Client App
 Comment=Organize and listen to your podcasts
-Categories=Audio;AudioVideo;Network;
+Categories=Audio;AudioVideo;Feed;Network;
 Exec=com.github.leggettc18.leopod
 Icon=com.github.leggettc18.leopod
 Terminal=false
