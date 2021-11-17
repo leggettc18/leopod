@@ -13,8 +13,8 @@ finish-args:
   - '--socket=wayland'
   - '--share=network'
   - '--socket=pulseaudio'
-  - '--talk-name=org.gtk.vfs'
   - '--talk-name=org.gtk.vfs.*'
+  - '--device=dri'
   - '--metadata=X-DConf=migrate-path=/com/github/leggettc18/leopod'
 
 modules:
