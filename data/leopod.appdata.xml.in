@@ -34,4 +34,10 @@
     <value key="x-appcenter-stripe">pk_live_51JvETfBdM1m7QL9XepszrEq2gJFJdMLNTrkAqCdDVWnfaQ3fuzIw0tIevrdTr2yPh1n0sto2MLvJqzPyNZL0Sd9800Szrwqx1b</value>
   </custom>
   <content_rating type="oars-1.0" />
+  <releases>
+    <release>
+        <version>1.0.0</version>
+        <date>2021-11-16</date>
+    </release>
+  </releases>
 </component>
