@@ -35,9 +35,6 @@
   </custom>
   <content_rating type="oars-1.0" />
   <releases>
-    <release>
-        <version>1.0.0</version>
-        <date>2021-11-16</date>
-    </release>
+    <release version="1.0.1" date="2021-11-16"/>
   </releases>
 </component>
