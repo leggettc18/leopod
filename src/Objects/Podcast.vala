@@ -1,11 +1,11 @@
 /*
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: LGPL-3.0.or-later
  * SPDX-FileCopyrightText: 2021 Christopher Leggett <chris@leggett.dev>
  */
 
 namespace Leopod {
 	public class Podcast {
-	
+
 	    public Gee.ArrayList<Episode> episodes = null;
 
 		public string remote_art_uri = "";
@@ -14,9 +14,9 @@ namespace Leopod {
 		public string description = "";
 		public string feed_uri = "";
 		public License license;
-		
+
 		public MediaType content_type = MediaType.UNKNOWN;
-		
+
         /*
          * Gets and sets the coverart, whether it's from a remote source
          * or locally cached.
@@ -55,7 +55,7 @@ namespace Leopod {
 		    episodes = new Gee.ArrayList<Episode> ();
             content_type = MediaType.UNKNOWN;
 		}
-		
+
 		public Podcast.with_name (string name) {
             this ();
             this.name = name;
@@ -64,7 +64,7 @@ namespace Leopod {
 		public Podcast.with_remote_art_uri (string uri) {
 			remote_art_uri = uri;
 		}
-		
+
         /*
          * Add a new episode to the library
          */
@@ -73,7 +73,7 @@ namespace Leopod {
             episodes.insert (0, new_episode);
         }
 	}
-	
+
     /*
      * The possible types of media that a podcast might contain, generally either audio or video.
      */

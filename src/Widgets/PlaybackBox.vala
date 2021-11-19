@@ -1,5 +1,5 @@
 /*
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: LGPL-3.0.or-later
  * SPDX-FileCopyrightText: 2021 Christopher Leggett <chris@leggett.dev>
  */
 
@@ -235,7 +235,7 @@ public class PlaybackBox : Gtk.Box {
             artwork_image.hide ();
         }
     }
-    
+
     public void set_artwork_image (string uri) {
         info ("Setting artwork button to: " + uri);
         artwork_image.clear ();
