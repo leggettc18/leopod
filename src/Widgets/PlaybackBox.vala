@@ -113,6 +113,7 @@ public class PlaybackBox : Gtk.Box {
         scale_grid.attach (left_time, 0, 0, 1, 1);
         scale_grid.attach (scale, 1, 0, 1, 1);
         scale_grid.attach (right_time, 2, 0, 1, 1);
+        scale_grid.margin_end = 10;
 
         //hexpand = true;
 
@@ -127,16 +128,16 @@ public class PlaybackBox : Gtk.Box {
         button_box.add (playpause_button);
         button_box.add (seek_forward_button);
 
-        volume_button = new Gtk.Button.from_icon_name ("audio-volume-high-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
-        volume_button.relief = Gtk.ReliefStyle.NONE;
-        volume_button.margin_end = 12;
+        // volume_button = new Gtk.Button.from_icon_name ("audio-volume-high-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
+        // volume_button.relief = Gtk.ReliefStyle.NONE;
+        // volume_button.margin_end = 12;
 
         artwork.add (artwork_image);
         add (artwork);
         add (label_box);
         add (button_box);
         add (scale_grid);
-        add (volume_button);
+        // add (volume_button);
     }
 
     /*
