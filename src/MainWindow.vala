@@ -153,7 +153,6 @@ public class MainWindow : Hdy.ApplicationWindow {
             header_bar.title = episode.title;
             playback_box.set_artwork_image (episode.parent.coverart_uri);
             artwork_popover.show_notes = episode.description;
-            playback_box.set_playing (true);
             controller.play ();
         });
 
@@ -205,6 +204,10 @@ public class MainWindow : Hdy.ApplicationWindow {
         playback_box.artwork.button_press_event.connect (() => {
             this.artwork_popover.show_all ();
             return false;
+        });
+        
+        controller.playback_status_changed.connect (() => {
+            playback_box.toggle_playing ();
         });
 
         main_layout.attach (playback_box, 0, 2);
@@ -279,7 +282,6 @@ public class MainWindow : Hdy.ApplicationWindow {
             header_bar.title = "%s - %s".printf (episode.parent.name, episode.title);
             playback_box.set_artwork_image (episode.parent.coverart_uri);
             artwork_popover.show_notes = episode.description;
-            playback_box.set_playing (true);
             controller.play ();
         });
         episodes_box.podcast_delete_requested.connect ((podcast) => {

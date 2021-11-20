@@ -75,7 +75,6 @@ public class PlaybackBox : Gtk.Box {
 
         playpause_button.clicked.connect (() => {
             playpause_clicked ();
-            set_playing (!currently_playing);
         });
 
         seek_forward_button = new Gtk.Button.from_icon_name (
@@ -145,6 +144,16 @@ public class PlaybackBox : Gtk.Box {
      */
      public void set_playing (bool playing) {
          if (playing) {
+             playpause_button.image = pause_image;
+             currently_playing = true;
+         } else {
+             playpause_button.image = play_image;
+             currently_playing = false;
+         }
+     }
+     
+     public void toggle_playing () {
+         if (!currently_playing) {
              playpause_button.image = pause_image;
              currently_playing = true;
          } else {
