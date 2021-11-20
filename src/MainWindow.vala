@@ -143,12 +143,7 @@ public class MainWindow : Hdy.ApplicationWindow {
 
         new_episodes = new NewEpisodesView (controller.library);
         new_episodes.episode_download_requested.connect ((episode) => {
-            DownloadDetailBox detail_box = controller.library.download_episode (episode);
-            if (detail_box != null) {
-                downloads.add_download (detail_box);
-                detail_box.show_all ();
-            }
-
+            on_download_requested (episode);
         });
         new_episodes.episode_delete_requested.connect ((episode) => {
             controller.library.delete_episode (episode);
@@ -274,13 +269,7 @@ public class MainWindow : Hdy.ApplicationWindow {
         episodes_box = new PodcastView (podcast);
         episodes_scrolled.add (episodes_box);
         episodes_box.episode_download_requested.connect ((episode) => {
-            DownloadDetailBox detail_box = controller.library.download_episode (episode);
-            if (detail_box != null) {
-                downloads.add_download (detail_box);
-                detail_box.show_all ();
-                downloads.show_all ();
-            }
-
+            on_download_requested (episode);
         });
         episodes_box.episode_delete_requested.connect ((episode) => {
             controller.library.delete_episode (episode);
@@ -300,6 +289,15 @@ public class MainWindow : Hdy.ApplicationWindow {
         });
         episodes_scrolled.show_all ();
         switch_visible_page(episodes_scrolled);
+    }
+    
+    public void on_download_requested (Episode episode) {
+        DownloadDetailBox detail_box = controller.library.download_episode (episode);
+        if (detail_box != null) {
+            downloads.add_download (detail_box);
+            detail_box.show_all ();
+            downloads.show_all ();
+        }
     }
 
     /*
