@@ -99,6 +99,7 @@ namespace Leopod {
 		    if (first_run || library.empty ()) {
 		        window.show_all ();
 		        window.switch_visible_page (window.welcome);
+		        window.playback_box.hide ();
 		    } else {
 		        window.populate_views();
 		        info ("Showing main window");
