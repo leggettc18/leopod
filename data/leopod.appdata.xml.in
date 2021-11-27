@@ -2,8 +2,8 @@
 <!-- Copyright 2021 Christopher Leggett <chris@leggett.dev> -->
 <component type="desktop">
   <id>com.github.leggettc18.leopod</id>
-  <metadata_license>CC0</metadata_license>
-  <project-license>LGPL-3.0</project-license>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project-license>LGPL-3.0+</project-license>
   <name>Leopod</name>
   <developer_name>Christopher Leggett</developer_name>
   <summary>Organize and listen to your podcasts!</summary>
@@ -28,6 +28,7 @@
       <caption>The Playback Box</caption>
     </screenshot>
   </screenshots>
+  <url type="bugtracker">https://github.com/leggettc18/leopod/issues</url>
   <custom>
     <value key="x-appcenter-suggested-price">5</value>
     <value key="x-appcenter-color-primary">#7239b3</value>
@@ -36,6 +37,20 @@
   </custom>
   <content_rating type="oars-1.0" />
   <releases>
-    <release version="1.0.1" date="2021-11-18"/>
+    <release version="1.0.2" date="2021-11-27">
+      <description>
+        <p>Bugfixes</p>
+        <ul>
+          <li>Fixes inconsistency between MPRIS player playpause button and in-window playpause button</li>
+          <li>Fixes some contrast issues in light mode</li>
+          <li>Fixes Downloads Popover not showing up from New Episodes view.</li>
+        </ul>
+        <p>Improvements</p>
+        <ul>
+          <li>Metadata improvements</li>
+        </ul>
+      </description>
+    </release>
+        <release version="1.0.1" date="2021-11-18"/>
   </releases>
 </component>
