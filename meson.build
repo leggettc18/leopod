@@ -24,6 +24,8 @@ executable(
     'src' / 'Controller.vala',
     'src' / 'Library.vala',
     'src' / 'LeopodSettings.vala',
+    'src' / 'GStreamer' / 'Pipeline.vala',
+    'src' / 'GStreamer' / 'Playback.vala',
     'src' / 'Utils' / 'SoupClient.vala',
     'src' / 'Utils' / 'FeedParser.vala',
     'src' / 'Utils' / 'XmlUtils.vala',

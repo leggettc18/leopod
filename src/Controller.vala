@@ -84,7 +84,7 @@ namespace Leopod {
                 mins_remaining = (int) total_secs_remaining / 60;
                 secs_remaining = (int) total_secs_remaining % 60;
 
-                if (player.progress != 0) {
+                if (player.progress != 0.0) {
                     window.playback_box.set_progress (player.progress, mins_remaining, secs_remaining, mins_elapsed, secs_elapsed);
                 }
             });
