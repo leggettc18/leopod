@@ -45,6 +45,7 @@ public class Player : Playback, GLib.Object {
     private Player (string[]? args) {
         bool new_launch = true;
         pipe = new Pipeline ();
+        pipe.bus.add_watch (GLib.Priority.DEFAULT, bus_callback);
 
         current_episode = null;
 
@@ -62,8 +63,9 @@ public class Player : Playback, GLib.Object {
         });
     }
 
-    public void set_position (int64 pos) {
-        pipe.playbin.seek(1.0, Gst.Format.TIME, Gst.SeekFlags.FLUSH, Gst.SeekType.SET, pos, Gst.SeekType.NONE, get_duration ());
+    public bool set_position (int64 pos) {
+        info ("Position: %" + int64.FORMAT, pos);
+        return pipe.playbin.seek(1.0, Gst.Format.TIME, Gst.SeekFlags.FLUSH, Gst.SeekType.SET, pos, Gst.SeekType.NONE, get_duration ());
     }
 
     /* Pauses the player */
@@ -85,23 +87,23 @@ public class Player : Playback, GLib.Object {
     /*
      * Seeks backward by a number of seconds
      */
-    public void seek_backward (int64 num_seconds) {
+    public bool seek_backward (int64 num_seconds) {
         int64 rv = (int64) 0;
         Gst.Format f = Gst.Format.TIME;
 
         pipe.playbin.query_position (f, out rv);
-        set_position (rv - (num_seconds * 1000000000));
+        return set_position (rv - (num_seconds * 1000000000));
     }
 
     /*
      * Seeks forward by a number of seconds
      */
-    public void seek_forward (int64 num_seconds) {
+    public bool seek_forward (int64 num_seconds) {
         int64 rv = (int64) 0;
         Gst.Format f = Gst.Format.TIME;
 
         pipe.playbin.query_position (f, out rv);
-        set_position (rv + (num_seconds * 1000000000));
+        return set_position (rv + (num_seconds * 1000000000));
     }
 
     /*
@@ -109,9 +111,16 @@ public class Player : Playback, GLib.Object {
      */
     public void set_episode (Episode episode) {
         this.current_episode = episode;
-
         set_state (Gst.State.READY);
-        pipe.playbin.set_property ("uri", episode.playback_uri);
+        pipe.playbin.uri = episode.playback_uri;
+        set_state (Gst.State.PLAYING);
+        GLib.Timeout.add (500, () => {
+            var result = pipe.playbin.seek_simple (Gst.Format.TIME, Gst.SeekFlags.FLUSH, current_episode.last_played_position);
+            info (result ? "Seek Succeeded" : "Seek Failed");
+            info ("Position: %" + int64.FORMAT, current_episode.last_played_position);
+            play ();
+            return !result;
+        });
     }
 
     public int64 get_position () {
@@ -158,6 +167,52 @@ public class Player : Playback, GLib.Object {
         var val = GLib.Value (typeof (double));
         pipe.playbin.get_property ("volume", ref val);
         return (double)val;
+    }
+
+    private bool bus_callback (Gst.Bus bus, Gst.Message message) {
+        switch (message.type) {
+        case Gst.MessageType.ERROR:
+            GLib.Error err;
+            string debug;
+            message.parse_error (out err, out debug);
+            warning ("Error: %s\n", err.message);
+            //error_occured ();
+            break;
+        case Gst.MessageType.ELEMENT:
+            //if (message.get_structure () != null && Gst.PbUtils.//is_missing_plugin_message (message) && (dialog == null || !dialog.visible)) {
+                //dialog = new InstallGstreamerPluginsDialog (message);
+            //}
+            break;
+        case Gst.MessageType.EOS:
+            //end_of_stream ();
+            break;
+        case Gst.MessageType.STATE_CHANGED:
+            Gst.State oldstate;
+            Gst.State newstate;
+            Gst.State pending;
+            message.parse_state_changed (out oldstate, out newstate, out pending);
+
+            if (newstate != Gst.State.PLAYING) {
+                break;
+            }
+
+            break;
+        case Gst.MessageType.TAG:
+            Gst.TagList tag_list;
+
+            message.parse_tag (out tag_list);
+            if (tag_list != null) {
+                if (tag_list.get_tag_size (Gst.Tags.TITLE) > 0) {
+                    string title = "";
+                    tag_list.get_string (Gst.Tags.TITLE, out title);
+                }
+            }
+            break;
+        default:
+            break;
+        }
+
+        return true;
     }
 }
 

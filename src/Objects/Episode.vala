@@ -13,7 +13,7 @@ namespace Leopod {
 		public string uri = "";
 		public string local_uri = "";
 		public string podcast_uri = "";
-		public int last_played_position;
+		public int64 last_played_position;
 		public string date_released;
 
 		public Podcast parent;

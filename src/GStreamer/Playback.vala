@@ -14,7 +14,7 @@ public interface Playback : GLib.Object {
     public abstract void pause ();
     public abstract void set_state (Gst.State s);
     public abstract void set_episode (Episode episode);
-    public abstract void set_position (int64 pos);
+    public abstract bool set_position (int64 pos);
     public abstract int64 get_position ();
     public abstract int64 get_duration ();
     public abstract void set_volume (double val);
