@@ -115,7 +115,7 @@ public class Player : Playback, GLib.Object {
         pipe.playbin.uri = episode.playback_uri;
         set_state (Gst.State.PLAYING);
         GLib.Timeout.add (500, () => {
-            var result = pipe.playbin.seek_simple (Gst.Format.TIME, Gst.SeekFlags.FLUSH, current_episode.last_played_position);
+            var result = set_position (current_episode.last_played_position);
             info (result ? "Seek Succeeded" : "Seek Failed");
             info ("Position: %" + int64.FORMAT, current_episode.last_played_position);
             play ();
