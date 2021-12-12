@@ -18,7 +18,7 @@ public class Player : Playback, GLib.Object {
 
     public double progress {
         get {
-            return get_position () / get_duration ();
+            return (double) get_position () / get_duration ();
         }
         set {
             set_position ((int64) (value * get_duration ()));

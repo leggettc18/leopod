@@ -74,12 +74,12 @@ namespace Leopod {
                 int mins_elapsed;
                 int secs_elapsed;
 
-                double total_secs_elapsed = player.duration * player.progress;
+                double total_secs_elapsed = (player.duration * player.progress) / 1000000000;
 
                 mins_elapsed = (int) total_secs_elapsed / 60;
                 secs_elapsed = (int) total_secs_elapsed % 60;
 
-                double total_secs_remaining = player.duration - total_secs_elapsed;
+                double total_secs_remaining = (player.duration / 1000000000) - total_secs_elapsed;
 
                 mins_remaining = (int) total_secs_remaining / 60;
                 secs_remaining = (int) total_secs_remaining % 60;
