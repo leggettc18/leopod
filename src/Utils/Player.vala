@@ -85,15 +85,23 @@ public class Player : Playback, GLib.Object {
     /*
      * Seeks backward by a number of seconds
      */
-    public void seek_backward (int num_seconds) {
-        set_position (num_seconds * 1000000000);
+    public void seek_backward (int64 num_seconds) {
+        int64 rv = (int64) 0;
+        Gst.Format f = Gst.Format.TIME;
+
+        pipe.playbin.query_position (f, out rv);
+        set_position (rv - (num_seconds * 1000000000));
     }
 
     /*
      * Seeks forward by a number of seconds
      */
-    public void seek_forward (int num_seconds) {
-        set_position (num_seconds * 1000000000);
+    public void seek_forward (int64 num_seconds) {
+        int64 rv = (int64) 0;
+        Gst.Format f = Gst.Format.TIME;
+
+        pipe.playbin.query_position (f, out rv);
+        set_position (rv + (num_seconds * 1000000000));
     }
 
     /*
