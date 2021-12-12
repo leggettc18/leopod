@@ -26,7 +26,7 @@ public class Pipeline : GLib.Object {
         audiotee = Gst.ElementFactory.make ("tee", null);
         audiosinkqueue = Gst.ElementFactory.make ("queue", null);
 
-        ((Gst.Bin)audiobin).add_many (audiotee, audiosink);
+        ((Gst.Bin)audiobin).add_many (audiotee, audiosinkqueue, audiosink);
 
         audiobin.add_pad (new Gst.GhostPad ("sink", audiotee.get_static_pad ("sink")));
 
