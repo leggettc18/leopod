@@ -24,6 +24,8 @@ executable(
     'src' / 'Controller.vala',
     'src' / 'Library.vala',
     'src' / 'LeopodSettings.vala',
+    'src' / 'GStreamer' / 'Pipeline.vala',
+    'src' / 'GStreamer' / 'Playback.vala',
     'src' / 'Utils' / 'SoupClient.vala',
     'src' / 'Utils' / 'FeedParser.vala',
     'src' / 'Utils' / 'XmlUtils.vala',
@@ -50,10 +52,7 @@ executable(
         dependency('gee-0.8'),
         dependency('sqlite3'),
         dependency('libhandy-1'),
-        dependency('clutter-1.0'),
-        dependency('clutter-gst-3.0'),
-        dependency('gstreamer-1.0'),
-        dependency('gstreamer-pbutils-1.0')
+        dependency('gstreamer-1.0')
     ],
     install: true
 )

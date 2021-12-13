@@ -198,7 +198,7 @@ public class MainWindow : Hdy.ApplicationWindow {
         });
         playback_box.scale_changed.connect (() => {
             var new_progress = playback_box.get_progress_bar_fill ();
-            controller.player.set_progress (new_progress);
+            controller.player.progress = new_progress;
         });
 
         playback_box.artwork.button_press_event.connect (() => {
