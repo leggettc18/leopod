@@ -66,6 +66,10 @@ public class PlaybackBox : Gtk.Box {
             relief = Gtk.ReliefStyle.NONE
         };
         playback_rate_button.get_style_context ().add_class ("h3");
+        PlaybackRatePopover rate_popover = new PlaybackRatePopover (playback_rate_button);
+        playback_rate_button.clicked.connect (() => {
+            rate_popover.show_all ();
+        });
 
         seek_back_button = new Gtk.Button.from_icon_name (
             "media-seek-backward-symbolic",
