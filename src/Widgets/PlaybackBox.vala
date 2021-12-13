@@ -11,7 +11,7 @@ public class PlaybackBox : Gtk.Box {
     public signal void playpause_clicked ();
     public signal void seek_backward_clicked ();
     public signal void seek_forward_clicked ();
-    public signal void playback_rate_selected ();
+    public signal void playback_rate_selected (double rate);
 
     public Gtk.Label episode_label;
     public Gtk.Label podcast_label;
@@ -69,6 +69,11 @@ public class PlaybackBox : Gtk.Box {
         PlaybackRatePopover rate_popover = new PlaybackRatePopover (playback_rate_button);
         playback_rate_button.clicked.connect (() => {
             rate_popover.show_all ();
+        });
+        rate_popover.rate_selected.connect ((t, r) => {
+            playback_rate_button.label = "x%g".printf (r);
+            playback_rate_selected (r);
+            rate_popover.popdown ();
         });
 
         seek_back_button = new Gtk.Button.from_icon_name (

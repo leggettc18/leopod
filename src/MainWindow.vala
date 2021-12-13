@@ -200,6 +200,9 @@ public class MainWindow : Hdy.ApplicationWindow {
             var new_progress = playback_box.get_progress_bar_fill ();
             controller.player.progress = new_progress;
         });
+        playback_box.playback_rate_selected.connect ((t, r) => {
+            controller.player.rate = r;
+        });
 
         playback_box.artwork.button_press_event.connect (() => {
             this.artwork_popover.show_all ();
