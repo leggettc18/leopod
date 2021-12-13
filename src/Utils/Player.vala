@@ -9,6 +9,16 @@ public class Player : Playback, GLib.Object {
     Pipeline pipe;
 
     public bool playing;
+    private double _rate = 1.0;
+    public double rate {
+        get {
+            return _rate;
+        }
+        set {
+            _rate = value;
+            set_position (get_position ());
+        }
+    }
 
     public int64 duration {
         get {
@@ -65,7 +75,7 @@ public class Player : Playback, GLib.Object {
 
     public bool set_position (int64 pos) {
         info ("Position: %" + int64.FORMAT, pos);
-        return pipe.playbin.seek(1.0, Gst.Format.TIME, Gst.SeekFlags.FLUSH, Gst.SeekType.SET, pos, Gst.SeekType.NONE, get_duration ());
+        return pipe.playbin.seek(_rate, Gst.Format.TIME, Gst.SeekFlags.FLUSH, Gst.SeekType.SET, pos, Gst.SeekType.NONE, get_duration ());
     }
 
     /* Pauses the player */
@@ -113,8 +123,7 @@ public class Player : Playback, GLib.Object {
         this.current_episode = episode;
         set_state (Gst.State.READY);
         pipe.playbin.uri = episode.playback_uri;
-        set_state (Gst.State.PLAYING);
-        GLib.Timeout.add (500, () => {
+        GLib.Timeout.add (0, () => {
             var result = set_position (current_episode.last_played_position);
             info (result ? "Seek Succeeded" : "Seek Failed");
             info ("Position: %" + int64.FORMAT, current_episode.last_played_position);

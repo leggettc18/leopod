@@ -200,10 +200,8 @@ namespace Leopod {
 		                library.set_episode_playback_position (player.current_episode);
 		            }
 					player.set_episode (current_episode);
-					//  while (current_episode.last_played_position <= 0) {
-					//  	warning ("Last Played Position <= 0: %" + int64.FORMAT, current_episode.last_played_position);
-					//  }
 		            track_changed (current_episode.title.replace ("%27", "'"), current_episode.parent.name, current_episode.parent.coverart_uri, (uint64) player.duration);
+					player.rate = 1.5;
 		        }
 
 		        //TODO: handle video content
