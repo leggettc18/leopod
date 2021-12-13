@@ -201,7 +201,6 @@ namespace Leopod {
 		            }
 					player.set_episode (current_episode);
 		            track_changed (current_episode.title.replace ("%27", "'"), current_episode.parent.name, current_episode.parent.coverart_uri, (uint64) player.duration);
-					player.rate = 1.5;
 		        }
 
 		        //TODO: handle video content

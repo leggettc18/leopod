@@ -11,12 +11,14 @@ public class PlaybackBox : Gtk.Box {
     public signal void playpause_clicked ();
     public signal void seek_backward_clicked ();
     public signal void seek_forward_clicked ();
+    public signal void playback_rate_selected ();
 
     public Gtk.Label episode_label;
     public Gtk.Label podcast_label;
     public Gtk.Button seek_back_button;
     public Gtk.Button playpause_button;
     public Gtk.Button seek_forward_button;
+    public Gtk.Button playback_rate_button;
     public Gtk.EventBox artwork;
     public Gtk.Image artwork_image;
     private Gtk.Image play_image;
@@ -58,6 +60,12 @@ public class PlaybackBox : Gtk.Box {
         podcast_label.set_ellipsize (Pango.EllipsizeMode.END);
         podcast_label.xalign = 0.0f;
         podcast_label.max_width_chars = 20;
+
+        playback_rate_button = new Gtk.Button.with_label ("x1.0") {
+            tooltip_text = _("Playback Rate"),
+            relief = Gtk.ReliefStyle.NONE
+        };
+        playback_rate_button.get_style_context ().add_class ("h3");
 
         seek_back_button = new Gtk.Button.from_icon_name (
             "media-seek-backward-symbolic",
@@ -123,9 +131,11 @@ public class PlaybackBox : Gtk.Box {
         label_box.halign = Gtk.Align.START;
 
         var button_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 3);
+        button_box.add (playback_rate_button);
         button_box.add (seek_back_button);
         button_box.add (playpause_button);
         button_box.add (seek_forward_button);
+        button_box.margin_start = 5;
 
         // volume_button = new Gtk.Button.from_icon_name ("audio-volume-high-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
         // volume_button.relief = Gtk.ReliefStyle.NONE;
