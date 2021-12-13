@@ -52,10 +52,7 @@ executable(
         dependency('gee-0.8'),
         dependency('sqlite3'),
         dependency('libhandy-1'),
-        dependency('clutter-1.0'),
-        dependency('clutter-gst-3.0'),
-        dependency('gstreamer-1.0'),
-        dependency('gstreamer-pbutils-1.0')
+        dependency('gstreamer-1.0')
     ],
     install: true
 )

@@ -22,7 +22,7 @@ namespace Leopod {
 	    public bool currently_repopulating = false;
 
 	    // System
-	    public Gst.PbUtils.InstallPluginsContext context;
+	    //public Gst.PbUtils.InstallPluginsContext context;
 
 	    // References
 	    public Episode current_episode;
