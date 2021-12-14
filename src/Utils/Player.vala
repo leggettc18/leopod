@@ -74,7 +74,7 @@ public class Player : Playback, GLib.Object {
     }
 
     public bool set_position (int64 pos) {
-        info ("Position: %" + int64.FORMAT, pos);
+        //info ("Position: %" + int64.FORMAT, pos);
         return pipe.playbin.seek(_rate, Gst.Format.TIME, Gst.SeekFlags.FLUSH, Gst.SeekType.SET, pos, Gst.SeekType.NONE, get_duration ());
     }
 
@@ -125,8 +125,8 @@ public class Player : Playback, GLib.Object {
         pipe.playbin.uri = episode.playback_uri;
         GLib.Timeout.add (0, () => {
             var result = set_position (current_episode.last_played_position);
-            info (result ? "Seek Succeeded" : "Seek Failed");
-            info ("Position: %" + int64.FORMAT, current_episode.last_played_position);
+            //info (result ? "Seek Succeeded" : "Seek Failed");
+           // info ("Position: %" + int64.FORMAT, current_episode.last_played_position);
             play ();
             return !result;
         });
@@ -188,9 +188,12 @@ public class Player : Playback, GLib.Object {
             //error_occured ();
             break;
         case Gst.MessageType.ELEMENT:
-            //if (message.get_structure () != null && Gst.PbUtils.//is_missing_plugin_message (message) && (dialog == null || !dialog.visible)) {
-                //dialog = new InstallGstreamerPluginsDialog (message);
-            //}
+        //      if (message.get_structure () != null && Gst.PbUtils.is_missing_plugin_message (message)
+        //      //&& (dialog == null || !dialog.visible)
+        //  ) {
+        //          //dialog = new InstallGstreamerPluginsDialog (message);
+        //          info ("Missing Plugins");
+        //      }
             break;
         case Gst.MessageType.EOS:
             //end_of_stream ();

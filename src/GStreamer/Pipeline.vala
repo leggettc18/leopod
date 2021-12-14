@@ -15,6 +15,9 @@ public class Pipeline : GLib.Object {
     public dynamic Gst.Element audiotee;
     public dynamic Gst.Element audiobin;
     public dynamic Gst.Element preamp;
+    public dynamic Gst.Element scaletempo;
+    public dynamic Gst.Element convert;
+    public dynamic Gst.Element resample;
 
     public Pipeline () {
         pipe = new Gst.Pipeline ("pipeline");
@@ -23,22 +26,28 @@ public class Pipeline : GLib.Object {
         audiosink = Gst.ElementFactory.make ("autoaudiosink", "audio-sink");
 
         audiobin = new Gst.Bin ("audiobin");
-        audiotee = Gst.ElementFactory.make ("tee", null);
-        audiosinkqueue = Gst.ElementFactory.make ("queue", null);
+        //audiotee = Gst.ElementFactory.make ("tee", null);
+        //audiosinkqueue = Gst.ElementFactory.make ("queue", null);
 
-        ((Gst.Bin)audiobin).add_many (audiotee, audiosinkqueue, audiosink);
+        scaletempo = Gst.ElementFactory.make ("scaletempo", null);
+        convert = Gst.ElementFactory.make ("audioconvert", null);
+        resample = Gst.ElementFactory.make ("audioresample", null);
 
-        audiobin.add_pad (new Gst.GhostPad ("sink", audiotee.get_static_pad ("sink")));
+        ((Gst.Bin)audiobin).add_many (scaletempo, convert, resample, audiosink);
+        scaletempo.link_many (convert, resample, audiosink);
 
-        audiosinkqueue.link_many (audiosink);
+        audiobin.add_pad (new Gst.GhostPad ("sink", scaletempo.get_static_pad ("sink")));
+        //audiosinkqueue.add_pad (new Gst.GhostPad ("sink", scaletempo.get_static_pad("sink")));
+
+        //audiosinkqueue.link_many (audiosink);
 
         playbin.set ("audio-sink", audiobin);
         bus = playbin.get_bus ();
 
-        Gst.Pad sinkpad = audiosinkqueue.get_static_pad ("sink");
-        pad = audiotee.get_request_pad ("src_%u");
-        audiotee.set ("alloc-pad", pad);
-        pad.link (sinkpad);
+        //  Gst.Pad sinkpad = audiosinkqueue.get_static_pad ("sink");
+        //  pad = audiotee.get_request_pad ("src_%u");
+        //  audiotee.set ("alloc-pad", pad);
+        //  pad.link (sinkpad);
     }
 }
 }
