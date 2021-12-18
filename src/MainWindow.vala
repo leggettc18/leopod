@@ -8,6 +8,7 @@ namespace Leopod {
 public class MainWindow : Hdy.ApplicationWindow {
     // Core Components
     private Controller controller;
+    private GLib.Settings settings;
     public Hdy.HeaderBar header_bar;
     public Gtk.FlowBox all_flowbox;
     public Gtk.ScrolledWindow all_scrolled;
@@ -42,6 +43,7 @@ public class MainWindow : Hdy.ApplicationWindow {
         height = 0;
         var granite_settings = Granite.Settings.get_default ();
         var gtk_settings = Gtk.Settings.get_default ();
+        settings = new GLib.Settings ("com.github.leggettc18.leopod");
 
         // Check if user prefers dark theme or not
         gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
@@ -184,6 +186,9 @@ public class MainWindow : Hdy.ApplicationWindow {
         main_layout.attach (notebook, 0, 1);
 
         playback_box = new PlaybackBox ();
+        double playback_rate = settings.get_double ("playback-rate");
+        controller.player.rate = playback_rate;
+        playback_box.playback_rate_button.label = "x%g".printf (playback_rate);
 
         artwork_popover = new ArtworkPopover (playback_box.artwork);
 
@@ -202,6 +207,7 @@ public class MainWindow : Hdy.ApplicationWindow {
         });
         playback_box.playback_rate_selected.connect ((t, r) => {
             controller.player.rate = r;
+            settings.set_double ("playback-rate", r);
         });
 
         playback_box.artwork.button_press_event.connect (() => {
