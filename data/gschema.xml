@@ -6,5 +6,10 @@
       <summary>The directory where podcasts are stored</summary>
       <description>The directory where podcasts are stored</description>
     </key>
+    <key name="playback-rate" type="d">
+      <default>1.0</default>
+      <summary>The current playback rate</summary>
+      <description>The speed at which audio is played. 1.0 is normal speed, 2.0 is double speed.</description>
+     </key>
   </schema>
 </schemalist>

@@ -35,15 +35,15 @@ public class MyApp : Gtk.Application {
     public static void main (string[] args) {
 
         // Initialize Clutter
-        var err = Clutter.init (ref args);
-        if (err != Clutter.InitError.SUCCESS) {
-            stdout.puts ("Cloud not initialize clutter.\n");
-            error ("Could not initialize clutter! " + err.to_string ());
-        }
+        //  var err = Clutter.init (ref args);
+        //  if (err != Clutter.InitError.SUCCESS) {
+        //      stdout.puts ("Cloud not initialize clutter.\n");
+        //      error ("Could not initialize clutter! " + err.to_string ());
+        //  }
 
         // Initialize GStreamer
         Gst.init (ref args);
-        Gst.PbUtils.init ();
+        //Gst.PbUtils.init ();
 
         // Set the media role
         GLib.Environ.set_variable ({"PULSE_PROP_media.role"}, "audio", "true");

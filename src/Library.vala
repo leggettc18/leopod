@@ -232,7 +232,7 @@ namespace Leopod {
                 } else if (column_name == "latest_position") {
                     int64 position = 0;
                     if (int64.try_parse (val, out position)) {
-                        episode.last_played_position = (int)position;
+                        episode.last_played_position = position;
                     }
                 } else if (column_name == "parent_podcast_name") {
                     episode.parent = new Podcast.with_name (val);
