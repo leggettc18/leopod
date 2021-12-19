@@ -47,10 +47,15 @@ public class PodcastView : Gtk.Box {
             tooltip_text = _("Unsubscribe from Podcast"),
             relief = Gtk.ReliefStyle.NORMAL,
             label = "Unsubscribe",
-            always_show_image = true
+            always_show_image = true,
         };
+        Gtk.Box podcast_delete_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5) {
+            halign = Gtk.Align.CENTER,
+            expand = false
+        };
+        podcast_delete_box.add (podcast_delete_button);
         podcast_delete_button.get_style_context ().add_class ("danger");
-        left_box.add (podcast_delete_button);
+        left_box.add (podcast_delete_box);
         podcast_delete_button.clicked.connect(() => {
             podcast_delete_requested (podcast);
         });
