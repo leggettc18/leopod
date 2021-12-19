@@ -27,7 +27,7 @@ namespace Leopod {
             };
             button.get_style_context ().add_class ("coverart");
             Gtk.Box button_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0) {
-                margin = 0,
+                margin = 5,
                 halign = Gtk.Align.CENTER
             };
             button_box.add (button);
