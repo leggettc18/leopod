@@ -1,5 +1,9 @@
 .episode-list {
-    border-bottom: 0.5px solid #8a9580;
+    border-bottom: 0.5px solid @BLACK_300;
+}
+
+.episode-list-box {
+    border: 0.5px solid @BLACK_300;
 }
 
 .danger {

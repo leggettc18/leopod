@@ -34,7 +34,9 @@ public class PodcastView : Gtk.Box {
         Gtk.Box right_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 10) {
             halign = Gtk.Align.FILL,
             margin = 10,
+            border_width = 5
         };
+        right_box.get_style_context ().add_class ("episode-list-box");
         pack_start (left_box);
         add (right_box);
         CoverArt coverart = new CoverArt.with_podcast (podcast);
