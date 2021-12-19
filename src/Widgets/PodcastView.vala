@@ -44,8 +44,10 @@ public class PodcastView : Gtk.Box {
             max_width_chars = 25
         });
         Gtk.Button podcast_delete_button = new Gtk.Button.from_icon_name ("edit-delete-symbolic", Gtk.IconSize.BUTTON) {
-            tooltip_text = _("Delete Podcast"),
+            tooltip_text = _("Unsubscribe from Podcast"),
             relief = Gtk.ReliefStyle.NORMAL,
+            label = "Unsubscribe",
+            always_show_image = true
         };
         podcast_delete_button.get_style_context ().add_class ("danger");
         left_box.add (podcast_delete_button);
