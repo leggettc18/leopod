@@ -20,6 +20,7 @@ namespace Leopod {
         // Widgets
         public Gtk.Box buttons_box;
         public Gtk.Box title_box;
+        public Gtk.Button info_button;
         public Gtk.Button download_button;
         public Gtk.Button play_button;
         public Gtk.Button delete_button;
@@ -81,6 +82,21 @@ namespace Leopod {
             buttons_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0) {
                 margin = 5
             };
+
+            info_button = new Gtk.Button.from_icon_name (
+                "dialog-information-symbolic",
+                Gtk.IconSize.BUTTON
+            ) {
+                tooltip_text = _("Description")
+            };
+
+            ArtworkPopover show_notes_popover = new ArtworkPopover (info_button);
+            show_notes_popover.show_notes = episode.description;
+
+            info_button.clicked.connect (() => {
+                show_notes_popover.show_all ();
+            });
+
             download_button = new Gtk.Button.from_icon_name (
                 "browser-download-symbolic",
                 Gtk.IconSize.BUTTON
@@ -113,6 +129,7 @@ namespace Leopod {
                 delete_requested (episode);
             });
 
+            buttons_box.pack_start (info_button);
             if (episode.current_download_status == DownloadStatus.NOT_DOWNLOADED) {
                 buttons_box.pack_start (download_button);
             } else {
