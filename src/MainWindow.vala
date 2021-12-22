@@ -346,7 +346,7 @@ public class MainWindow : Hdy.ApplicationWindow {
             back_button = new Gtk.Button () {
                 label = back_text,
             };
-            back_button.get_style_context ().add_class ("back-button");
+            back_button.get_style_context ().add_class (Granite.STYLE_CLASS_BACK_BUTTON);
             back_button.clicked.connect (() => {
                 episodes_scrolled.remove (episodes_box);
                 episodes_box.foreach ((child) => episodes_box.remove (child));

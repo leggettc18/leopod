@@ -16,14 +16,19 @@ public class NewEpisodesView : Gtk.ScrolledWindow {
 
     public NewEpisodesView (Library library) {
         set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
-        main_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0) {
+        Gtk.ScrolledWindow main_scrolled = new Gtk.ScrolledWindow (null, null) {
             margin = 20,
+            margin_top = 0,
+        };
+        main_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0) {
             halign = Gtk.Align.FILL,
             valign = Gtk.Align.START,
             vexpand = false
         };
-        add (main_box);
+        main_scrolled.add (main_box);
+        add (main_scrolled);
         list_box = new Gtk.ListBox ();
+        main_scrolled.get_style_context ().add_class ("episode-list-box");
         Gee.ArrayList<Episode> episodes = get_new_episodes(library.podcasts);
         foreach (Episode episode in episodes) {
             var coverart = new CoverArt.with_podcast (episode.parent);
