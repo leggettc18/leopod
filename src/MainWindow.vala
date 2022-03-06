@@ -192,9 +192,6 @@ public class MainWindow : Hdy.ApplicationWindow {
 
         artwork_popover = new ArtworkPopover (playback_box.artwork);
 
-        playback_box.playpause_clicked.connect (()=> {
-            controller.play_pause ();
-        });
         playback_box.seek_forward_clicked.connect (() => {
             controller.seek_forward ();
         });
