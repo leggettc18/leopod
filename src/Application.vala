@@ -26,7 +26,6 @@ public class MyApp : Gtk.Application {
           provider,
           Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         );
-        info ("Starting activation");
 
         var controller = new Controller(this);
 

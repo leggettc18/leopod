@@ -9,19 +9,28 @@ namespace Leopod {
         public Podcast podcast = null;
         public CoverArt.with_podcast (Podcast podcast) {
             this.podcast = podcast;
-            set_size_request (170, 170);
+            //set_size_request (170, 170);
             add_events (Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.BUTTON_PRESS_MASK);
             orientation = Gtk.Orientation.VERTICAL;
             no_show_all = true;
             Gdk.Pixbuf pixbuf = null;
-            Gtk.Image image = new Gtk.Image ();
+            Gtk.Image image = new Gtk.Image () {
+                margin = 0
+            };
             Gtk.Label name = new Gtk.Label (podcast.name);
             name.no_show_all = true;
-            name.margin = 5;
+            name.margin = 10;
             Gtk.Button button = new Gtk.Button () {
                 always_show_image = true,
-                tooltip_text = _("Browse Podcast Episodes")
+                tooltip_text = _("Browse Podcast Episodes"),
+                margin = 0
             };
+            button.get_style_context ().add_class ("coverart");
+            Gtk.Box button_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0) {
+                margin = 5,
+                halign = Gtk.Align.CENTER
+            };
+            button_box.add (button);
 
             try {
                 //Load the actual coverart
@@ -43,7 +52,8 @@ namespace Leopod {
                 warning ("unable to load podcast coverart.");
             }
 
-            add (button);
+            button_box.show ();
+            add (button_box);
             add (name);
         }
 

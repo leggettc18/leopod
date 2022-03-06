@@ -1,21 +1,21 @@
-
 app-id: com.github.leggettc18.leopod
 
 runtime: io.elementary.Platform
-runtime-version: '6'
+runtime-version: "6.1"
 sdk: io.elementary.Sdk
 
 command: com.github.leggettc18.leopod
 
 finish-args:
-  - '--share=ipc'
-  - '--socket=fallback-x11'
-  - '--socket=wayland'
-  - '--share=network'
-  - '--socket=pulseaudio'
-  - '--talk-name=org.gtk.vfs.*'
-  - '--device=dri'
-  - '--metadata=X-DConf=migrate-path=/com/github/leggettc18/leopod'
+  - "--share=ipc"
+  - "--socket=fallback-x11"
+  - "--socket=wayland"
+  - "--share=network"
+  - "--socket=pulseaudio"
+  - "--filesystem=xdg-run/gvfsd"
+  - "--talk-name=org.gtk.vfs.*"
+  - "--device=dri"
+  - "--metadata=X-DConf=migrate-path=/com/github/leggettc18/leopod"
 
 modules:
   - name: leopod

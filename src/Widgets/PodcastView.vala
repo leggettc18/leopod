@@ -23,19 +23,24 @@ public class PodcastView : Gtk.Box {
         // Create the view that will display all the episodes of a given podcast.
         orientation = Gtk.Orientation.HORIZONTAL;
         spacing = 5;
-        halign = Gtk.Align.FILL;
-        valign = Gtk.Align.FILL;
         Gtk.Box left_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
-            halign = Gtk.Align.FILL,
-            valign = Gtk.Align.START,
-            vexpand = false,
+            expand = false,
             margin = 20
         };
+        Gtk.ScrolledWindow right_scrolled = new Gtk.ScrolledWindow (null, null) {
+            expand = true,
+        };
         Gtk.Box right_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 10) {
-            halign = Gtk.Align.FILL,
+            expand = true,
             margin = 10,
         };
-        pack_start (left_box);
+        right_scrolled.get_style_context ().add_class ("episode-list-box");
+        add (left_box);
+        episodes_list = new Gtk.ListBox () {
+            hexpand = true
+        };
+        right_scrolled.add (episodes_list);
+        right_box.add (right_scrolled);
         add (right_box);
         CoverArt coverart = new CoverArt.with_podcast (podcast);
         left_box.add (coverart);
@@ -44,16 +49,21 @@ public class PodcastView : Gtk.Box {
             max_width_chars = 25
         });
         Gtk.Button podcast_delete_button = new Gtk.Button.from_icon_name ("edit-delete-symbolic", Gtk.IconSize.BUTTON) {
-            tooltip_text = _("Delete Podcast"),
+            tooltip_text = _("Unsubscribe from Podcast"),
             relief = Gtk.ReliefStyle.NORMAL,
+            label = "Unsubscribe",
+            always_show_image = true,
         };
+        Gtk.Box podcast_delete_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5) {
+            halign = Gtk.Align.CENTER,
+            expand = false
+        };
+        podcast_delete_box.add (podcast_delete_button);
         podcast_delete_button.get_style_context ().add_class ("danger");
-        left_box.add (podcast_delete_button);
+        left_box.add (podcast_delete_box);
         podcast_delete_button.clicked.connect(() => {
             podcast_delete_requested (podcast);
         });
-        episodes_list = new Gtk.ListBox ();
-        right_box.add (episodes_list);
         foreach (Episode episode in podcast.episodes) {
             var episode_list_item = new EpisodeListItem (episode);
             episodes_list.prepend (episode_list_item);
