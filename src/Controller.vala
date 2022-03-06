@@ -28,26 +28,25 @@ namespace Leopod {
 	    public Episode current_episode;
 
 		public Controller (MyApp app) {
-			info ("initializing the controller.");
 			this.app = app;
-
-			info ("Initializing the GStreamer Player.");
 			player = Player.get_default (app.args);
-
-			info ("initializing blank library");
 			library = new Library (this);
 
 			first_run = (!library.check_database_exists ());
 
 			if (first_run) {
-			    info ("Setting up library");
 			    library.setup_library ();
 			} else {
-			    info ("Refilling library");
 			    library.refill_library ();
 			}
 
-			info ("initializing the main window");
+            var playpause_action = new SimpleAction("playpause", null);
+            app.add_action(playpause_action);
+            app.set_accels_for_action ("app.playpause", {"<Space>"});
+            playpause_action.activate.connect (() => {
+                this.play_pause ();
+            });
+
 			window = new MainWindow (this);
 
 			window.podcast_delete_requested.connect ((podcast) => {
@@ -56,11 +55,9 @@ namespace Leopod {
 				window.populate_views ();
 			});
 
-			info ("Connecting player signals");
 			//player.eos.connect (window.on_stream_ended);
 			//player.additional_plugins_required.connect (window.on_additional_plugins_needed);
 
-            info ("Initializing NPRIS playback.");
             MPRIS mpris = new MPRIS (this);
             mpris.initialize ();
 
@@ -114,6 +111,13 @@ namespace Leopod {
 		        on_update_request ();
 		        return true;
 		    });
+
+            var playpause_action = new SimpleAction("playpause", null);
+            app.add_action(playpause_action);
+            app.set_accels_for_action ("app.playpause", {"space"});
+            playpause_action.activate.connect (() => {
+                this.play_pause ();
+            });
 		}
 
 		public void add_podcast (string podcast_uri) {
@@ -201,7 +205,9 @@ namespace Leopod {
 		            }
 					player.set_episode (current_episode);
 		            track_changed (current_episode.title.replace ("%27", "'"), current_episode.parent.name, current_episode.parent.coverart_uri, (uint64) player.duration);
-		        }
+		        } else {
+                    player.play ();
+                }
 
 		        //TODO: handle video content
 
