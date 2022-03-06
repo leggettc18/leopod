@@ -65,7 +65,10 @@ public class MainWindow : Hdy.ApplicationWindow {
 
         var add_podcast_button = new Gtk.Button.from_icon_name ("list-add", Gtk.IconSize.LARGE_TOOLBAR) {
             action_name = "app.add-podcast",
-            tooltip_text = _("Add Podcast")
+            tooltip_markup = Granite.markup_accel_tooltip(
+                this.controller.app.get_accels_for_action ("app.add-podcast"),
+                _("Add Podcast")
+            )
         };
         var download_button = new Gtk.Button.from_icon_name ("browser-download", Gtk.IconSize.LARGE_TOOLBAR) {
             tooltip_text = _("Downloads")
