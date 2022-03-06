@@ -188,19 +188,36 @@ public class MainWindow : Hdy.ApplicationWindow {
 
         main_layout.attach (notebook, 0, 1);
 
-        playback_box = new PlaybackBox ();
+        // Actions
+
+        var playpause_action = new SimpleAction("playpause", null);
+        this.controller.app.add_action(playpause_action);
+        this.controller.app.set_accels_for_action ("app.playpause", {"space"});
+        playpause_action.activate.connect (() => {
+            this.controller.play_pause ();
+        });
+
+        var seek_forward_action = new SimpleAction("seek_forward", null);
+        this.controller.app.add_action (seek_forward_action);
+        this.controller.app.set_accels_for_action ("app.seek_forward", {"l"});
+        seek_forward_action.activate.connect (() => {
+            this.controller.seek_forward ();
+        });
+
+        var seek_backward_action = new SimpleAction("seek_backward", null);
+        this.controller.app.add_action (seek_backward_action);
+        this.controller.app.set_accels_for_action ("app.seek_backward", {"h"});
+        seek_backward_action.activate.connect (() => {
+            this.controller.seek_backward ();
+        });
+
+        playback_box = new PlaybackBox (this.controller.app);
         double playback_rate = settings.get_double ("playback-rate");
         controller.player.rate = playback_rate;
         playback_box.playback_rate_button.label = "x%g".printf (playback_rate);
 
         artwork_popover = new ArtworkPopover (playback_box.artwork);
 
-        playback_box.seek_forward_clicked.connect (() => {
-            controller.seek_forward ();
-        });
-        playback_box.seek_backward_clicked.connect (() => {
-            controller.seek_backward ();
-        });
         playback_box.scale_changed.connect (() => {
             var new_progress = playback_box.get_progress_bar_fill ();
             controller.player.progress = new_progress;
