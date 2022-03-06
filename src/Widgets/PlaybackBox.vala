@@ -8,7 +8,6 @@ namespace Leopod {
 public class PlaybackBox : Gtk.Box {
 
     public signal void scale_changed ();
-    public signal void playpause_clicked ();
     public signal void seek_backward_clicked ();
     public signal void seek_forward_clicked ();
     public signal void playback_rate_selected (double rate);
@@ -88,11 +87,10 @@ public class PlaybackBox : Gtk.Box {
         playpause_button = new Gtk.Button.from_icon_name (
             "media-playback-start-symbolic",
             Gtk.IconSize.LARGE_TOOLBAR
-        );
-
-        playpause_button.clicked.connect (() => {
-            playpause_clicked ();
-        });
+        ) {
+            action_name="app.playpause",
+            tooltip_markup = Granite.markup_accel_tooltip ({"space"}, "Play/Pause")
+        };
 
         seek_forward_button = new Gtk.Button.from_icon_name (
             "media-seek-forward-symbolic",
