@@ -112,11 +112,27 @@ namespace Leopod {
 		        return true;
 		    });
 
+            // Actions
+
             var playpause_action = new SimpleAction("playpause", null);
             app.add_action(playpause_action);
             app.set_accels_for_action ("app.playpause", {"space"});
             playpause_action.activate.connect (() => {
                 this.play_pause ();
+            });
+
+            var seek_forward_action = new SimpleAction("seek_forward", null);
+            app.add_action (seek_forward_action);
+            app.set_accels_for_action ("app.seek_forward", {"l"});
+            seek_forward_action.activate.connect (() => {
+                this.seek_forward ();
+            });
+
+            var seek_backward_action = new SimpleAction("seek_backward", null);
+            app.add_action (seek_backward_action);
+            app.set_accels_for_action ("app.seek_backward", {"h"});
+            seek_backward_action.activate.connect (() => {
+                this.seek_backward ();
             });
 		}
 

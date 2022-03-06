@@ -78,28 +78,26 @@ public class PlaybackBox : Gtk.Box {
         seek_back_button = new Gtk.Button.from_icon_name (
             "media-seek-backward-symbolic",
             Gtk.IconSize.LARGE_TOOLBAR
-        );
-
-        seek_back_button.clicked.connect (() => {
-            seek_backward_clicked ();
-        });
+        ) {
+            action_name = "app.seek_backward",
+            tooltip_markup = Granite.markup_accel_tooltip ({"h"}, "Seek Backward")
+        };
 
         playpause_button = new Gtk.Button.from_icon_name (
             "media-playback-start-symbolic",
             Gtk.IconSize.LARGE_TOOLBAR
         ) {
-            action_name="app.playpause",
+            action_name = "app.playpause",
             tooltip_markup = Granite.markup_accel_tooltip ({"space"}, "Play/Pause")
         };
 
         seek_forward_button = new Gtk.Button.from_icon_name (
             "media-seek-forward-symbolic",
             Gtk.IconSize.LARGE_TOOLBAR
-        );
-
-        seek_forward_button.clicked.connect (() => {
-            seek_forward_clicked ();
-        });
+        ) {
+            action_name = "app.seek_forward",
+            tooltip_markup = Granite.markup_accel_tooltip ({"l"}, "Seek Forward")
+        };
 
         progress_bar = new Gtk.ProgressBar ();
 
