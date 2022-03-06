@@ -400,7 +400,7 @@ public class MainWindow : Hdy.ApplicationWindow {
      * Handles adding adding the podcast from the dialog
      */
     public void on_add_podcast (int response_id) {
-        if (response_id == Gtk.ResponseType.OK) {
+        if (response_id == Gtk.ResponseType.ACCEPT) {
             controller.add_podcast(add_podcast.podcast_uri_entry.get_text ());
         }
         add_podcast.destroy ();
