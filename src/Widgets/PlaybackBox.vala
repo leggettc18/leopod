@@ -8,7 +8,6 @@ namespace Leopod {
 public class PlaybackBox : Gtk.Box {
 
     public signal void scale_changed ();
-    public signal void playpause_clicked ();
     public signal void seek_backward_clicked ();
     public signal void seek_forward_clicked ();
     public signal void playback_rate_selected (double rate);
@@ -31,7 +30,7 @@ public class PlaybackBox : Gtk.Box {
     public Gtk.Button volume_button;
     private bool currently_playing = false;
 
-    public PlaybackBox () {
+    public PlaybackBox (MyApp app) {
         play_image = new Gtk.Image.from_icon_name("media-playback-start-symbolic", Gtk.IconSize.LARGE_TOOLBAR);
         pause_image = new Gtk.Image.from_icon_name("media-playback-pause-symbolic", Gtk.IconSize.LARGE_TOOLBAR);
         this.get_style_context ().add_class ("seek-bar");
@@ -79,29 +78,35 @@ public class PlaybackBox : Gtk.Box {
         seek_back_button = new Gtk.Button.from_icon_name (
             "media-seek-backward-symbolic",
             Gtk.IconSize.LARGE_TOOLBAR
-        );
-
-        seek_back_button.clicked.connect (() => {
-            seek_backward_clicked ();
-        });
+        ) {
+            action_name = "app.seek_backward",
+            tooltip_markup = Granite.markup_accel_tooltip (
+                app.get_accels_for_action ("app.seek_backward"),
+                _("Seek Backward")
+            )
+        };
 
         playpause_button = new Gtk.Button.from_icon_name (
             "media-playback-start-symbolic",
             Gtk.IconSize.LARGE_TOOLBAR
-        );
-
-        playpause_button.clicked.connect (() => {
-            playpause_clicked ();
-        });
+        ) {
+            action_name = "app.playpause",
+            tooltip_markup = Granite.markup_accel_tooltip (
+                app.get_actions_for_accel ("app.playpause"),
+                _("Play/Pause")
+            )
+        };
 
         seek_forward_button = new Gtk.Button.from_icon_name (
             "media-seek-forward-symbolic",
             Gtk.IconSize.LARGE_TOOLBAR
-        );
-
-        seek_forward_button.clicked.connect (() => {
-            seek_forward_clicked ();
-        });
+        ) {
+            action_name = "app.seek_forward",
+            tooltip_markup = Granite.markup_accel_tooltip (
+                app.get_accels_for_action ("app.seek_forward"),
+                _("Seek Forward")
+            )
+        };
 
         progress_bar = new Gtk.ProgressBar ();
 
