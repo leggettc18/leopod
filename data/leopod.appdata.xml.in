@@ -37,7 +37,7 @@
   </custom>
   <content_rating type="oars-1.0" />
   <releases>
-    <release version-"1.1.1" date="2022-03-06">
+    <release version="1.1.1" date="2022-03-06">
       <description>
         <p>Updates release info for Appcenter and updates one of the screenshots</p>
       </description>
