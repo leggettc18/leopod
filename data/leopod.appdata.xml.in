@@ -37,6 +37,26 @@
   </custom>
   <content_rating type="oars-1.0" />
   <releases>
+    <release version="1.1.1" date="2022-03-06">
+      <description>
+        <p>Updates release info for Appcenter and updates one of the screenshots</p>
+      </description>
+    </release>
+    <release version="1.1" date="2022-03-06">
+      <description>
+        <p>Improvements</p>
+        <ul>
+          <li>Smooths out some UI interactions and styling</li>
+          <li>Adds ability to increase playback rate</li>
+          <li>Adds keyboard shortcuts for play/pause and seeking</li>
+        </ul>
+        <p>Under the Hood</p>
+        <ul>
+          <li>Replaces ClutterGST player with native GStreamer Player</li>
+          <li>Replaces some more generic widgets with Granite Widgets, where applicable</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.0.2" date="2021-11-27">
       <description>
         <p>Bugfixes</p>
