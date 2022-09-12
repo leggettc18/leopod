@@ -15,35 +15,45 @@ asresources = gnome.compile_resources (
     c_name: 'as'
 )
 
+leopod_sources = [
+  'src' / 'Application.vala',
+  'src' / 'MainWindow.vala',
+  'src' / 'Controller.vala',
+  'src' / 'Library.vala',
+  'src' / 'LeopodSettings.vala',
+  'src' / 'GStreamer' / 'Pipeline.vala',
+  'src' / 'GStreamer' / 'Playback.vala',
+  'src' / 'Utils' / 'SoupClient.vala',
+  'src' / 'Utils' / 'FeedParser.vala',
+  'src' / 'Utils' / 'XmlUtils.vala',
+  'src' / 'Utils' / 'Player.vala',
+  'src' / 'Utils' / 'MPRIS.vala',
+  'src' / 'Utils' / 'Utils.vala',
+  'src' / 'Objects' / 'Podcast.vala',
+  'src' / 'Objects' / 'Episode.vala',
+  'src' / 'Widgets' / 'CoverArt.vala',
+  'src' / 'Widgets' / 'AddPodcastDialog.vala',
+  'src' / 'Widgets' / 'EpisodeListItem.vala',
+  'src' / 'Widgets' / 'DownloadDetailBox.vala',
+  'src' / 'Widgets' / 'DownloadsPopover.vala',
+  'src' / 'Widgets' / 'PodcastView.vala',
+  'src' / 'Widgets' / 'PlaybackBox.vala',
+  'src' / 'Widgets' / 'NewEpisodesView.vala',
+  'src' / 'Widgets' / 'ArtworkPopover.vala',
+  'src' / 'Widgets' / 'PlaybackRatePopover.vala'
+]
+
+if host_machine.system() == 'windows'
+  leopod_sources += [
+    'src' / 'strptime.c'
+  ]
+endif
+
 # Create a new executable, list the files we want to compile, list the dependencies we need, and install
 executable(
     meson.project_name(),
     asresources,
-    'src' / 'Application.vala',
-    'src' / 'MainWindow.vala',
-    'src' / 'Controller.vala',
-    'src' / 'Library.vala',
-    'src' / 'LeopodSettings.vala',
-    'src' / 'GStreamer' / 'Pipeline.vala',
-    'src' / 'GStreamer' / 'Playback.vala',
-    'src' / 'Utils' / 'SoupClient.vala',
-    'src' / 'Utils' / 'FeedParser.vala',
-    'src' / 'Utils' / 'XmlUtils.vala',
-    'src' / 'Utils' / 'Player.vala',
-    'src' / 'Utils' / 'MPRIS.vala',
-    'src' / 'Utils' / 'Utils.vala',
-    'src' / 'Objects' / 'Podcast.vala',
-    'src' / 'Objects' / 'Episode.vala',
-    'src' / 'Widgets' / 'CoverArt.vala',
-    'src' / 'Widgets' / 'AddPodcastDialog.vala',
-    'src' / 'Widgets' / 'EpisodeListItem.vala',
-    'src' / 'Widgets' / 'DownloadDetailBox.vala',
-    'src' / 'Widgets' / 'DownloadsPopover.vala',
-    'src' / 'Widgets' / 'PodcastView.vala',
-    'src' / 'Widgets' / 'PlaybackBox.vala',
-    'src' / 'Widgets' / 'NewEpisodesView.vala',
-    'src' / 'Widgets' / 'ArtworkPopover.vala',
-    'src' / 'Widgets' / 'PlaybackRatePopover.vala',
+    sources: leopod_sources,
     dependencies: [
         dependency('gtk+-3.0'),
         dependency('granite'),
