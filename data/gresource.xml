@@ -3,4 +3,7 @@
 <gresource prefix="/com/github/leggettc18/leopod">
 <file alias="application.css">application.css</file>
 </gresource>
+<gresource prefix="/com/github/leggettc18/leopod">
+  <file preprocess="xml-stripblanks">icons/arrow3-down-symbolic.svg</file>
+</gresource>
 </gresources>

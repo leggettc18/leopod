@@ -98,7 +98,7 @@ namespace Leopod {
             });
 
             download_button = new Gtk.Button.from_icon_name (
-                "browser-download-symbolic",
+                "arrow3-down-symbolic",
                 Gtk.IconSize.BUTTON
             ){
             	tooltip_text = _("Download")
