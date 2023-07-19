@@ -45,7 +45,8 @@ public class PlaybackBox : Gtk.Box {
         );
 
         artwork_image.tooltip_text = _("View the shownotes for this episode");
-        //artwork_image.margin = 12;
+        artwork_image.margin_bottom = artwork_image.margin_top =
+        artwork_image.margin_start = artwork_image.margin_end = 12;
         artwork_image.halign = Gtk.Align.START;
 
         episode_label = new Gtk.Label ("");
@@ -61,7 +62,7 @@ public class PlaybackBox : Gtk.Box {
 
         playback_rate_button = new Gtk.Button.with_label ("x1.0") {
             tooltip_text = _("Playback Rate"),
-            //relief = Gtk.ReliefStyle.NONE
+            has_frame = false,
         };
         playback_rate_button.get_style_context ().add_class ("h3");
         PlaybackRatePopover rate_popover = new PlaybackRatePopover (playback_rate_button);
@@ -81,7 +82,8 @@ public class PlaybackBox : Gtk.Box {
             tooltip_markup = Granite.markup_accel_tooltip (
                 app.get_accels_for_action ("app.seek_backward"),
                 _("Seek Backward")
-            )
+            ),
+            has_frame = false
         };
 
         playpause_button = new Gtk.Button.from_icon_name (
@@ -91,7 +93,8 @@ public class PlaybackBox : Gtk.Box {
             tooltip_markup = Granite.markup_accel_tooltip (
                 app.get_actions_for_accel ("app.playpause"),
                 _("Play/Pause")
-            )
+            ),
+            has_frame = false
         };
 
         seek_forward_button = new Gtk.Button.from_icon_name (
@@ -101,7 +104,8 @@ public class PlaybackBox : Gtk.Box {
             tooltip_markup = Granite.markup_accel_tooltip (
                 app.get_accels_for_action ("app.seek_forward"),
                 _("Seek Forward")
-            )
+            ),
+            has_frame = false
         };
 
         progress_bar = new Gtk.ProgressBar ();
@@ -142,21 +146,21 @@ public class PlaybackBox : Gtk.Box {
         label_box.halign = Gtk.Align.START;
 
         var button_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 3);
-        button_box.prepend(playback_rate_button);
-        button_box.prepend(seek_back_button);
-        button_box.prepend(playpause_button);
-        button_box.prepend(seek_forward_button);
+        button_box.append(playback_rate_button);
+        button_box.append(seek_back_button);
+        button_box.append(playpause_button);
+        button_box.append(seek_forward_button);
         button_box.margin_start = 5;
 
         // volume_button = new Gtk.Button.from_icon_name ("audio-volume-high-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
         // volume_button.relief = Gtk.ReliefStyle.NONE;
         // volume_button.margin_end = 12;
 
-        artwork.prepend(artwork_image);
-        prepend(artwork);
-        prepend(label_box);
-        prepend(button_box);
-        prepend(scale_grid);
+        artwork.append(artwork_image);
+        append(artwork);
+        append(label_box);
+        append(button_box);
+        append(scale_grid);
         // add (volume_button);
     }
 
