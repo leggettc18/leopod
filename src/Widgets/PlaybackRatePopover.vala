@@ -14,7 +14,7 @@ public class PlaybackRatePopover : Gtk.Popover {
     public signal void rate_selected (double rate);
 
     public PlaybackRatePopover (Gtk.Widget parent, double? starting_rate = null) {
-        set_relative_to (parent);
+        set_parent(parent);
         if (starting_rate != null) {
             current_rate = starting_rate;
         }
@@ -24,18 +24,18 @@ public class PlaybackRatePopover : Gtk.Popover {
         int index = 0;
         foreach (double rate in rates) {
             rate_buttons.add (new Gtk.Button.with_label ("x%g".printf (rate)) {
-                relief = Gtk.ReliefStyle.NONE,
+                //relief = Gtk.ReliefStyle.NONE,
                 tooltip_text = "x%g".printf(rate),
                 can_focus = false
             });
             rate_buttons[index].get_style_context ().add_class ("h3");
-            rates_box.add (rate_buttons[index]);
+            rates_box.prepend (rate_buttons[index]);
             rate_buttons[index].clicked.connect (() => {
                 rate_selected (rate);
             });
             index++;
         }
-        add (rates_box);
+        set_child(rates_box);
     }
 }
 }

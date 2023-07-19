@@ -5,7 +5,7 @@
 
 namespace Leopod {
 
-public class NewEpisodesView : Gtk.ScrolledWindow {
+public class NewEpisodesView : Gtk.Box {
     public Gtk.Box main_box;
     public Gtk.ListBox list_box;
 
@@ -15,18 +15,18 @@ public class NewEpisodesView : Gtk.ScrolledWindow {
     public signal void episode_play_requested (Episode episode);
 
     public NewEpisodesView (Library library) {
-        set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
-        Gtk.ScrolledWindow main_scrolled = new Gtk.ScrolledWindow (null, null) {
-            margin = 20,
+        Gtk.ScrolledWindow main_scrolled = new Gtk.ScrolledWindow () {
+            //margin = 20,
             margin_top = 0,
         };
+        main_scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
         main_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0) {
             halign = Gtk.Align.FILL,
             valign = Gtk.Align.START,
             vexpand = false
         };
-        main_scrolled.add (main_box);
-        add (main_scrolled);
+        main_scrolled.set_child(main_box);
+        prepend(main_scrolled);
         list_box = new Gtk.ListBox ();
         main_scrolled.get_style_context ().add_class ("episode-list-box");
         Gee.ArrayList<Episode> episodes = get_new_episodes(library.podcasts);
@@ -45,14 +45,14 @@ public class NewEpisodesView : Gtk.ScrolledWindow {
                 episode_play_requested (e);
             });
             var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5);
-            box.add (coverart);
-            box.add (list_item);
-            list_box.add (box);
+            box.prepend (coverart);
+            box.prepend(list_item);
+            list_box.prepend(box);
         }
-        list_box.get_children ().foreach ((child) => {
-            child.get_style_context ().add_class ("episode-list");
-        });
-        main_box.add (list_box);
+        //list_box.get_children ().foreach ((child) => {
+        //    child.get_style_context ().add_class ("episode-list");
+        //});
+        main_box.prepend (list_box);
     }
 
     /*
@@ -89,9 +89,10 @@ public class NewEpisodesView : Gtk.ScrolledWindow {
 
 	public void rebuild (Library library) {
 	    main_box.remove (list_box);
-	    list_box.get_children ().foreach ((child) => {
-	        list_box.remove (child);
-	    });
+        list_box.select_all();
+	    list_box.selected_foreach((box, row) => {
+                list_box.remove(row);
+            });
 	    Gee.ArrayList<Episode> episodes = get_new_episodes(library.podcasts);
         foreach (Episode episode in episodes) {
             var coverart = new CoverArt.with_podcast (episode.parent);
@@ -108,15 +109,15 @@ public class NewEpisodesView : Gtk.ScrolledWindow {
                 episode_play_requested (e);
             });
             var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5);
-            box.add (coverart);
-            box.add (list_item);
-            list_box.add (box);
+            box.prepend (coverart);
+            box.prepend(list_item);
+            list_box.prepend(box);
         }
-        list_box.get_children ().foreach ((child) => {
-            child.get_style_context ().add_class ("episode-list");
-        });
-        main_box.add (list_box);
-        main_box.show_all ();
+        //list_box.get_children ().foreach ((child) => {
+        //    child.get_style_context ().add_class ("episode-list");
+        //});
+        main_box.prepend(list_box);
+        main_box.show();
 	}
 }
 

@@ -84,13 +84,13 @@ namespace Leopod {
 
 		private void post_creation_sequence () {
 		    if (first_run || library.empty ()) {
-		        window.show_all ();
+		        window.show();
 		        window.switch_visible_page (window.welcome);
 		        window.playback_box.hide ();
 		    } else {
 		        window.populate_views();
 		        info ("Showing main window");
-		        window.show_all ();
+		        window.show();
 		        window.playback_box.hide ();
 		        info ("switching to all_scrolled view");
 		        window.switch_visible_page (window.main_box);
@@ -214,7 +214,7 @@ namespace Leopod {
 		            current_episode.parent.name.replace ("%27", "'")
 		        );
 
-		        window.show_all ();
+		        window.show();
 		    }
 		}
 
@@ -231,7 +231,7 @@ namespace Leopod {
 	                current_episode.parent.name.replace ("%27", "'")
 	            );
 
-	            window.show_all ();
+	            window.show();
 	        }
 		}
 

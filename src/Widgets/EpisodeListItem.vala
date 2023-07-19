@@ -34,11 +34,14 @@ namespace Leopod {
 
         // Constructors
         public EpisodeListItem (Episode episode) {
-            margin = 10;
+//            margin = 10;
             halign = Gtk.Align.FILL;
+            valign = Gtk.Align.CENTER;
+            vexpand = false;
             this.episode = episode;
             title_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
-                expand = true
+                vexpand = true,
+                margin_top = margin_bottom = margin_start = margin_end = 5
             };
             title = new Gtk.Label (episode.title) {
                 vexpand = false,
@@ -62,46 +65,49 @@ namespace Leopod {
             	lines = 3,
             	single_line_mode = true
             };
-            title_box.add (title);
-            title_box.add (desc);
-            add (title_box);
+            title_box.prepend (title);
+            title_box.append (desc);
+            prepend (title_box);
 
             buttons_box = create_buttons_box ();
-            add (buttons_box);
-            buttons_box.show_all ();
+            append(buttons_box);
+            buttons_box.show();
 
             episode.download_status_changed.connect (() => {
                 buttons_box.destroy ();
                 buttons_box = create_buttons_box ();
-                add (buttons_box);
-                buttons_box.show_all ();
+                append(buttons_box);
+                buttons_box.show();
             });
         }
 
         private Gtk.Box create_buttons_box () {
-            buttons_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0) {
-                margin = 5
+            buttons_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5) {
+                margin_top = 10,
+                margin_bottom = 10,
+                vexpand = false,
             };
 
             info_button = new Gtk.Button.from_icon_name (
-                "info-symbolic",
-                Gtk.IconSize.BUTTON
+                "info-symbolic"
             ) {
-                tooltip_text = _("Description")
+                tooltip_text = _("Description"),
+                has_frame = false,
             };
 
             ArtworkPopover show_notes_popover = new ArtworkPopover (info_button);
             show_notes_popover.show_notes = episode.description;
 
             info_button.clicked.connect (() => {
-                show_notes_popover.show_all ();
+                show_notes_popover.show();
             });
 
             download_button = new Gtk.Button.from_icon_name (
-                "folder-download-symbolic",
-                Gtk.IconSize.BUTTON
+                "folder-download-symbolic"
             ){
-            	tooltip_text = _("Download")
+                vexpand = false,
+            	tooltip_text = _("Download"),
+                has_frame = false,
             };
 
             download_button.clicked.connect (() => {
@@ -109,32 +115,32 @@ namespace Leopod {
             });
 
             play_button = new Gtk.Button.from_icon_name (
-                "media-playback-start-symbolic",
-                Gtk.IconSize.BUTTON
+                "media-playback-start-symbolic"
             ){
-            	tooltip_text = _("Play")
+            	tooltip_text = _("Play"),
+                has_frame = false,
             };
             play_button.clicked.connect (() => {
                 play_requested (episode);
             });
 
             delete_button = new Gtk.Button.from_icon_name (
-                "user-trash-symbolic",
-                Gtk.IconSize.BUTTON
+                "user-trash-symbolic"
             ){
-            	tooltip_text = _("Delete")
+            	tooltip_text = _("Delete"),
+                has_frame = false,
             };
 
             delete_button.clicked.connect (() => {
                 delete_requested (episode);
             });
 
-            buttons_box.pack_start (info_button);
+            buttons_box.prepend(info_button);
             if (episode.current_download_status == DownloadStatus.NOT_DOWNLOADED) {
-                buttons_box.pack_start (download_button);
+                buttons_box.append(download_button);
             } else {
-                buttons_box.pack_start (play_button);
-                buttons_box.pack_end (delete_button);
+                buttons_box.append(play_button);
+                buttons_box.append(delete_button);
             }
 
             return buttons_box;

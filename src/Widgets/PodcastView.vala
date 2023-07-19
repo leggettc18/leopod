@@ -24,43 +24,43 @@ public class PodcastView : Gtk.Box {
         orientation = Gtk.Orientation.HORIZONTAL;
         spacing = 5;
         Gtk.Box left_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
-            expand = false,
-            margin = 20
+            vexpand = false,
+            margin_start = margin_end = margin_top = margin_bottom = 20
         };
-        Gtk.ScrolledWindow right_scrolled = new Gtk.ScrolledWindow (null, null) {
-            expand = true,
+        Gtk.ScrolledWindow right_scrolled = new Gtk.ScrolledWindow () {
+            vexpand = true,
+            hexpand = true,
         };
         Gtk.Box right_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 10) {
-            expand = true,
-            margin = 10,
+            vexpand = true,
+            margin_start = margin_end = 10,
         };
         right_scrolled.get_style_context ().add_class ("episode-list-box");
-        add (left_box);
+        prepend (left_box);
         episodes_list = new Gtk.ListBox () {
-            hexpand = true
+            vexpand = true,
+            show_separators = true,
         };
-        right_scrolled.add (episodes_list);
-        right_box.add (right_scrolled);
-        add (right_box);
+        right_scrolled.set_child (episodes_list);
+        right_box.prepend (right_scrolled);
+        append(right_box);
         CoverArt coverart = new CoverArt.with_podcast (podcast);
-        left_box.add (coverart);
-        left_box.add (new Gtk.Label (podcast.description) {
+        left_box.prepend(coverart);
+        left_box.append(new Gtk.Label (podcast.description) {
             wrap = true,
             max_width_chars = 25
         });
-        Gtk.Button podcast_delete_button = new Gtk.Button.from_icon_name ("edit-delete-symbolic", Gtk.IconSize.BUTTON) {
+        Gtk.Button podcast_delete_button = new Gtk.Button.with_label
+        (_("Unsubscribe")) {
             tooltip_text = _("Unsubscribe from Podcast"),
-            relief = Gtk.ReliefStyle.NORMAL,
-            label = "Unsubscribe",
-            always_show_image = true,
         };
         Gtk.Box podcast_delete_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5) {
             halign = Gtk.Align.CENTER,
-            expand = false
+            hexpand = false
         };
-        podcast_delete_box.add (podcast_delete_button);
+        podcast_delete_box.append (podcast_delete_button);
         podcast_delete_button.get_style_context ().add_class ("danger");
-        left_box.add (podcast_delete_box);
+        left_box.append(podcast_delete_box);
         podcast_delete_button.clicked.connect(() => {
             podcast_delete_requested (podcast);
         });
@@ -77,9 +77,9 @@ public class PodcastView : Gtk.Box {
                 episode_play_requested (e);
             });
         }
-        episodes_list.get_children ().foreach ((child) => {
-            child.get_style_context ().add_class ("episode-list");
-        });
+        //var children = episodes_list.observe_children().foreach ((child) => {
+         //   child.get_style_context ().add_class ("episode-list");
+        //});
     }
 }
 

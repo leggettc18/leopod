@@ -5,32 +5,29 @@
 
 namespace Leopod {
     public class CoverArt : Gtk.Box {
-        private bool double_click = false;
         public Podcast podcast = null;
         public CoverArt.with_podcast (Podcast podcast) {
             this.podcast = podcast;
             //set_size_request (170, 170);
-            add_events (Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.BUTTON_PRESS_MASK);
+            var controller = new Gtk.GestureClick ();
+            controller.released.connect((num_presses, x, y) => {
+                    clicked(this.podcast);
+                    });
+            add_controller (controller);
             orientation = Gtk.Orientation.VERTICAL;
-            no_show_all = true;
-            Gdk.Pixbuf pixbuf = null;
+            //no_show_all = true;
             Gtk.Image image = new Gtk.Image () {
-                margin = 0
+                //margin = 0
             };
             Gtk.Label name = new Gtk.Label (podcast.name);
-            name.no_show_all = true;
-            name.margin = 10;
+            //name.no_show_all = true;
+            //name.margin = 10;
             Gtk.Button button = new Gtk.Button () {
-                always_show_image = true,
+                //always_show_image = true,
                 tooltip_text = _("Browse Podcast Episodes"),
-                margin = 0
+                //margin = 0
             };
             button.get_style_context ().add_class ("coverart");
-            Gtk.Box button_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0) {
-                margin = 5,
-                halign = Gtk.Align.CENTER
-            };
-            button_box.add (button);
 
             try {
                 //Load the actual coverart
@@ -41,42 +38,21 @@ namespace Leopod {
                     info (podcast.local_art_uri);
                     file = GLib.File.new_for_uri (podcast.local_art_uri);
                 }
-                var icon = new GLib.FileIcon (file);
-                image = new Gtk.Image.from_gicon (icon, Gtk.IconSize.DIALOG);
+                image.set_from_file(file.get_path());
                 image.pixel_size = 170;
-                button.image = image;
-                button.show ();
+                //button.image = image;
+                image.show();
                 name.show ();
                 show ();
             } catch (Error e) {
                 warning ("unable to load podcast coverart.");
             }
 
-            button_box.show ();
-            add (button_box);
-            add (name);
-        }
-
-        public override bool button_release_event(Gdk.EventButton event) {
-            if (!this.double_click) {
-                clicked (this.podcast);
-                return false;
-            }
-            this.double_click = false;
-            return false;
-        }
-
-        public override bool button_press_event (Gdk.EventButton event) {
-            if (event.type == Gdk.EventType.@2BUTTON_PRESS) {
-                double_clicked (this.podcast);
-                this.double_click = true;
-                return false;
-            }
-            return false;
+            append (image);
+            append (name);
         }
 
         public signal void clicked (Podcast podcast);
-        public signal void double_clicked (Podcast podcast);
     }
 
     private async Gdk.Pixbuf load_image_async (string url) {

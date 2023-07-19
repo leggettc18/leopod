@@ -27,15 +27,15 @@ namespace Leopod {
                 margin_start = 12,
                 margin_end = 12
             };
-            hbox.pack_start(add_label, false, true, 0);
-            hbox.pack_start(this.podcast_uri_entry, true, true, 0);
+            hbox.prepend(add_label);
+            hbox.prepend(this.podcast_uri_entry);
             var content = get_content_area ();
-            content.add (hbox);
+            content.prepend(hbox);
 
             // Add buttons to button area at the bottom
             add_button (_("Cancel"), Gtk.ResponseType.CANCEL);
             this.add_podcast_button = add_button (_("Add"), Gtk.ResponseType.ACCEPT);
-            this.add_podcast_button.get_style_context ().add_class (Gtk.STYLE_CLASS_SUGGESTED_ACTION);
+            //this.add_podcast_button.get_style_context ().add_class (Gtk.STYLE_CLASS_SUGGESTED_ACTION);
             this.add_podcast_button.sensitive = false;
 
             podcast_uri_entry.changed.connect (() => {
@@ -44,7 +44,7 @@ namespace Leopod {
                 }
             });
 
-            show_all ();
+            show();
         }
     }
 }

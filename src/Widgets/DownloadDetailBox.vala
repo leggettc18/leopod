@@ -40,12 +40,12 @@ public class DownloadDetailBox : Gtk.Box {
         //Load coverart
         var file = GLib.File.new_for_uri (episode.parent.coverart_uri);
         var icon = new GLib.FileIcon (file);
-        var image = new Gtk.Image.from_gicon(icon, Gtk.IconSize.DIALOG);
+        var image = new Gtk.Image.from_gicon(icon);
         image.pixel_size = 64;
 
         //Spacing
-        margin = 5;
-        margin_left = margin_right = 12;
+        //margin = 5;
+        //margin_left = margin_right = 12;
         spacing = 5;
 
         //Title Label
@@ -62,25 +62,24 @@ public class DownloadDetailBox : Gtk.Box {
 
         //Label Box
         var label_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-        label_box.add (title_label);
-        label_box.add (podcast_label);
+        label_box.prepend(title_label);
+        label_box.prepend(podcast_label);
 
         //Details Box
         var details_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-        details_box.add (image);
-        details_box.add (label_box);
+        details_box.prepend(image);
+        details_box.prepend(label_box);
 
         //Progress Bar and cancel button (and containing Box)
         var progress_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
 
         progress_bar = new Gtk.ProgressBar ();
         progress_bar.show_text = false;
-        progress_bar.expand = true;
+        progress_bar.hexpand = true;
         progress_bar.valign = Gtk.Align.CENTER;
 
         var cancel_button = new Gtk.Button.from_icon_name (
-            "process-stop-symbolic",
-            Gtk.IconSize.BUTTON
+            "process-stop-symbolic"
         ){
         	tooltip_text = _("Cancel Download")
         };
@@ -90,8 +89,8 @@ public class DownloadDetailBox : Gtk.Box {
             cancel_requested (this.episode);
         });
 
-        progress_box.add (progress_bar);
-        progress_box.add (cancel_button);
+        progress_box.prepend(progress_bar);
+        progress_box.prepend(cancel_button);
 
         //Download Label
         download_label = new Gtk.Label ("");
@@ -99,9 +98,9 @@ public class DownloadDetailBox : Gtk.Box {
         download_label.xalign = 0;
 
         //Add it all together.
-        label_box.add (progress_box);
-        label_box.add (download_label);
-        add (details_box);
+        label_box.prepend(progress_box);
+        label_box.prepend(download_label);
+        prepend(details_box);
 
         //Keep track of seconds elapsed.
         GLib.Timeout.add (1000, () => {

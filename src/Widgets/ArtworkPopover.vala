@@ -18,20 +18,20 @@ public class ArtworkPopover : Gtk.Popover {
     }
 
     public ArtworkPopover (Gtk.Widget parent) {
-        set_relative_to (parent);
+        set_parent(parent);
 
-        var scrolled = new Gtk.ScrolledWindow(null, null);
+        var scrolled = new Gtk.ScrolledWindow();
         var shownotes_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
         show_notes_label = new Gtk.Label ("") {
             wrap = true,
             wrap_mode = Pango.WrapMode.WORD,
             use_markup = true,
-            margin = 10
+            //margin = 10
         };
         scrolled.set_size_request (400, 200);
-        scrolled.add (show_notes_label);
-        shownotes_box.add (scrolled);
-        add (shownotes_box);
+        scrolled.set_child(show_notes_label);
+        shownotes_box.prepend(scrolled);
+        set_child(shownotes_box);
     }
 }
 }

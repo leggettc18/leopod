@@ -11,24 +11,24 @@ public class DownloadsPopover : Gtk.Popover {
     public Gee.ArrayList<DownloadDetailBox> downloads;
 
     public DownloadsPopover (Gtk.Widget parent) {
-        this.set_relative_to (parent);
+        this.set_parent(parent);
         this.listbox = new Gtk.ListBox ();
         listbox.selection_mode = Gtk.SelectionMode.NONE;
         this.width_request = 425;
 
         downloads = new Gee.ArrayList<DownloadDetailBox> ();
-        var scroll = new Gtk.ScrolledWindow (null, null);
+        var scroll = new Gtk.ScrolledWindow ();
         scroll.hscrollbar_policy = Gtk.PolicyType.NEVER;
         scroll.min_content_height = 200;
-        scroll.add (listbox);
+        scroll.set_child(listbox);
 
         downloads_complete = new Gtk.Label (_ ("No Active Downloads"));
         downloads_complete.get_style_context ().add_class ("h3");
         downloads_complete.sensitive = false;
-        downloads_complete.margin = 12;
+        //downloads_complete.margin = 12;
         listbox.prepend (downloads_complete);
 
-        add (scroll);
+        set_child(scroll);
     }
 
     /*
@@ -46,11 +46,11 @@ public class DownloadsPopover : Gtk.Popover {
 
         downloads.add (details);
         listbox.prepend (details);
-        listbox.show_all ();
+        listbox.show();
     }
 
     private void hide_downloads_complete () {
-        downloads_complete.no_show_all = true;
+        //downloads_complete.no_show_all = true;
         downloads_complete.hide ();
     }
 
@@ -66,8 +66,8 @@ public class DownloadsPopover : Gtk.Popover {
     }
 
     private void show_downloads_complete () {
-        downloads_complete.no_show_all = false;
-        downloads_complete.show_all ();
+        //downloads_complete.no_show_all = false;
+        downloads_complete.show();
     }
 }
 

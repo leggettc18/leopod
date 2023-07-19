@@ -5,11 +5,11 @@
 
 namespace Leopod {
 
-public class MainWindow : Hdy.ApplicationWindow {
+public class MainWindow : Adw.ApplicationWindow {
     // Core Components
     private Controller controller;
     private GLib.Settings settings;
-    public Hdy.HeaderBar header_bar;
+    public Adw.HeaderBar header_bar;
     public Gtk.FlowBox all_flowbox;
     public Gtk.ScrolledWindow all_scrolled;
     public PodcastView episodes_box;
@@ -19,7 +19,7 @@ public class MainWindow : Hdy.ApplicationWindow {
 
     private Gee.ArrayList<CoverArt> coverarts;
 
-    public Granite.Widgets.Welcome welcome;
+    public Granite.Placeholder welcome;
     private Gtk.Stack notebook;
 
     public AddPodcastDialog add_podcast;
@@ -38,7 +38,7 @@ public class MainWindow : Hdy.ApplicationWindow {
 
 
     public MainWindow (Controller controller) {
-        Hdy.init ();
+        Adw.init ();
         width = 0;
         height = 0;
         var granite_settings = Granite.Settings.get_default ();
@@ -63,20 +63,20 @@ public class MainWindow : Hdy.ApplicationWindow {
         this.controller.app.add_action (add_podcast_action);
         this.controller.app.set_accels_for_action ("app.add-podcast", {"<Control>a"});
 
-        var add_podcast_button = new Gtk.Button.from_icon_name("list-add-symbolic", Gtk.IconSize.LARGE_TOOLBAR) {
+        var add_podcast_button = new Gtk.Button.from_icon_name("list-add-symbolic") {
             action_name = "app.add-podcast",
             tooltip_markup = Granite.markup_accel_tooltip(
                 this.controller.app.get_accels_for_action ("app.add-podcast"),
                 _("Add Podcast")
             )
         };
-        var download_button = new Gtk.Button.from_icon_name("folder-download-symbolic", Gtk.IconSize.LARGE_TOOLBAR) {
+        var download_button = new Gtk.Button.from_icon_name("folder-download-symbolic") {
             tooltip_text = _("Downloads")
         };
         download_button.clicked.connect (show_downloads_popover);
 
-        header_bar = new Hdy.HeaderBar () {
-            show_close_button = true
+        header_bar = new Adw.HeaderBar () {
+            show_end_title_buttons = true
         };
         header_bar.pack_end (add_podcast_button);
         header_bar.pack_end (download_button);
@@ -114,17 +114,18 @@ public class MainWindow : Hdy.ApplicationWindow {
         info ("Creating welcome screen");
         // Create a welcome screen and add it to the notebook whether first run or not
 
-        welcome = new Granite.Widgets.Welcome (
-            _("Welcome to Leopod"),
-            _("Build your library by adding podcasts.")
-        );
-        welcome.append (
-            "list-add",
+        welcome = new Granite.Placeholder (
+            _("Welcome to Leopod")
+        ) {
+            description =  _("Build your library by adding podcasts.")
+        };
+        welcome.append_button (
+            GLib.Icon.new_for_string("list-add-symbolic"),
             _("Add a new Feed"),
             _("Provide the web address of a podcast feed.")
         );
 
-        welcome.activated.connect (on_welcome);
+        //welcome.activated.connect (on_welcome);
 
         info ("Creating All Scrolled view");
         // Create the all_scrolled view, which displays all podcasts in a grid.
@@ -134,16 +135,16 @@ public class MainWindow : Hdy.ApplicationWindow {
             column_spacing = 20,
             halign = Gtk.Align.FILL,
             valign = Gtk.Align.START,
-            margin = 5,
+            //margin = 5,
             selection_mode = Gtk.SelectionMode.NONE
         };
 
-        all_scrolled = new Gtk.ScrolledWindow (null, null);
+        all_scrolled = new Gtk.ScrolledWindow ();
         all_scrolled.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
-        all_scrolled.add(all_flowbox);
+        all_scrolled.set_child(all_flowbox);
 
 
-        episodes_scrolled = new Gtk.ScrolledWindow (null, null);
+        episodes_scrolled = new Gtk.ScrolledWindow ();
         episodes_scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
 
         new_episodes = new NewEpisodesView (controller.library);
@@ -155,7 +156,7 @@ public class MainWindow : Hdy.ApplicationWindow {
         });
         new_episodes.episode_play_requested.connect ((episode) => {
             controller.current_episode = episode;
-            header_bar.title = episode.title;
+            header_bar.title_widget = new Gtk.Label(episode.title);
             playback_box.set_artwork_image (episode.parent.coverart_uri);
             artwork_popover.show_notes = episode.description;
             controller.play ();
@@ -164,7 +165,7 @@ public class MainWindow : Hdy.ApplicationWindow {
         var main_stack = new Gtk.Stack () {
             transition_type = Gtk.StackTransitionType.SLIDE_LEFT_RIGHT,
             transition_duration = 200,
-            expand = true
+            vexpand = true
         };
 
         main_stack.add_titled (all_scrolled, "all", _("All Podcasts"));
@@ -173,12 +174,12 @@ public class MainWindow : Hdy.ApplicationWindow {
         var main_switcher = new Gtk.StackSwitcher () {
             stack = main_stack,
             halign = Gtk.Align.CENTER,
-            margin = 10
+            //margin = 10
         };
 
         main_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-        main_box.add (main_switcher);
-        main_box.add (main_stack);
+        main_box.prepend(main_switcher);
+        main_box.append(main_stack);
 
 
         notebook.add_titled (main_box, "main", _("Main"));
@@ -192,7 +193,7 @@ public class MainWindow : Hdy.ApplicationWindow {
 
         var playpause_action = new SimpleAction("playpause", null);
         this.controller.app.add_action(playpause_action);
-        this.controller.app.set_accels_for_action ("app.playpause", {"space"});
+        this.controller.app.set_accels_for_action ("app.playpause", {" "});
         playpause_action.activate.connect (() => {
             this.controller.play_pause ();
         });
@@ -226,10 +227,11 @@ public class MainWindow : Hdy.ApplicationWindow {
             controller.player.rate = r;
             settings.set_double ("playback-rate", r);
         });
+        var gesture_click = new Gtk.GestureClick();
+        playback_box.artwork.add_controller(gesture_click);
 
-        playback_box.artwork.button_press_event.connect (() => {
-            this.artwork_popover.show_all ();
-            return false;
+        gesture_click.released.connect (() => {
+            this.artwork_popover.show();
         });
         
         controller.playback_status_changed.connect (() => {
@@ -238,10 +240,7 @@ public class MainWindow : Hdy.ApplicationWindow {
 
         main_layout.attach (playback_box, 0, 2);
 
-        var window_handle = new Hdy.WindowHandle ();
-        window_handle.add (main_layout);
-
-        add (window_handle);
+        set_content(main_layout);
 
         add_podcast.response.connect (on_add_podcast);
     }
@@ -250,7 +249,7 @@ public class MainWindow : Hdy.ApplicationWindow {
         var coverart = new CoverArt.with_podcast (podcast);
         coverart.clicked.connect (on_podcast_clicked);
         coverarts.add (coverart);
-        all_flowbox.add (coverart);
+        all_flowbox.prepend(coverart);
     }
 
     public void populate_views () {
@@ -296,7 +295,7 @@ public class MainWindow : Hdy.ApplicationWindow {
      */
     public async void on_podcast_clicked (Podcast podcast) {
         episodes_box = new PodcastView (podcast);
-        episodes_scrolled.add (episodes_box);
+        episodes_scrolled.set_child(episodes_box);
         episodes_box.episode_download_requested.connect ((episode) => {
             on_download_requested (episode);
         });
@@ -305,7 +304,8 @@ public class MainWindow : Hdy.ApplicationWindow {
         });
         episodes_box.episode_play_requested.connect ((episode) => {
             controller.current_episode = episode;
-            header_bar.title = "%s - %s".printf (episode.parent.name, episode.title);
+            header_bar.title_widget = new Gtk.Label("%s - %s".printf
+            (episode.parent.name, episode.title));
             playback_box.set_artwork_image (episode.parent.coverart_uri);
             artwork_popover.show_notes = episode.description;
             controller.play ();
@@ -313,9 +313,9 @@ public class MainWindow : Hdy.ApplicationWindow {
         episodes_box.podcast_delete_requested.connect ((podcast) => {
             switch_visible_page (main_box);
             podcast_delete_requested (podcast);
-            episodes_scrolled.remove (episodes_box);
+            //episodes_scrolled.remove (episodes_box);
         });
-        episodes_scrolled.show_all ();
+        episodes_scrolled.show();
         switch_visible_page(episodes_scrolled);
     }
     
@@ -323,8 +323,8 @@ public class MainWindow : Hdy.ApplicationWindow {
         DownloadDetailBox detail_box = controller.library.download_episode (episode);
         if (detail_box != null) {
             downloads.add_download (detail_box);
-            detail_box.show_all ();
-            downloads.show_all ();
+            detail_box.show();
+            downloads.show();
         }
     }
 
@@ -365,14 +365,14 @@ public class MainWindow : Hdy.ApplicationWindow {
             };
             back_button.get_style_context ().add_class (Granite.STYLE_CLASS_BACK_BUTTON);
             back_button.clicked.connect (() => {
-                episodes_scrolled.remove (episodes_box);
-                episodes_box.foreach ((child) => episodes_box.remove (child));
+                //episodes_scrolled.remove (episodes_box);
+                //episodes_box.foreach ((child) => episodes_box.remove (child));
                 episodes_box.destroy ();
                 header_bar.remove (back_button);
                 switch_visible_page (back_widget);
             });
             header_bar.pack_start (back_button);
-            back_button.show_all ();
+            back_button.show();
         } else {
             if (back_button != null) {
                 back_button.destroy ();
@@ -393,7 +393,7 @@ public class MainWindow : Hdy.ApplicationWindow {
     private void on_add_podcast_clicked () {
         add_podcast = new AddPodcastDialog (this);
         add_podcast.response.connect (on_add_podcast);
-        add_podcast.show_all ();
+        add_podcast.show();
     }
 
     /*
@@ -411,7 +411,7 @@ public class MainWindow : Hdy.ApplicationWindow {
      * Shows the downloads popover
      */
     public void show_downloads_popover () {
-        this.downloads.show_all ();
+        this.downloads.show ();
     }
 }
 
