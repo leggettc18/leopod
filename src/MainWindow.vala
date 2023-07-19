@@ -135,7 +135,7 @@ public class MainWindow : Adw.ApplicationWindow {
             column_spacing = 20,
             halign = Gtk.Align.FILL,
             valign = Gtk.Align.START,
-            //margin = 5,
+            margin_top = margin_bottom = margin_start = margin_end = 5,
             selection_mode = Gtk.SelectionMode.NONE
         };
 
@@ -174,7 +174,7 @@ public class MainWindow : Adw.ApplicationWindow {
         var main_switcher = new Gtk.StackSwitcher () {
             stack = main_stack,
             halign = Gtk.Align.CENTER,
-            //margin = 10
+            margin_top = margin_bottom = margin_start = margin_end = 10
         };
 
         main_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
