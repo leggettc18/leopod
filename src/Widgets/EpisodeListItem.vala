@@ -84,7 +84,7 @@ namespace Leopod {
             };
 
             info_button = new Gtk.Button.from_icon_name (
-                "dialog-information-symbolic",
+                "info-symbolic",
                 Gtk.IconSize.BUTTON
             ) {
                 tooltip_text = _("Description")
@@ -98,7 +98,7 @@ namespace Leopod {
             });
 
             download_button = new Gtk.Button.from_icon_name (
-                "arrow3-down-symbolic",
+                "folder-download-symbolic",
                 Gtk.IconSize.BUTTON
             ){
             	tooltip_text = _("Download")
@@ -119,7 +119,7 @@ namespace Leopod {
             });
 
             delete_button = new Gtk.Button.from_icon_name (
-                "edit-delete-symbolic",
+                "user-trash-symbolic",
                 Gtk.IconSize.BUTTON
             ){
             	tooltip_text = _("Delete")
