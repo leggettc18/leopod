@@ -16,23 +16,27 @@ public class NewEpisodesView : Gtk.Box {
 
     public NewEpisodesView (Library library) {
         Gtk.ScrolledWindow main_scrolled = new Gtk.ScrolledWindow () {
-            //margin = 20,
+            margin_bottom = margin_start = margin_end = 20,
             margin_top = 0,
         };
         main_scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
         main_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0) {
             halign = Gtk.Align.FILL,
             valign = Gtk.Align.START,
-            vexpand = false
+            vexpand = false,
+            hexpand = true
         };
         main_scrolled.set_child(main_box);
         prepend(main_scrolled);
-        list_box = new Gtk.ListBox ();
+        list_box = new Gtk.ListBox () {
+            show_separators = true
+        };
         main_scrolled.get_style_context ().add_class ("episode-list-box");
-        Gee.ArrayList<Episode> episodes = get_new_episodes(library.podcasts);
-        foreach (Episode episode in episodes) {
+	    ObservableArrayList<Episode> episodes = get_new_episodes(library.podcasts);
+        list_box.bind_model (episodes, ((object) => {
+            Episode episode = (Episode) object;
             var coverart = new CoverArt.with_podcast (episode.parent);
-            var list_item = new EpisodeListItem (episode) {
+            var list_item = new EpisodeListItem ((Episode) episode) {
                 desc_lines = 8
             };
             list_item.download_clicked.connect ((episode) => {
@@ -45,10 +49,10 @@ public class NewEpisodesView : Gtk.Box {
                 episode_play_requested (e);
             });
             var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5);
-            box.prepend (coverart);
-            box.prepend(list_item);
-            list_box.prepend(box);
-        }
+            box.append(coverart);
+            box.append(list_item);
+            return box;
+                }));
         //list_box.get_children ().foreach ((child) => {
         //    child.get_style_context ().add_class ("episode-list");
         //});
@@ -62,8 +66,8 @@ public class NewEpisodesView : Gtk.Box {
 	 * podcast is automatically marked as played, adding a new
 	 * podcast will not flood this list.
 	 */
-	public Gee.ArrayList<Episode> get_new_episodes (Gee.ArrayList<Podcast> podcasts) {
-		var new_episodes = new Gee.ArrayList<Episode> ();
+	public ObservableArrayList<Episode> get_new_episodes (Gee.ArrayList<Podcast> podcasts) {
+		var new_episodes = new ObservableArrayList<Episode> ();
 		foreach (Podcast podcast in podcasts) {
 			foreach (Episode episode in podcast.episodes) {
 				if (episode.status == EpisodeStatus.UNPLAYED) {
@@ -89,14 +93,11 @@ public class NewEpisodesView : Gtk.Box {
 
 	public void rebuild (Library library) {
 	    main_box.remove (list_box);
-        list_box.select_all();
-	    list_box.selected_foreach((box, row) => {
-                list_box.remove(row);
-            });
-	    Gee.ArrayList<Episode> episodes = get_new_episodes(library.podcasts);
-        foreach (Episode episode in episodes) {
+	    ObservableArrayList<Episode> episodes = get_new_episodes(library.podcasts);
+        list_box.bind_model (episodes, ((object) => {
+            Episode episode = (Episode) object;
             var coverart = new CoverArt.with_podcast (episode.parent);
-            var list_item = new EpisodeListItem (episode) {
+            var list_item = new EpisodeListItem ((Episode) episode) {
                 desc_lines = 8
             };
             list_item.download_clicked.connect ((episode) => {
@@ -109,14 +110,14 @@ public class NewEpisodesView : Gtk.Box {
                 episode_play_requested (e);
             });
             var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5);
-            box.prepend (coverart);
-            box.prepend(list_item);
-            list_box.prepend(box);
-        }
+            box.append(coverart);
+            box.append(list_item);
+            return box;
+                }));
         //list_box.get_children ().foreach ((child) => {
         //    child.get_style_context ().add_class ("episode-list");
         //});
-        main_box.prepend(list_box);
+        main_box.append(list_box);
         main_box.show();
 	}
 }

@@ -34,6 +34,7 @@ executable(
     'src' / 'Utils' / 'Utils.vala',
     'src' / 'Objects' / 'Podcast.vala',
     'src' / 'Objects' / 'Episode.vala',
+    'src' / 'Objects' / 'ObservableArrayList.vala',
     'src' / 'Widgets' / 'CoverArt.vala',
     'src' / 'Widgets' / 'AddPodcastDialog.vala',
     'src' / 'Widgets' / 'EpisodeListItem.vala',
