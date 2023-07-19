@@ -6,7 +6,7 @@
 namespace Leopod {
 	public class Podcast {
 
-	    public Gee.ArrayList<Episode> episodes = null;
+	    public ObservableArrayList<Episode> episodes = null;
 
 		public string remote_art_uri = "";
 		public string local_art_uri = "";
@@ -52,7 +52,7 @@ namespace Leopod {
         }
 
 		public Podcast () {
-		    episodes = new Gee.ArrayList<Episode> ();
+		    episodes = new ObservableArrayList<Episode> ();
             content_type = MediaType.UNKNOWN;
 		}
 

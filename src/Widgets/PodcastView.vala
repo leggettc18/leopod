@@ -16,7 +16,31 @@ public class PodcastView : Gtk.Box {
     public Gtk.ListBox episodes_list;
 
     // Data
-    public Gee.ArrayList<EpisodeListItem> episodes;
+    public ObservableArrayList<EpisodeListItem> episodes;
+
+    private Gtk.Widget CreateEpisodeListItem(GLib.Object object) {
+        Episode episode = (Episode) object;
+        var episode_list_item = new EpisodeListItem (episode);
+        episode_list_item.download_clicked.connect ((episode) => {
+                episode_download_requested (episode);
+                });
+        episode_list_item.delete_requested.connect ((episode) => {
+                episode_delete_requested (episode);
+                });
+        episode_list_item.play_requested.connect ((e) => {
+                episode_play_requested (e);
+                });
+        return episode_list_item;
+    }
+
+    private int EpisodeListItemSortFunc(Gtk.ListBoxRow row1, Gtk.ListBoxRow row2) {
+        EpisodeListItem item1 = (EpisodeListItem) row1.get_child();
+        EpisodeListItem item2 = (EpisodeListItem) row2.get_child();
+
+        return
+        item1.episode.datetime_released.compare(item2.episode.datetime_released)
+        * -1;
+    }
 
     public PodcastView (Podcast podcast) {
         info ("Creating the podcast episodes view");
@@ -35,12 +59,13 @@ public class PodcastView : Gtk.Box {
             vexpand = true,
             margin_start = margin_end = 10,
         };
-        right_scrolled.get_style_context ().add_class ("episode-list-box");
+        //right_scrolled.get_style_context ().add_class ("episode-list-box");
         prepend (left_box);
         episodes_list = new Gtk.ListBox () {
             vexpand = true,
             show_separators = true,
         };
+        episodes_list.set_sort_func(EpisodeListItemSortFunc);
         right_scrolled.set_child (episodes_list);
         right_box.prepend (right_scrolled);
         append(right_box);
@@ -64,19 +89,7 @@ public class PodcastView : Gtk.Box {
         podcast_delete_button.clicked.connect(() => {
             podcast_delete_requested (podcast);
         });
-        foreach (Episode episode in podcast.episodes) {
-            var episode_list_item = new EpisodeListItem (episode);
-            episodes_list.prepend (episode_list_item);
-            episode_list_item.download_clicked.connect ((episode) => {
-                episode_download_requested (episode);
-            });
-            episode_list_item.delete_requested.connect ((episode) => {
-                episode_delete_requested (episode);
-            });
-            episode_list_item.play_requested.connect ((e) => {
-                episode_play_requested (e);
-            });
-        }
+        episodes_list.bind_model(podcast.episodes, CreateEpisodeListItem);
         //var children = episodes_list.observe_children().foreach ((child) => {
          //   child.get_style_context ().add_class ("episode-list");
         //});

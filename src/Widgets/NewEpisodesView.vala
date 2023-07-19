@@ -5,6 +5,7 @@
 
 namespace Leopod {
 
+
 public class NewEpisodesView : Gtk.Box {
     public Gtk.Box main_box;
     public Gtk.ListBox list_box;
@@ -13,6 +14,27 @@ public class NewEpisodesView : Gtk.Box {
     public signal void episode_download_requested (Episode episode);
     public signal void episode_delete_requested (Episode episode);
     public signal void episode_play_requested (Episode episode);
+
+    private Gtk.Widget CreateListBoxForNewEpisode(GLib.Object object) {
+        Episode episode = (Episode) object;
+        var coverart = new CoverArt.with_podcast (episode.parent);
+        var list_item = new EpisodeListItem ((Episode) episode) {
+            desc_lines = 8
+        };
+        list_item.download_clicked.connect ((episode) => {
+                episode_download_requested (episode);
+                });
+        list_item.delete_requested.connect ((episode) => {
+                episode_delete_requested (episode);
+                });
+        list_item.play_requested.connect ((e) => {
+                episode_play_requested (e);
+                });
+        var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5);
+        box.append(coverart);
+        box.append(list_item);
+        return box;
+    }
 
     public NewEpisodesView (Library library) {
         Gtk.ScrolledWindow main_scrolled = new Gtk.ScrolledWindow () {
@@ -33,26 +55,7 @@ public class NewEpisodesView : Gtk.Box {
         };
         main_scrolled.get_style_context ().add_class ("episode-list-box");
 	    ObservableArrayList<Episode> episodes = get_new_episodes(library.podcasts);
-        list_box.bind_model (episodes, ((object) => {
-            Episode episode = (Episode) object;
-            var coverart = new CoverArt.with_podcast (episode.parent);
-            var list_item = new EpisodeListItem ((Episode) episode) {
-                desc_lines = 8
-            };
-            list_item.download_clicked.connect ((episode) => {
-                episode_download_requested (episode);
-            });
-            list_item.delete_requested.connect ((episode) => {
-                episode_delete_requested (episode);
-            });
-            list_item.play_requested.connect ((e) => {
-                episode_play_requested (e);
-            });
-            var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5);
-            box.append(coverart);
-            box.append(list_item);
-            return box;
-                }));
+        list_box.bind_model (episodes, CreateListBoxForNewEpisode);
         //list_box.get_children ().foreach ((child) => {
         //    child.get_style_context ().add_class ("episode-list");
         //});
@@ -94,27 +97,7 @@ public class NewEpisodesView : Gtk.Box {
 	public void rebuild (Library library) {
 	    main_box.remove (list_box);
 	    ObservableArrayList<Episode> episodes = get_new_episodes(library.podcasts);
-        list_box.bind_model (episodes, ((object) => {
-            Episode episode = (Episode) object;
-            var coverart = new CoverArt.with_podcast (episode.parent);
-            var list_item = new EpisodeListItem ((Episode) episode) {
-                desc_lines = 8
-            };
-            list_item.download_clicked.connect ((episode) => {
-                episode_download_requested (episode);
-            });
-            list_item.delete_requested.connect ((episode) => {
-                episode_delete_requested (episode);
-            });
-            list_item.play_requested.connect ((e) => {
-                episode_play_requested (e);
-            });
-            var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5);
-            box.append(coverart);
-            box.append(list_item);
-            return box;
-                }));
-        //list_box.get_children ().foreach ((child) => {
+        list_box.bind_model (episodes, CreateListBoxForNewEpisode);        //list_box.get_children ().foreach ((child) => {
         //    child.get_style_context ().add_class ("episode-list");
         //});
         main_box.append(list_box);
