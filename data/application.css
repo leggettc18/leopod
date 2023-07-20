@@ -6,6 +6,10 @@
     border-bottom: 1px solid #77767b;
 }
 
+.episodes-list {
+    background-color: inherit;
+}
+
 .episode-list-box {
     border: 1px solid #77767b;
 }

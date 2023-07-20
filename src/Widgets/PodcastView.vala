@@ -57,14 +57,16 @@ public class PodcastView : Gtk.Box {
         };
         Gtk.Box right_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 10) {
             vexpand = true,
-            margin_start = margin_end = 10,
+            margin_start = 20,
         };
         //right_scrolled.get_style_context ().add_class ("episode-list-box");
         prepend (left_box);
         episodes_list = new Gtk.ListBox () {
             vexpand = true,
             show_separators = true,
+            margin_end = 10,
         };
+        episodes_list.get_style_context().add_class("episodes-list");
         episodes_list.set_sort_func(EpisodeListItemSortFunc);
         right_scrolled.set_child (episodes_list);
         right_box.prepend (right_scrolled);

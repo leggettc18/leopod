@@ -53,7 +53,7 @@ public class NewEpisodesView : Gtk.Box {
         list_box = new Gtk.ListBox () {
             show_separators = true
         };
-        main_scrolled.get_style_context ().add_class ("episode-list-box");
+        list_box.get_style_context ().add_class("episodes-list");
 	    ObservableArrayList<Episode> episodes = get_new_episodes(library.podcasts);
         list_box.bind_model (episodes, CreateListBoxForNewEpisode);
         //list_box.get_children ().foreach ((child) => {
