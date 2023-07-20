@@ -74,10 +74,15 @@ namespace Leopod {
             buttons_box.show();
 
             episode.download_status_changed.connect (() => {
-                buttons_box.destroy ();
-                buttons_box = create_buttons_box ();
-                append(buttons_box);
-                buttons_box.show();
+                if (episode.current_download_status == DownloadStatus.NOT_DOWNLOADED) {
+                    buttons_box.remove(play_button);
+                    buttons_box.remove(delete_button);
+                    buttons_box.append(download_button);
+                } else {
+                    buttons_box.remove(download_button);
+                    buttons_box.append(play_button);
+                    buttons_box.append(delete_button);
+                }
             });
         }
 
