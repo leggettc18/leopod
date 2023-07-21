@@ -1,7 +1,7 @@
 app-id: com.github.leggettc18.leopod
 
 runtime: io.elementary.Platform
-runtime-version: "6.1"
+runtime-version: "7.1"
 sdk: io.elementary.Sdk
 
 command: com.github.leggettc18.leopod
