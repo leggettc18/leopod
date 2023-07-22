@@ -48,7 +48,7 @@ executable(
     dependencies: [
         dependency('gtk4'),
         dependency('granite-7'),
-        dependency('libsoup-2.4'),
+        dependency('libsoup-3.0'),
         dependency('libxml-2.0'),
         dependency('gee-0.8'),
         dependency('sqlite3'),
