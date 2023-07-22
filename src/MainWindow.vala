@@ -121,8 +121,8 @@ public class MainWindow : Adw.ApplicationWindow {
         };
         welcome.append_button (
             GLib.Icon.new_for_string("list-add-symbolic"),
-            _("Add a new Feed"),
-            _("Provide the web address of a podcast feed.")
+            _(" Add a new Feed"),
+            _(" Provide the web address of a podcast feed.")
         );
 
         //welcome.activated.connect (on_welcome);
