@@ -16,7 +16,7 @@ public class SoupClient {
         var response = soup_session.send_and_read (message);
         check_response_headers (message);
 
-        return (string) response;
+        return (string) response.get_data();
     }
 
     public InputStream request (HttpMethod method, string url) throws Error {
