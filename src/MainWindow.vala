@@ -42,16 +42,24 @@ public class MainWindow : Adw.ApplicationWindow {
         width = 0;
         height = 0;
         var granite_settings = Granite.Settings.get_default ();
-        var gtk_settings = Gtk.Settings.get_default ();
+        var adw_style = Adw.StyleManager.get_default();
         settings = new GLib.Settings ("com.github.leggettc18.leopod");
 
         // Check if user prefers dark theme or not
-        gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
+        if (granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK) {
+            adw_style.set_color_scheme (Adw.ColorScheme.PREFER_DARK);
+        } else {
+            adw_style.set_color_scheme (Adw.ColorScheme.PREFER_LIGHT);
+        }
 
         // Listen for changes to user's dark theme preference
         granite_settings.notify["prefers-color-scheme"].connect (() => {
-            gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme ==
-                Granite.Settings.ColorScheme.DARK;
+            if (granite_settings.prefers_color_scheme ==
+            Granite.Settings.ColorScheme.DARK) {
+                adw_style.set_color_scheme (Adw.ColorScheme.PREFER_DARK);
+            } else {
+                adw_style.set_color_scheme (Adw.ColorScheme.PREFER_LIGHT);
+            }
         });
 
         this.controller = controller;
