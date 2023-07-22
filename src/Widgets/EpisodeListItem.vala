@@ -108,7 +108,7 @@ namespace Leopod {
             });
 
             download_button = new Gtk.Button.from_icon_name (
-                "folder-download-symbolic"
+                "document-save-symbolic"
             ){
                 vexpand = false,
             	tooltip_text = _("Download"),

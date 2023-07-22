@@ -70,7 +70,7 @@ public class MainWindow : Adw.ApplicationWindow {
                 _("Add Podcast")
             )
         };
-        var download_button = new Gtk.Button.from_icon_name("folder-download-symbolic") {
+        var download_button = new Gtk.Button.from_icon_name("document-save-symbolic") {
             tooltip_text = _("Downloads")
         };
         download_button.clicked.connect (show_downloads_popover);
