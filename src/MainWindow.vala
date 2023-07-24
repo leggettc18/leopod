@@ -199,9 +199,10 @@ public class MainWindow : Adw.ApplicationWindow {
 
         // Actions
 
-        var playpause_action = new SimpleAction("playpause", null);
+        var playpause_action = new SimpleAction("play_pause", null);
         this.controller.app.add_action(playpause_action);
-        this.controller.app.set_accels_for_action ("app.playpause", {" "});
+        this.controller.app.set_accels_for_action ("app.play_pause", {"k",
+        "space"});
         playpause_action.activate.connect (() => {
             this.controller.play_pause ();
         });

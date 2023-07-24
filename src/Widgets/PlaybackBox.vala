@@ -89,9 +89,9 @@ public class PlaybackBox : Gtk.Box {
         playpause_button = new Gtk.Button.from_icon_name (
             "media-playback-start-symbolic"
         ) {
-            action_name = "app.playpause",
+            action_name = "app.play_pause",
             tooltip_markup = Granite.markup_accel_tooltip (
-                app.get_actions_for_accel ("app.playpause"),
+                app.get_accels_for_action ("app.play_pause"),
                 _("Play/Pause")
             ),
             has_frame = false
