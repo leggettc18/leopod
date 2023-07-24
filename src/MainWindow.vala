@@ -329,11 +329,16 @@ public class MainWindow : Adw.ApplicationWindow {
     }
     
     public void on_download_requested (Episode episode) {
-        DownloadDetailBox detail_box = controller.library.download_episode (episode);
-        if (detail_box != null) {
-            downloads.add_download (detail_box);
-            detail_box.show();
-            downloads.show();
+        try {
+            DownloadDetailBox detail_box = controller.library.download_episode (episode);
+
+            if (detail_box != null) {
+                downloads.add_download (detail_box);
+                detail_box.show();
+                downloads.show();
+            }
+        } catch {
+            critical("LeopodLibraryError");
         }
     }
 
