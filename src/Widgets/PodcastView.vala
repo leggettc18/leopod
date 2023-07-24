@@ -65,6 +65,7 @@ public class PodcastView : Gtk.Box {
             vexpand = true,
             show_separators = true,
             margin_end = 10,
+            selection_mode = Gtk.SelectionMode.NONE,
         };
         episodes_list.get_style_context().add_class("episodes-list");
         episodes_list.set_sort_func(EpisodeListItemSortFunc);
