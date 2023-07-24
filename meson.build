@@ -53,7 +53,7 @@ executable(
         dependency('gee-0.8'),
         dependency('sqlite3'),
         dependency('libadwaita-1'),
-        dependency('gstreamer-1.0')
+        dependency('gstreamer-1.0'),
     ],
     install: true
 )
