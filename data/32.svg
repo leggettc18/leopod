@@ -3,8 +3,8 @@
 
 <svg
    width="31.999998"
-   height="34.065781"
-   viewBox="0 0 8.4666662 9.0132357"
+   height="31.999998"
+   viewBox="0 0 8.4666662 8.4666642"
    version="1.1"
    id="svg5"
    inkscape:version="1.1 (c68e22c387, 2021-05-23)"
@@ -26,24 +26,30 @@
      units="px"
      inkscape:snap-center="true"
      inkscape:zoom="6.3359375"
-     inkscape:cx="14.678175"
+     inkscape:cx="14.75709"
      inkscape:cy="18.071517"
      inkscape:window-width="1920"
-     inkscape:window-height="1019"
+     inkscape:window-height="1011"
      inkscape:window-x="0"
-     inkscape:window-y="30"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer2"
      fit-margin-top="5.3"
      fit-margin-left="2"
      fit-margin-right="2"
      fit-margin-bottom="5.2"
-     lock-margins="false">
+     lock-margins="false"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1">
     <inkscape:grid
        type="xygrid"
        id="grid1111"
        originx="-12.964581"
-       originy="-12.161471" />
+       originy="-12.161471"
+       spacingy="1"
+       spacingx="1"
+       units="px"
+       visible="true" />
   </sodipodi:namedview>
   <defs
      id="defs2" />
