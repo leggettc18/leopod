@@ -580,7 +580,7 @@ namespace Leopod {
          		            write_episode_to_database (episode);
  		                });
  		                // Download the episode
- 		                remote_episode.copy_async (
+ 		                remote_episode.copy_async.begin (
  		                    local_episode,
  		                    FileCopyFlags.OVERWRITE,
  		                    GLib.Priority.DEFAULT,
