@@ -13,7 +13,7 @@ public class PodcastView : Gtk.Box {
     public signal void podcast_delete_requested (Podcast podcast);
 
     // Widgets
-    public Gtk.ListBox episodes_list;
+    public Gtk.FlowBox episodes_list;
 
     // Data
     public ObservableArrayList<EpisodeListItem> episodes;
@@ -33,7 +33,7 @@ public class PodcastView : Gtk.Box {
         return episode_list_item;
     }
 
-    private int EpisodeListItemSortFunc(Gtk.ListBoxRow row1, Gtk.ListBoxRow row2) {
+    private int EpisodeListItemSortFunc(Gtk.FlowBoxChild row1, Gtk.FlowBoxChild row2) {
         EpisodeListItem item1 = (EpisodeListItem) row1.get_child();
         EpisodeListItem item2 = (EpisodeListItem) row2.get_child();
 
@@ -47,10 +47,10 @@ public class PodcastView : Gtk.Box {
         // Create the view that will display all the episodes of a given podcast.
         orientation = Gtk.Orientation.HORIZONTAL;
         spacing = 5;
-        Gtk.Box left_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
-            vexpand = false,
-            margin_start = margin_end = margin_top = margin_bottom = 20
-        };
+        //Gtk.Box left_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
+        //    vexpand = false,
+        //    margin_start = margin_end = margin_top = margin_bottom = 20
+        //};
         Gtk.ScrolledWindow right_scrolled = new Gtk.ScrolledWindow () {
             vexpand = true,
             hexpand = true,
@@ -60,12 +60,12 @@ public class PodcastView : Gtk.Box {
             margin_start = 20,
         };
         //right_scrolled.get_style_context ().add_class ("episode-list-box");
-        prepend (left_box);
-        episodes_list = new Gtk.ListBox () {
+        //prepend (left_box);
+        episodes_list = new Gtk.FlowBox () {
             vexpand = true,
-            show_separators = true,
             margin_end = 10,
             selection_mode = Gtk.SelectionMode.NONE,
+            homogeneous = true,
         };
         episodes_list.add_css_class(Granite.STYLE_CLASS_RICH_LIST);
         episodes_list.set_sort_func(EpisodeListItemSortFunc);
@@ -73,11 +73,11 @@ public class PodcastView : Gtk.Box {
         right_box.prepend (right_scrolled);
         append(right_box);
         CoverArt coverart = new CoverArt.with_podcast (podcast);
-        left_box.prepend(coverart);
-        left_box.append(new Gtk.Label (podcast.description) {
-            wrap = true,
-            max_width_chars = 25
-        });
+        //left_box.prepend(coverart);
+        //left_box.append(new Gtk.Label (podcast.description) {
+        //    wrap = true,
+        //    max_width_chars = 25
+        //});
         Gtk.Button podcast_delete_button = new Gtk.Button.with_label
         (_("Unsubscribe")) {
             tooltip_text = _("Unsubscribe from Podcast"),
@@ -88,7 +88,7 @@ public class PodcastView : Gtk.Box {
         };
         podcast_delete_box.append (podcast_delete_button);
         podcast_delete_button.get_style_context ().add_class ("danger");
-        left_box.append(podcast_delete_box);
+        //left_box.append(podcast_delete_box);
         podcast_delete_button.clicked.connect(() => {
             podcast_delete_requested (podcast);
         });

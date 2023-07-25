@@ -10,12 +10,20 @@
     background-color: inherit;
 }
 
+.episode-button {
+    background-color: #7239b3;
+    color: #fafafa;
+}
+.padded {
+    padding: 10px;
+}
+
 .episode-list-box {
     border: 1px solid #77767b;
 }
 
 .danger {
-    background-color: #e01b24;
+    background-color: #c6262e;
     color: white;
 }
 

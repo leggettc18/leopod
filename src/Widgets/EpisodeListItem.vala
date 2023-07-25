@@ -34,19 +34,25 @@ namespace Leopod {
 
         // Constructors
         public EpisodeListItem (Episode episode) {
-//            margin = 10;
-            halign = Gtk.Align.FILL;
+            margin_top = margin_bottom = margin_start = margin_end = 5;
             valign = Gtk.Align.CENTER;
-            vexpand = false;
+            css_classes = { Granite.STYLE_CLASS_CARD , "padded" };
+            vexpand = true;
+            hexpand = true;
+            halign = Gtk.Align.FILL;
+            valign = Gtk.Align.FILL;
+            orientation = Gtk.Orientation.VERTICAL;
             this.episode = episode;
             title_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
                 vexpand = true,
-                margin_top = margin_bottom = margin_start = margin_end = 5
+                halign = Gtk.Align.FILL,
+                margin_top = margin_bottom = margin_start = margin_end = 5,
             };
             title = new Gtk.Label (episode.title) {
                 vexpand = false,
                 hexpand = true,
-                halign = Gtk.Align.START,
+                halign = Gtk.Align.FILL,
+                max_width_chars = 30,
                 ellipsize = Pango.EllipsizeMode.END
             };
             title.get_style_context ().add_class ("h3");
@@ -58,7 +64,7 @@ namespace Leopod {
             desc_text = condense_spaces.replace (desc_text, -1, 0, " ").strip ();
             desc = new Gtk.Label (desc_text) {
             	valign = Gtk.Align.START,
-            	max_width_chars = 75,
+                max_width_chars = 30,
             	ellipsize = Pango.EllipsizeMode.END,
             	wrap = true,
             	use_markup = true,
@@ -70,8 +76,7 @@ namespace Leopod {
             prepend (title_box);
 
             buttons_box = create_buttons_box ();
-            append(buttons_box);
-            buttons_box.show();
+            append (buttons_box);
 
             episode.download_status_changed.connect (() => {
                 if (episode.current_download_status == DownloadStatus.NOT_DOWNLOADED) {
@@ -91,17 +96,22 @@ namespace Leopod {
                 margin_top = 10,
                 margin_bottom = 10,
                 vexpand = false,
+                hexpand = true,
+                halign = Gtk.Align.FILL,
             };
 
             info_button = new Gtk.Button.from_icon_name (
                 "dialog-information-symbolic"
             ) {
                 tooltip_text = _("Description"),
-                has_frame = false,
+                hexpand = true,
+                has_frame = true,
+                css_classes = { "episode-button" }
             };
 
             ArtworkPopover show_notes_popover = new ArtworkPopover (info_button);
             show_notes_popover.show_notes = episode.description;
+            show_notes_popover.title = episode.title;
 
             info_button.clicked.connect (() => {
                 show_notes_popover.show();
@@ -110,9 +120,10 @@ namespace Leopod {
             download_button = new Gtk.Button.from_icon_name (
                 "folder-download-symbolic"
             ){
-                vexpand = false,
+                hexpand = true,
             	tooltip_text = _("Download"),
-                has_frame = false,
+                has_frame = true,
+                css_classes = { "episode-button" },
             };
 
             download_button.clicked.connect (() => {
@@ -123,7 +134,9 @@ namespace Leopod {
                 "media-playback-start-symbolic"
             ){
             	tooltip_text = _("Play"),
-                has_frame = false,
+                hexpand = true,
+                has_frame = true,
+                css_classes = { "episode-button" },
             };
             play_button.clicked.connect (() => {
                 play_requested (episode);
@@ -133,7 +146,9 @@ namespace Leopod {
                 "user-trash-symbolic"
             ){
             	tooltip_text = _("Delete"),
-                has_frame = false,
+                hexpand = true,
+                has_frame = true,
+                css_classes = { "episode-button" },
             };
 
             delete_button.clicked.connect (() => {
