@@ -67,7 +67,7 @@ public class PodcastView : Gtk.Box {
             margin_end = 10,
             selection_mode = Gtk.SelectionMode.NONE,
         };
-        episodes_list.get_style_context().add_class("episodes-list");
+        episodes_list.add_css_class(Granite.STYLE_CLASS_RICH_LIST);
         episodes_list.set_sort_func(EpisodeListItemSortFunc);
         right_scrolled.set_child (episodes_list);
         right_box.prepend (right_scrolled);

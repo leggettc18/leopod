@@ -5,11 +5,11 @@
 
 namespace Leopod {
 
-public class MainWindow : Adw.ApplicationWindow {
+public class MainWindow : Gtk.ApplicationWindow {
     // Core Components
     private Controller controller;
     private GLib.Settings settings;
-    public Adw.HeaderBar header_bar;
+    public Gtk.HeaderBar header_bar;
     public Gtk.FlowBox all_flowbox;
     public Gtk.ScrolledWindow all_scrolled;
     public PodcastView episodes_box;
@@ -38,28 +38,19 @@ public class MainWindow : Adw.ApplicationWindow {
 
 
     public MainWindow (Controller controller) {
-        Adw.init ();
         width = 0;
         height = 0;
         var granite_settings = Granite.Settings.get_default ();
-        var adw_style = Adw.StyleManager.get_default();
+        var gtk_settings = Gtk.Settings.get_default ();
         settings = new GLib.Settings ("com.github.leggettc18.leopod");
 
         // Check if user prefers dark theme or not
-        if (granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK) {
-            adw_style.set_color_scheme (Adw.ColorScheme.PREFER_DARK);
-        } else {
-            adw_style.set_color_scheme (Adw.ColorScheme.PREFER_LIGHT);
-        }
-
+        gtk_settings.gtk_application_prefer_dark_theme =
+            granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
         // Listen for changes to user's dark theme preference
         granite_settings.notify["prefers-color-scheme"].connect (() => {
-            if (granite_settings.prefers_color_scheme ==
-            Granite.Settings.ColorScheme.DARK) {
-                adw_style.set_color_scheme (Adw.ColorScheme.PREFER_DARK);
-            } else {
-                adw_style.set_color_scheme (Adw.ColorScheme.PREFER_LIGHT);
-            }
+                gtk_settings.gtk_application_prefer_dark_theme =
+                    granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
         });
 
         this.controller = controller;
@@ -71,21 +62,24 @@ public class MainWindow : Adw.ApplicationWindow {
         this.controller.app.add_action (add_podcast_action);
         this.controller.app.set_accels_for_action ("app.add-podcast", {"<Control>a"});
 
-        var add_podcast_button = new Gtk.Button.from_icon_name("list-add-symbolic") {
+        var add_podcast_button = new Gtk.Button.from_icon_name("list-add") {
             action_name = "app.add-podcast",
             tooltip_markup = Granite.markup_accel_tooltip(
                 this.controller.app.get_accels_for_action ("app.add-podcast"),
                 _("Add Podcast")
             )
         };
-        var download_button = new Gtk.Button.from_icon_name("document-save-symbolic") {
+        var download_button = new Gtk.Button.from_icon_name("browser-download") {
             tooltip_text = _("Downloads")
         };
         download_button.clicked.connect (show_downloads_popover);
 
-        header_bar = new Adw.HeaderBar () {
-            show_end_title_buttons = true
+        header_bar = new Gtk.HeaderBar (){ 
+            show_title_buttons = false,
         };
+        header_bar.add_css_class(Granite.STYLE_CLASS_FLAT);
+        header_bar.pack_start(new Gtk.WindowControls (Gtk.PackType.START));
+        header_bar.pack_end(new Gtk.WindowControls (Gtk.PackType.END));
         header_bar.pack_end (add_podcast_button);
         header_bar.pack_end (download_button);
 
@@ -127,13 +121,13 @@ public class MainWindow : Adw.ApplicationWindow {
         ) {
             description =  _("Build your library by adding podcasts.")
         };
-        welcome.append_button (
-            GLib.Icon.new_for_string("list-add-symbolic"),
+        var welcome_add_action = welcome.append_button (
+            GLib.Icon.new_for_string("list-add"),
             _(" Add a new Feed"),
             _(" Provide the web address of a podcast feed.")
         );
 
-        //welcome.activated.connect (on_welcome);
+        welcome_add_action.clicked.connect (on_welcome);
 
         info ("Creating All Scrolled view");
         // Create the all_scrolled view, which displays all podcasts in a grid.
@@ -249,7 +243,8 @@ public class MainWindow : Adw.ApplicationWindow {
 
         main_layout.attach (playback_box, 0, 2);
 
-        set_content(main_layout);
+        titlebar = new Gtk.Grid () { visible = false };
+        child = main_layout;
 
         add_podcast.response.connect (on_add_podcast);
     }
@@ -397,11 +392,9 @@ public class MainWindow : Adw.ApplicationWindow {
     /*
      * Handles responses from the welcome screen
      */
-    private void on_welcome (int index) {
+    private void on_welcome (Gtk.Button button) {
         // Add podcast from freed
-        if (index == 0) {
-            on_add_podcast_clicked ();
-        }
+        on_add_podcast_clicked ();
     }
 
     private void on_add_podcast_clicked () {
@@ -416,9 +409,9 @@ public class MainWindow : Adw.ApplicationWindow {
     public void on_add_podcast (int response_id) {
         if (response_id == Gtk.ResponseType.ACCEPT) {
             controller.add_podcast(add_podcast.podcast_uri_entry.get_text ());
+            switch_visible_page (main_box);
         }
         add_podcast.destroy ();
-        switch_visible_page (main_box);
     }
 
     /*

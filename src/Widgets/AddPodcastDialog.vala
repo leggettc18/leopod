@@ -19,22 +19,22 @@ namespace Leopod {
             this.podcast_uri_entry = new Gtk.Entry () {
                 width_request = 300,
             };
-            var add_label = new Gtk.Label.with_mnemonic(_("Podcast RSS Feed URL"));
-            add_label.mnemonic_widget = this.podcast_uri_entry;
+            var add_label = new Granite.HeaderLabel (_("Podcast RSS Feed URL"));
 
             // Layout Widgets
             var hbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 12) {
                 margin_start = 12,
-                margin_end = 12
+                margin_end = 12,
+                margin_top = 12,
             };
-            hbox.prepend(add_label);
-            hbox.prepend(this.podcast_uri_entry);
+            hbox.append(add_label);
+            hbox.append(this.podcast_uri_entry);
             var content = get_content_area ();
-            content.prepend(hbox);
+            content.append(hbox);
 
             // Add buttons to button area at the bottom
-            add_button (_("Cancel"), Gtk.ResponseType.CANCEL);
             this.add_podcast_button = add_button (_("Add"), Gtk.ResponseType.ACCEPT);
+            add_button (_("Cancel"), Gtk.ResponseType.CANCEL);
             //this.add_podcast_button.get_style_context ().add_class (Gtk.STYLE_CLASS_SUGGESTED_ACTION);
             this.add_podcast_button.sensitive = false;
 

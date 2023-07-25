@@ -94,7 +94,7 @@ namespace Leopod {
             };
 
             info_button = new Gtk.Button.from_icon_name (
-                "info-symbolic"
+                "dialog-information-symbolic"
             ) {
                 tooltip_text = _("Description"),
                 has_frame = false,
@@ -108,7 +108,7 @@ namespace Leopod {
             });
 
             download_button = new Gtk.Button.from_icon_name (
-                "document-save-symbolic"
+                "folder-download-symbolic"
             ){
                 vexpand = false,
             	tooltip_text = _("Download"),

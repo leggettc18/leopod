@@ -52,7 +52,6 @@ executable(
         dependency('libxml-2.0'),
         dependency('gee-0.8'),
         dependency('sqlite3'),
-        dependency('libadwaita-1'),
         dependency('gstreamer-1.0'),
     ],
     install: true
