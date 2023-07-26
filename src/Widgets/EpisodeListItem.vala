@@ -36,7 +36,7 @@ namespace Leopod {
         public EpisodeListItem (Episode episode) {
             margin_top = margin_bottom = margin_start = margin_end = 5;
             valign = Gtk.Align.CENTER;
-            css_classes = { Granite.STYLE_CLASS_CARD , "padded" };
+            css_classes = { Granite.STYLE_CLASS_CARD, Granite.STYLE_CLASS_ROUNDED, "padded" };
             vexpand = true;
             hexpand = true;
             halign = Gtk.Align.FILL;
