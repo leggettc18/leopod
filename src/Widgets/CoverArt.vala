@@ -66,34 +66,11 @@ namespace Leopod {
 	        "~",
 	        GLib.Environment.get_home_dir ()
 	    );
-
-         string podcast_path = local_library_path + "/%s".printf (
-	        podcast.name.replace ("%27", "'").replace ("%", "_")
-	    );
-
-	    // Create a directory for downloads and artwork caching
-	    GLib.DirUtils.create_with_parents (podcast_path, 0775);
-
-	    // Locally cache the album art if necessary
-	    try {
-	        // Don't user the coverart_path getter, use the remote_uri
-	        GLib.File remote_art = GLib.File.new_for_uri (podcast.remote_art_uri);
-	        if (remote_art.query_exists ()) {
-	            // If the remote art exists, set path for new file and create object for the local file
-	            string art_path = podcast_path + "/" + remote_art.get_basename ().replace ("%", "_");
-	            info (art_path);
-	            GLib.File local_art = GLib.File.new_for_path (art_path);
-
-	            if (!local_art.query_exists ()) {
-	                // Cache the art
-	                remote_art.copy (local_art, FileCopyFlags.NONE);
-	            }
-	            // Mark the local path on the podcast
-	            podcast.local_art_uri = "file://" + art_path;
-	        }
-	    } catch (Error e) {
-	        error ("unable to save a local copy of album art. %s", e.message);
-	    }
-     }
+        try {
+            podcast.cache_album_art (local_library_path);
+        } catch (Error e) {
+            error ("unable to save a local copy of album art. %s", e.message);
+        }
+    }
 
 }

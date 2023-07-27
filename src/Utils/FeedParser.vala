@@ -26,29 +26,39 @@ namespace Leopod {
         private Podcast create_podcast_from_queue () {
 
             // Create the new podcast object
-            Podcast podcast = new Podcast ();
+            Podcast podcast = null;
+            ObservableArrayList<Episode> episodes =
+                new ObservableArrayList<Episode> ();
 
             bool found_podcast_title = false;
             bool found_podcast_link = false;
             bool found_cover_art = false;
             bool found_main_description = false;
+            bool found_license = false;
+            bool type_found = false;
+
+            string name = null;
+            string feed_uri = null;
+            string podcast_description = null;
+            string remote_art_uri = null;
+            License license = License.UNKNOWN;
+            MediaType content_type = MediaType.UNKNOWN;
 
             int i = 0;
 
             while (i < queue.size) {
                 string current = queue[i];
-
                 // Title can be ambigous, so only accept the first one
                 if (current == "title" && found_podcast_title == false) {
                     i++;
-                    podcast.name = queue[i];
+                    name = queue[i];
                     found_podcast_title = true;
                     i++;
                 }
                 else if (current == "new-feed-url" && found_podcast_link == false) {
 
                     i++;
-                    podcast.feed_uri = queue[i];
+                    feed_uri = queue[i];
                     found_podcast_link = true;
                     i++;
                 }
@@ -70,7 +80,7 @@ namespace Leopod {
                     }
 
                     if (store_ref) {
-                        podcast.feed_uri = href;
+                        feed_uri = href;
                         found_podcast_link = true;
                     }
 
@@ -79,7 +89,7 @@ namespace Leopod {
 
                 else if (current == "description" && found_main_description == false) {
                     i++;
-                    podcast.description = queue[i];
+                    podcast_description = queue[i];
                     found_main_description = true;
                     i++;
                 }
@@ -89,7 +99,7 @@ namespace Leopod {
                         // When there is an iTunes image, queue[i + 1] is empty
                         if (queue[i + 1] == "" || found_cover_art == false) {
                             i += 3;
-                            podcast.remote_art_uri = queue[i];
+                            remote_art_uri = queue[i];
                         }
                     } else if (found_cover_art == false) {
                         while (queue[i] != "url") {
@@ -97,7 +107,7 @@ namespace Leopod {
                         }
 
                         i++;
-                        podcast.remote_art_uri = queue[i];
+                        remote_art_uri = queue[i];
                     }
 
                     found_cover_art = true;
@@ -106,8 +116,9 @@ namespace Leopod {
                 else if (current == "license") {
                     i++;
                     if (queue[i].up ().contains ("CREATIVE")) {
-                        podcast.license = License.CC;
+                        license = License.CC;
                     }
+                    found_license = true;
                     i++;
                 }
 
@@ -134,7 +145,6 @@ namespace Leopod {
                         }
                         else if (next_item_in_queue == "enclosure") {
                             bool uri_found = false;
-                            bool type_found = false;
 
                             // Because different podcasts enclose information differently,
                             // we must individually search for both the uri and the type
@@ -153,15 +163,15 @@ namespace Leopod {
                                     i++;
 
                                     string typestring = queue[i].slice (0, 5);
-                                    if (podcast.content_type == MediaType.UNKNOWN) {
+                                    if (content_type == MediaType.UNKNOWN) {
                                         if (typestring == "audio") {
-                                            podcast.content_type = MediaType.AUDIO;
+                                            content_type = MediaType.AUDIO;
                                         }
                                         else if (typestring == "video") {
-                                            podcast.content_type = MediaType.VIDEO;
+                                            content_type = MediaType.VIDEO;
                                         }
                                         else {
-                                            podcast.content_type = MediaType.UNKNOWN;
+                                            content_type = MediaType.UNKNOWN;
                                         }
 
                                     }
@@ -203,7 +213,7 @@ namespace Leopod {
                     Episode episode = new Episode(
                         title, uri, date_released, description, guid, link
                     );
-                    podcast.add_episode (episode);
+                    episodes.add(episode);
 
                 }
 
@@ -212,6 +222,15 @@ namespace Leopod {
                     i++;
                 }
             }
+
+            if (podcast == null) {
+                podcast = new Podcast(
+                    name, podcast_description, feed_uri, remote_art_uri,
+                    license, content_type
+                );
+            }
+            
+            podcast.add_episodes (episodes);
 
             return podcast;
         }
@@ -565,28 +584,22 @@ namespace Leopod {
                                         uri = queue[i];
                                         uri_found = true;
 
-                                    }
-                                    else if (queue[i] == "type") {
+                                    } else if (queue[i] == "type") {
                                         i++;
 
                                         string typestring = queue[i].slice (0, 5);
                                         if (podcast.content_type == MediaType.UNKNOWN) {
                                             if (typestring == "audio") {
                                                 podcast.content_type = MediaType.AUDIO;
-                                            }
-                                            else if (typestring == "video") {
+                                            } else if (typestring == "video") {
                                                 podcast.content_type = MediaType.VIDEO;
-                                            }
-                                            else {
+                                            } else {
                                                 podcast.content_type = MediaType.UNKNOWN;
                                             }
-
                                         }
-
                                         type_found = true;
                                     }
                                 }
-
                             }
                             else if (next_item_in_queue == "pubDate") {
                                 i++;
@@ -619,7 +632,6 @@ namespace Leopod {
                         Episode episode = new Episode(
                             title, uri, date_released, description, guid, link
                         );
-                        podcast.add_episode(episode);
 
                         if (previous_newest_episode != null) {
                             if (episode.title == previous_newest_episode.title.replace ("%27", "'")) {
@@ -643,7 +655,7 @@ namespace Leopod {
 
             // Keep in mind that the newest episode is on the bottom, so go in reverse order
             for (int index = new_episodes.size - 1; index >= 0; index--) {
-                podcast.episodes.add (new_episodes[index]);
+                podcast.add_episode (new_episodes[index]);
             }
 
             int episodes_added = new_episodes.size;
@@ -659,15 +671,15 @@ namespace Leopod {
     /*
      * This method collects the episodes from atom xml file.
      */
-    private Gee.ArrayList<Episode> create_podcast_from_queue_atom_new_episodes (
+    private ObservableArrayList<Episode> create_podcast_from_queue_atom_new_episodes (
         Xml.Node* node,
         Podcast podcast,
         Episode? previous_newest_episode
     ) {
 
         bool previous_found = false;
-        Gee.ArrayList<Episode> new_episodes = new Gee.ArrayList<Episode> (); //array of new episodes
-        Gee.ArrayList<Episode> episodes = new Gee.ArrayList<Episode> (); // array of episodes from xml
+        ObservableArrayList<Episode> new_episodes = new ObservableArrayList<Episode> (); //array of new episodes
+        ObservableArrayList<Episode> episodes = new ObservableArrayList<Episode> (); // array of episodes from xml
 
         /* Create the new podcast object */
         for (Xml.Node* iter = node->children; iter != null ; iter = iter->next) {
@@ -695,7 +707,6 @@ namespace Leopod {
                         GLib.Time tm = GLib.Time ();
                         tm.strptime ( iterEntry->get_content (), "%Y-%m-%dT%H:%M:%S%Z");
                         date_released=tm.format ("%a, %d %b %Y %H:%M:%S %Z");
-                        //entry.set_datetime_from_pubdate ();
                         break;
                     case "link":
                         for (Xml.Attr* propEntry = iterEntry->properties; propEntry != null; propEntry = propEntry->next) {  // vala-lint=line-length
@@ -703,9 +714,10 @@ namespace Leopod {
                             if (attr_name == "href") {
                                 uri=propEntry->children->content;
                                 link = uri;
-                            } else if (attr_name == "type" && podcast != null) {
-                                podcast.content_type = MediaType.UNKNOWN;
-
+                            } else if (
+                                attr_name == "type" && podcast != null
+                                && podcast.content_type != MediaType.UNKNOWN
+                            ) {
                                 if (propEntry->children->content.contains ("audio/")) {
                                     podcast.content_type = MediaType.AUDIO;
                                 } else if (propEntry->children->content.contains ("video/")) {
@@ -724,7 +736,6 @@ namespace Leopod {
             Episode entry = new Episode(
                 title, uri, date_released, description, guid, link
             );
-            podcast.add_episode (entry);
 
             episodes.add (entry);
         }
@@ -752,25 +763,33 @@ namespace Leopod {
      */
     private Podcast create_podcast_from_queue_atom ( Xml.Node* node) {
 
-        Podcast podcast = new Podcast ();
+        Podcast podcast = null;
+        ObservableArrayList<Episode> episodes = new ObservableArrayList<Episode>();
+
+        string name = null;
+        string description = null;
+        string feed_uri = null;
+        string remote_art_uri = null;
+        License license = License.UNKNOWN;
+        MediaType content_type = MediaType.UNKNOWN;
 
         for (Xml.Node* iter = node->children; iter != null; iter = iter->next) {
             /* Assigning podcast properties... */
             switch (iter->name) {
                 case "title":
-                    podcast.name= iter->get_content ();
+                    name= iter->get_content ();
                     break;
                 case "subtitle":
-                    podcast.description= iter->get_content ();
+                    description= iter->get_content ();
                     break;
                 case "logo":
-                    podcast.remote_art_uri= iter->get_content ();
+                    remote_art_uri= iter->get_content ();
                     break;
                 case "rights":
                     if (iter->get_content ().index_of ("cc-") == 0) {
-                        podcast.license = License.CC;
+                        license = License.CC;
                     } else {
-                        podcast.license = License.UNKNOWN;
+                        license = License.UNKNOWN;
                     }
                     break;
                 case "link":
@@ -785,11 +804,11 @@ namespace Leopod {
             }
         }
 
-        Gee.ArrayList<Episode> episodes = create_podcast_from_queue_atom_new_episodes (node, podcast, null);
+        podcast = new Podcast(name, description, feed_uri, remote_art_uri, license, content_type);
 
-        foreach (Episode episode in episodes) {
-            podcast.episodes.add (episode);
-        }
+        episodes = create_podcast_from_queue_atom_new_episodes (node, podcast, null);
+
+        podcast.add_episodes(episodes);
 
         return podcast;
     }

@@ -15,14 +15,14 @@ namespace Leopod {
 		public string title { get; construct; }
 		public string description { get; construct; }
 		public string uri { get; construct set; }
-		public string local_uri { get; set; }
-		public string podcast_uri { get; set; }
-		public int64 last_played_position { get; set; }
-		public Podcast parent { get; set; }
+		public string local_uri { get; construct set; }
+		public string podcast_uri { get; construct set; }
+		public int64 last_played_position { get; construct set; }
+		public Podcast parent { get; construct set; }
 		public DateTime datetime_released { get; construct; }
 
-		public EpisodeStatus status { get; set; }
-		public DownloadStatus current_download_status { get; set; }
+		public EpisodeStatus status { get; construct set; }
+		public DownloadStatus current_download_status { get; construct set; }
 
 		public signal void download_status_changed ();
 

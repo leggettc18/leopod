@@ -29,8 +29,8 @@ namespace Leopod {
 
 		    leopod_config_dir =
 		        GLib.Environment.get_user_config_dir () + """/leopod""";
-		    this.db_directory = leopod_config_dir + """/database""";
-		    this.db_location = this.db_directory + """/leopod.db""";
+            this.db_directory = leopod_config_dir + """/database""";
+            this.db_location = this.db_directory + """/leopod.db""";
 		    info (db_location);
 
 		    podcasts = new Gee.ArrayList<Podcast> ();
@@ -149,50 +149,19 @@ namespace Leopod {
                     Episode episode = episode_from_row (stmt);
                     episode.parent = podcast;
 
-                    podcast.episodes.add (episode);
+                    podcast.add_episode (episode);
                 }
                 stmt.reset ();
             }
         }
 
         public Podcast podcast_from_row (Sqlite.Statement stmt) {
-            Podcast podcast = new Podcast ();
-
-            for (int i = 0; i < stmt.column_count (); i++) {
-                string column_name = stmt.column_name (i) ?? "<none>";
-                string val = stmt.column_text (i) ?? "<none>";
-
-                if (column_name == "name") {
-                    podcast.name = val;
-                } else if (column_name == "feed_uri") {
-                    podcast.feed_uri = val;
-                } else if (column_name == "album_art_url") {
-                    podcast.remote_art_uri = val;
-                } else if (column_name == "album_art_local_uri") {
-                    podcast.local_art_uri = val;
-                } else if (column_name == "description") {
-                    podcast.description = val;
-                } else if (column_name == "content_type") {
-                    if (val == "audio") {
-                        podcast.content_type = MediaType.AUDIO;
-                    } else if (val == "video") {
-                        podcast.content_type = MediaType.VIDEO;
-                    } else {
-                        podcast.content_type = MediaType.UNKNOWN;
-                    }
-                } else if (column_name == "license") {
-                    if (val == "cc") {
-                        podcast.license = License.CC;
-                    } else if (val == "public") {
-                        podcast.license = License.PUBLIC;
-                    } else if (val == "reserved") {
-                        podcast.license = License.RESERVED;
-                    } else {
-                        podcast.license = License.UNKNOWN;
-                    }
-                }
+            Podcast podcast = null;
+            try {
+                podcast = new Podcast.from_sqlite_row (stmt);
+            } catch (PodcastConstructionError e) {
+                critical (e.message);
             }
-
             return podcast;
         }
 
@@ -200,7 +169,7 @@ namespace Leopod {
             Episode episode = null;
             try {
                 episode = new Episode.from_sqlite_row (stmt);
-            } catch(EpisodeConstructionError e) {
+            } catch (EpisodeConstructionError e) {
                 critical(e.message);
             }
             return episode;
@@ -211,32 +180,11 @@ namespace Leopod {
          * already exist.
          */
          public void cache_album_art (Podcast podcast) {
-            string podcast_path = local_library_path + "/%s".printf (
- 		        podcast.name.replace ("%27", "'").replace ("%", "_")
- 		    );
-
- 		    // Create a directory for downloads and artwork caching
- 		    GLib.DirUtils.create_with_parents (podcast_path, 0775);
-
- 		    // Locally cache the album art if necessary
- 		    try {
- 		        // Don't user the coverart_path getter, use the remote_uri
- 		        GLib.File remote_art = GLib.File.new_for_uri (podcast.remote_art_uri);
- 		        if (remote_art.query_exists ()) {
- 		            // If the remote art exists, set path for new file and create object for the local file
- 		            string art_path = podcast_path + "/" + remote_art.get_basename ().replace ("%", "_");
- 		            GLib.File local_art = GLib.File.new_for_path (art_path);
-
- 		            if (!local_art.query_exists ()) {
- 		                // Cache the art
- 		                remote_art.copy (local_art, FileCopyFlags.NONE);
- 		            }
- 		            // Mark the local path on the podcast
- 		            podcast.local_art_uri = "file://" + art_path;
- 		        }
- 		    } catch (Error e) {
+            try {
+                podcast.cache_album_art (local_library_path);
+            } catch (Error e) {
  		        error ("unable to save a local copy of album art. %s", e.message);
- 		    }
+            }
          }
 
 		/*
