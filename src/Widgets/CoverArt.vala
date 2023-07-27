@@ -17,9 +17,11 @@ namespace Leopod {
             orientation = Gtk.Orientation.VERTICAL;
             //no_show_all = true;
             Gtk.Image image = new Gtk.Image () {
-                //margin = 0
+                margin_top = margin_end = margin_start = margin_bottom = 2,
             };
-            Gtk.Label name = new Gtk.Label (podcast.name);
+            Granite.HeaderLabel name = new Granite.HeaderLabel (podcast.name) {
+                halign = Gtk.Align.CENTER,
+            };
             //name.no_show_all = true;
             //name.margin = 10;
             Gtk.Button button = new Gtk.Button () {
@@ -29,24 +31,20 @@ namespace Leopod {
             };
             button.get_style_context ().add_class ("coverart");
 
-            try {
-                //Load the actual coverart
+            //Load the actual coverart
+            info (podcast.local_art_uri);
+            var file = GLib.File.new_for_uri (podcast.local_art_uri);
+            if (!file.query_exists ()) {
+                cache_album_art (podcast);
                 info (podcast.local_art_uri);
-                var file = GLib.File.new_for_uri (podcast.local_art_uri);
-                if (!file.query_exists ()) {
-                    cache_album_art (podcast);
-                    info (podcast.local_art_uri);
-                    file = GLib.File.new_for_uri (podcast.local_art_uri);
-                }
-                image.set_from_file(file.get_path());
-                image.pixel_size = 170;
-                //button.image = image;
-                image.show();
-                name.show ();
-                show ();
-            } catch (Error e) {
-                warning ("unable to load podcast coverart.");
+                file = GLib.File.new_for_uri (podcast.local_art_uri);
             }
+            image.set_from_file(file.get_path());
+            image.pixel_size = 170;
+            //button.image = image;
+            image.show();
+            name.show ();
+            show ();
 
             append (image);
             append (name);
