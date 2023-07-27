@@ -251,7 +251,7 @@ public class MainWindow : Gtk.ApplicationWindow {
     }
 
     public void add_podcast_feed (Podcast podcast) {
-        var coverart = new CoverArt.with_podcast (podcast);
+        var coverart = new CoverArt (podcast);
         coverart.clicked.connect (on_podcast_clicked);
         coverarts.add (coverart);
         all_flowbox.prepend(coverart);

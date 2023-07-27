@@ -17,7 +17,7 @@ public class NewEpisodesView : Gtk.Box {
 
     private Gtk.Widget CreateListBoxForNewEpisode(GLib.Object object) {
         Episode episode = (Episode) object;
-        var coverart = new CoverArt.with_podcast (episode.parent);
+        var coverart = new CoverArt (episode.parent);
         var list_item = new EpisodeListItem ((Episode) episode) {
             desc_lines = 8
         };

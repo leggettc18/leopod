@@ -72,7 +72,7 @@ public class PodcastView : Gtk.Box {
         right_scrolled.set_child (episodes_list);
         right_box.prepend (right_scrolled);
         append(right_box);
-        CoverArt coverart = new CoverArt.with_podcast (podcast);
+        CoverArt coverart = new CoverArt (podcast);
         //left_box.prepend(coverart);
         //left_box.append(new Gtk.Label (podcast.description) {
         //    wrap = true,

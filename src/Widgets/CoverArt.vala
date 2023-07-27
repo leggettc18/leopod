@@ -5,29 +5,27 @@
 
 namespace Leopod {
     public class CoverArt : Gtk.Box {
-        public Podcast podcast = null;
-        public CoverArt.with_podcast (Podcast podcast) {
-            this.podcast = podcast;
-            //set_size_request (170, 170);
+        public Podcast podcast { get; construct; }
+        
+        public CoverArt (Podcast podcast) {
+            Object(podcast: podcast);
+        }
+
+        construct {
+            orientation = Gtk.Orientation.VERTICAL;
             var controller = new Gtk.GestureClick ();
             controller.released.connect((num_presses, x, y) => {
                     clicked(this.podcast);
                     });
             add_controller (controller);
-            orientation = Gtk.Orientation.VERTICAL;
-            //no_show_all = true;
             Gtk.Image image = new Gtk.Image () {
                 margin_top = margin_end = margin_start = margin_bottom = 2,
             };
             Granite.HeaderLabel name = new Granite.HeaderLabel (podcast.name) {
                 halign = Gtk.Align.CENTER,
             };
-            //name.no_show_all = true;
-            //name.margin = 10;
             Gtk.Button button = new Gtk.Button () {
-                //always_show_image = true,
                 tooltip_text = _("Browse Podcast Episodes"),
-                //margin = 0
             };
             button.get_style_context ().add_class ("coverart");
 
@@ -41,7 +39,6 @@ namespace Leopod {
             }
             image.set_from_file(file.get_path());
             image.pixel_size = 170;
-            //button.image = image;
             image.show();
             name.show ();
             show ();
