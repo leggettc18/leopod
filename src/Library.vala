@@ -86,10 +86,8 @@ namespace Leopod {
                     }
 
                     while (added > 0) {
-                        int index = podcast.episodes.size - added;
-
-                        new_episodes.add (podcast.episodes[index]);
-                        write_episode_to_database (podcast.episodes[index]);
+                        new_episodes.add (podcast.episodes[added]);
+                        write_episode_to_database (podcast.episodes[added]);
                         added--;
                     }
 
