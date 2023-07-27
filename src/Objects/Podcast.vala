@@ -17,7 +17,7 @@ namespace Leopod {
 		public string name { get; construct; }
 		public string description { get; construct; } 
 		public string feed_uri { get; construct set; }
-		public License license { get; construct; }
+		public License license { get; construct; default = License.UNKNOWN; }
 
 		public MediaType content_type { 
             get; construct set; default = MediaType.UNKNOWN;

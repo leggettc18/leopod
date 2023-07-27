@@ -21,8 +21,8 @@ namespace Leopod {
 		public Podcast parent { get; construct set; }
 		public DateTime datetime_released { get; construct; }
 
-		public EpisodeStatus status { get; construct set; }
-		public DownloadStatus current_download_status { get; construct set; }
+		public EpisodeStatus status { get; construct set; default = EpisodeStatus.UNPLAYED; }
+		public DownloadStatus current_download_status { get; construct set; default = DownloadStatus.NOT_DOWNLOADED; }
 
 		public signal void download_status_changed ();
 
@@ -149,7 +149,7 @@ namespace Leopod {
                 } else if (column_name == "download_status") {
                     if (val == "downloaded") {
                         current_download_status = DownloadStatus.DOWNLOADED;
-                    } else if (val == "not_downloaded") {
+                    } else {
                         current_download_status = DownloadStatus.NOT_DOWNLOADED;
                     }
                 } else if (column_name == "play_status") {
