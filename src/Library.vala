@@ -197,52 +197,11 @@ namespace Leopod {
         }
 
         public Episode episode_from_row (Sqlite.Statement stmt) {
-            Episode episode = new Episode ();
-
-            for (int i = 0; i < stmt.column_count (); i++) {
-                string column_name = stmt.column_name (i) ?? "<none>";
-                string val = stmt.column_text (i) ?? "<none>";
-
-                if (column_name == "title") {
-                    episode.title = val;
-                } else if (column_name == "description") {
-                    episode.description = val;
-                } else if (column_name == "uri") {
-                    episode.uri = val;
-                } else if (column_name == "local_uri") {
-                    if (val != null) {
-                        episode.local_uri = val;
-                    }
-                } else if (column_name == "released") {
-                    episode.datetime_released = new GLib.DateTime.from_unix_local (
-                        val.to_int64 ()
-                    );
-                } else if (column_name == "download_status") {
-                    if (val == "downloaded") {
-                        episode.current_download_status = DownloadStatus.DOWNLOADED;
-                    } else if (val == "not_downloaded") {
-                        episode.current_download_status = DownloadStatus.NOT_DOWNLOADED;
-                    }
-                } else if (column_name == "play_status") {
-                    if (val == "played") {
-                        episode.status = EpisodeStatus.PLAYED;
-                    } else {
-                        episode.status = EpisodeStatus.UNPLAYED;
-                    }
-                } else if (column_name == "latest_position") {
-                    int64 position = 0;
-                    if (int64.try_parse (val, out position)) {
-                        episode.last_played_position = position;
-                    }
-                } else if (column_name == "parent_podcast_name") {
-                    episode.parent = new Podcast.with_name (val);
-                } else if (column_name == "podcast_uri") {
-                    episode.podcast_uri = val;
-                } else if (column_name == "guid") {
-                    episode.guid = val;
-                } else if (column_name == "link") {
-                    episode.link = val;
-                }
+            Episode episode = null;
+            try {
+                episode = new Episode.from_sqlite_row (stmt);
+            } catch(EpisodeConstructionError e) {
+                critical(e.message);
             }
             return episode;
         }

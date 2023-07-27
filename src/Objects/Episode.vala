@@ -4,23 +4,25 @@
  */
 
 namespace Leopod {
+    public errordomain EpisodeConstructionError {
+        ROW_PARSING_ERROR;
+    }
+
 	public class Episode : GLib.Object {
 
-        public string guid = null;
-        public string link = "";
-		public string title = "";
-		public string description = "";
-		public string uri = "";
-		public string local_uri = "";
-		public string podcast_uri = "";
-		public int64 last_played_position;
-		public string date_released;
+        public string guid { get; construct; }
+        public string link { get; construct; }
+		public string title { get; construct; }
+		public string description { get; construct; }
+		public string uri { get; construct set; }
+		public string local_uri { get; set; }
+		public string podcast_uri { get; set; }
+		public int64 last_played_position { get; set; }
+		public Podcast parent { get; set; }
+		public DateTime datetime_released { get; construct; }
 
-		public Podcast parent;
-		public DateTime datetime_released;
-
-		public EpisodeStatus status;
-		public DownloadStatus current_download_status;
+		public EpisodeStatus status { get; set; }
+		public DownloadStatus current_download_status { get; set; }
 
 		public signal void download_status_changed ();
 
@@ -68,19 +70,23 @@ namespace Leopod {
 			}
 		}
 
-		public Episode () {
-		    parent = null;
-		    local_uri = null;
-		    status = EpisodeStatus.UNPLAYED;
-            current_download_status = DownloadStatus.NOT_DOWNLOADED;
-            last_played_position = 0;
-		}
+		//public Episode () {
+		//    parent = null;
+		//    local_uri = null;
+		//    status = EpisodeStatus.UNPLAYED;
+        //    current_download_status = DownloadStatus.NOT_DOWNLOADED;
+        //    last_played_position = 0;
+		//}
 
-		/*
-        * Sets the local datetime based on the standardized "pubdate" as listed
-        * in the feed.
-        */
-        public void set_datetime_from_pubdate () {
+        public Episode(
+            string title,
+            string uri,
+            string date_released,
+            string description,
+            string guid,
+            string link
+        ) {
+            DateTime datetime_released = null;
             if (date_released != null) {
                 GLib.Time tm = GLib.Time ();
                 tm.strptime (date_released, "%a, %d %b %Y %H:%M:%S %Z");
@@ -93,6 +99,99 @@ namespace Leopod {
                     tm.second
                 );
             }
+            Object (
+                title: title,
+                uri: uri,
+                datetime_released: datetime_released,
+                description: description,
+                guid: guid,
+                link: link
+            );
+        }
+
+        public Episode.from_sqlite_row(Sqlite.Statement stmt)
+            throws EpisodeConstructionError.ROW_PARSING_ERROR {
+            string title = null;
+            string description = null;
+            string uri = null;
+            string local_uri = null;
+            DateTime datetime_released = null;
+            DownloadStatus current_download_status =
+                DownloadStatus.NOT_DOWNLOADED;
+            EpisodeStatus status = EpisodeStatus.UNPLAYED;
+            int64 last_played_position = 0;
+            Podcast parent = null;
+            string podcast_uri = null;
+            string guid = null;
+            string link = null;
+ 
+            for (int i = 0; i < stmt.column_count (); i++) {
+                string column_name = stmt.column_name (i) ?? "<none>";
+                string val = stmt.column_text (i) ?? "<none>";
+
+                if (column_name == "title") {
+                    title = val;
+                } else if (column_name == "description") {
+                    description = val;
+                } else if (column_name == "uri") {
+                    uri = val;
+                } else if (column_name == "local_uri") {
+                    if (val != null) {
+                        local_uri = val;
+                    }
+                } else if (column_name == "released") {
+                    int64 datetime = 0;
+                    if (int64.try_parse (val, out datetime)) {
+                        datetime_released = new GLib.DateTime.from_unix_local (
+                            datetime
+                        );
+                    }
+                } else if (column_name == "download_status") {
+                    if (val == "downloaded") {
+                        current_download_status = DownloadStatus.DOWNLOADED;
+                    } else if (val == "not_downloaded") {
+                        current_download_status = DownloadStatus.NOT_DOWNLOADED;
+                    }
+                } else if (column_name == "play_status") {
+                    if (val == "played") {
+                        status = EpisodeStatus.PLAYED;
+                    } else {
+                        status = EpisodeStatus.UNPLAYED;
+                    }
+                } else if (column_name == "latest_position") {
+                    int64 position = 0;
+                    if (int64.try_parse (val, out position)) {
+                        last_played_position = position;
+                    }
+                } else if (column_name == "parent_podcast_name") {
+                    parent = new Podcast.with_name (val);
+                } else if (column_name == "podcast_uri") {
+                    podcast_uri = val;
+                } else if (column_name == "guid") {
+                    guid = val;
+                } else if (column_name == "link") {
+                    link = val;
+                }
+            }
+            if (title == null || description == null || uri == null || local_uri
+            == null || datetime_released == null || parent == null ||
+            podcast_uri == null || guid == null || link == null) {
+                throw new EpisodeConstructionError.ROW_PARSING_ERROR("Required column was missing");
+            }
+            Object (
+                title: title,
+                description: description,
+                uri: uri,
+                local_uri: local_uri,
+                datetime_released: datetime_released,
+                current_download_status: current_download_status,
+                status: status,
+                last_played_position: last_played_position,
+                parent: parent,
+                podcast_uri: podcast_uri,
+                guid: guid,
+                link: link
+            );
         }
 	}
 

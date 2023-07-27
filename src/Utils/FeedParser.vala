@@ -115,9 +115,14 @@ namespace Leopod {
                 else if (current == "item") {
 
                     // Create a new episode
-                    Episode episode = new Episode ();
+                    string title = null;
+                    string uri = null;
+                    string description = null;
+                    string guid = null;
+                    string date_released = null;
+                    string link = null;
+
                     string next_item_in_queue = null;
-                    bool found_summary = false;
 
                     while (next_item_in_queue != "item" && i < queue.size - 1) {
                         i++;
@@ -125,7 +130,7 @@ namespace Leopod {
 
                         if (next_item_in_queue == "title") {
                             i++;
-                            episode.title = queue[i];
+                            title = queue[i];
                         }
                         else if (next_item_in_queue == "enclosure") {
                             bool uri_found = false;
@@ -140,7 +145,7 @@ namespace Leopod {
                                 if (queue[i] == "url") {
 
                                     i++;
-                                    episode.uri = queue[i];
+                                    uri = queue[i];
                                     uri_found = true;
 
                                 }
@@ -169,32 +174,35 @@ namespace Leopod {
                         else if (next_item_in_queue == "pubDate") {
                             i++;
 
-                            episode.date_released = queue[i];
-                            episode.set_datetime_from_pubdate ();
+                            date_released = queue[i];
+                            //episode.set_datetime_from_pubdate ();
 
                         }
                         else if (next_item_in_queue == "summary") {
                             // Save the summary as description if we haven't found a description yet.
                             // Subsequent descriptions will overwrite this.
-                            if (episode.description.char_count () == 0) {
+                            if (description.char_count () == 0) {
                                 i++;
-                                episode.description = queue[i];
+                                description = queue[i];
                             }
                         }
                         else if (next_item_in_queue == "description") {
                             i++;
-                            episode.description = queue[i];
+                            description = queue[i];
                         } else if (next_item_in_queue == "guid") {
                             i++;
-                            episode.guid = queue[i];
+                            guid = queue[i];
                         } else if (next_item_in_queue == "link") {
                             i++;
-                            episode.link = queue[i];
+                            link = queue[i];
                         }
                     }
 
 
                     // Add the new episode to the podcast
+                    Episode episode = new Episode(
+                        title, uri, date_released, description, guid, link
+                    );
                     podcast.add_episode (episode);
 
                 }
@@ -525,9 +533,13 @@ namespace Leopod {
                     if (queue[i] == "item") {
 
                         // Create a new episode
-                        Episode episode = new Episode ();
+                        string title = null;
+                        string uri = null;
+                        string description = null;
+                        string date_released = null;
+                        string guid = null;
+                        string link = null;
                         string next_item_in_queue = null;
-                        bool found_summary = false;
 
 
                         while (next_item_in_queue != "item" && i < queue.size - 1) {
@@ -535,7 +547,7 @@ namespace Leopod {
                             next_item_in_queue = queue[i];
                             if (next_item_in_queue == "title") {
                                 i++;
-                                episode.title = queue[i];
+                                title = queue[i];
                             }
                             else if (next_item_in_queue == "enclosure") {
                                 bool uri_found = false;
@@ -550,7 +562,7 @@ namespace Leopod {
                                     if (queue[i] == "url") {
 
                                         i++;
-                                        episode.uri = queue[i];
+                                        uri = queue[i];
                                         uri_found = true;
 
                                     }
@@ -579,33 +591,35 @@ namespace Leopod {
                             else if (next_item_in_queue == "pubDate") {
                                 i++;
 
-                                episode.date_released = queue[i];
-                                episode.set_datetime_from_pubdate ();
+                                date_released = queue[i];
+                                //episode.set_datetime_from_pubdate ();
 
                             }
                             else if (next_item_in_queue == "summary") {
                                 // Save the summary as description if we haven't found a description yet.
                                 // Subsequent descriptions will overwrite this.
-                                if (episode.description.char_count () == 0) {
+                                if (description.char_count () == 0) {
                                     i++;
-                                    episode.description = queue[i];
+                                    description = queue[i];
                                 }
                             }
                             else if (next_item_in_queue == "description") {
                                 i++;
-                                episode.description = queue[i];
+                                description = queue[i];
                             } else if (next_item_in_queue == "guid") {
                                 i++;
-                                episode.guid = queue[i];
+                                guid = queue[i];
                             } else if (next_item_in_queue == "link") {
                                 i++;
-                                episode.link = queue[i];
+                                link = queue[i];
                             }
 
                         }
 
-                        episode.parent = podcast;
-                        episode.podcast_uri = podcast.feed_uri;
+                        Episode episode = new Episode(
+                            title, uri, date_released, description, guid, link
+                        );
+                        podcast.add_episode(episode);
 
                         if (previous_newest_episode != null) {
                             if (episode.title == previous_newest_episode.title.replace ("%27", "'")) {
@@ -662,28 +676,33 @@ namespace Leopod {
             }
 
             /* Creating a Episode with values from <entry> tag. */
-            Episode entry = new Episode ();
+            string title = null;
+            string description = null;
+            string date_released = null;
+            string uri = null;
+            string guid = null;
+            string link = null;
 
             for (Xml.Node* iterEntry = iter->children; iterEntry != null; iterEntry = iterEntry->next) {
                 switch (iterEntry->name) {
                     case "title":
-                        entry.title= iterEntry->get_content ();
+                        title= iterEntry->get_content ();
                         break;
                     case "content":
-                        entry.description= iterEntry->get_content ();
+                        description= iterEntry->get_content ();
                         break;
                     case "updated":
                         GLib.Time tm = GLib.Time ();
                         tm.strptime ( iterEntry->get_content (), "%Y-%m-%dT%H:%M:%S%Z");
-                        entry.date_released=tm.format ("%a, %d %b %Y %H:%M:%S %Z");
-                        entry.set_datetime_from_pubdate ();
+                        date_released=tm.format ("%a, %d %b %Y %H:%M:%S %Z");
+                        //entry.set_datetime_from_pubdate ();
                         break;
                     case "link":
                         for (Xml.Attr* propEntry = iterEntry->properties; propEntry != null; propEntry = propEntry->next) {  // vala-lint=line-length
                             string attr_name = propEntry->name;
                             if (attr_name == "href") {
-                                entry.uri=propEntry->children->content;
-                                entry.link = entry.uri;
+                                uri=propEntry->children->content;
+                                link = uri;
                             } else if (attr_name == "type" && podcast != null) {
                                 podcast.content_type = MediaType.UNKNOWN;
 
@@ -696,15 +715,16 @@ namespace Leopod {
                         }
                         break;
                     case "id":
-                        entry.guid = iterEntry->get_content ();
+                        guid = iterEntry->get_content ();
                         break;
                     default:
                         break;
                 }
             }
-
-            entry.parent=podcast;
-            entry.podcast_uri = podcast.feed_uri;
+            Episode entry = new Episode(
+                title, uri, date_released, description, guid, link
+            );
+            podcast.add_episode (entry);
 
             episodes.add (entry);
         }
