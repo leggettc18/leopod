@@ -137,6 +137,7 @@ public class MainWindow : Gtk.ApplicationWindow {
             column_spacing = 20,
             halign = Gtk.Align.FILL,
             valign = Gtk.Align.START,
+            homogeneous = true,
             margin_top = margin_bottom = margin_start = margin_end = 5,
             selection_mode = Gtk.SelectionMode.NONE
         };
