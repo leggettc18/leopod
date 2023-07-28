@@ -104,22 +104,23 @@ namespace Leopod {
 		}
 
 		public void add_podcast (string podcast_uri) {
-		    Podcast podcast = new FeedParser ().get_podcast_from_file (podcast_uri);
-		    library.add_podcast (podcast);
-			window.populate_views ();
+            try {
+		        Podcast podcast = new FeedParser ().get_podcast_from_file (podcast_uri);
+		        library.add_podcast (podcast);
+			    window.populate_views ();
+            } catch (Error e) {
+                error (e.message);
+            }
 		}
 
 		public async void add_podcast_async (string podcast_uri) {
             SourceFunc callback = add_podcast_async.callback;
 
             ThreadFunc<void> run = () => {
-
-                Podcast podcast = new FeedParser ().get_podcast_from_file (podcast_uri);
-                library.add_podcast (podcast);
-                window.populate_views ();
+                add_podcast (podcast_uri);
                 Idle.add((owned) callback);
             };
-            new Thread<void> ("add_podcast", run);
+            new Thread<void> ("add_podcast", (owned) run);
             yield;
 		}
 
