@@ -6,6 +6,7 @@
 namespace Leopod {
 
 public class PodcastView : Gtk.Box {
+    public Podcast podcast { get; construct; }
     // Signals
     public signal void episode_download_requested (Episode episode);
     public signal void episode_delete_requested (Episode episode);
@@ -43,14 +44,18 @@ public class PodcastView : Gtk.Box {
     }
 
     public PodcastView (Podcast podcast) {
+        Object(podcast: podcast);
+    }
+
+    construct {
         info ("Creating the podcast episodes view");
         // Create the view that will display all the episodes of a given podcast.
         orientation = Gtk.Orientation.HORIZONTAL;
         spacing = 5;
-        //Gtk.Box left_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
-        //    vexpand = false,
-        //    margin_start = margin_end = margin_top = margin_bottom = 20
-        //};
+        Gtk.Box left_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
+            vexpand = false,
+            margin_start = margin_end = margin_top = margin_bottom = 20
+        };
         Gtk.ScrolledWindow right_scrolled = new Gtk.ScrolledWindow () {
             vexpand = true,
             hexpand = true,
@@ -71,13 +76,14 @@ public class PodcastView : Gtk.Box {
         episodes_list.set_sort_func(EpisodeListItemSortFunc);
         right_scrolled.set_child (episodes_list);
         right_box.prepend (right_scrolled);
-        append(right_box);
         CoverArt coverart = new CoverArt (podcast);
-        //left_box.prepend(coverart);
-        //left_box.append(new Gtk.Label (podcast.description) {
-        //    wrap = true,
-        //    max_width_chars = 25
-        //});
+        left_box.prepend(coverart);
+        left_box.append(new Gtk.Label (podcast.description) {
+            wrap = true,
+            width_chars = 25,
+            max_width_chars = 30,
+            single_line_mode = true,
+        });
         Gtk.Button podcast_delete_button = new Gtk.Button.with_label
         (_("Unsubscribe")) {
             tooltip_text = _("Unsubscribe from Podcast"),
@@ -88,14 +94,20 @@ public class PodcastView : Gtk.Box {
         };
         podcast_delete_box.append (podcast_delete_button);
         podcast_delete_button.get_style_context ().add_class ("danger");
-        //left_box.append(podcast_delete_box);
+        left_box.append(podcast_delete_box);
         podcast_delete_button.clicked.connect(() => {
             podcast_delete_requested (podcast);
         });
         episodes_list.bind_model(podcast.episodes, CreateEpisodeListItem);
-        //var children = episodes_list.observe_children().foreach ((child) => {
-         //   child.get_style_context ().add_class ("episode-list");
-        //});
+        Gtk.Paned paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL) {
+            start_child = left_box,
+            shrink_start_child = true,
+            resize_start_child = false,
+            end_child = right_box,
+            shrink_end_child = false,
+            resize_end_child = true,
+        };
+        append(paned);
     }
 }
 
