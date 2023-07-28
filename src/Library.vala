@@ -193,7 +193,7 @@ namespace Leopod {
 
 		    // Set all but the most recent episode as played
 		    if (podcast.episodes.size > 0) {
-		        for (int i = 0; i < podcast.episodes.size - 1; i++) {
+		        for (int i = 1; i < podcast.episodes.size; i++) {
 		            podcast.episodes[i].status = EpisodeStatus.PLAYED;
 		        }
 		    }

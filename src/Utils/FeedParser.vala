@@ -23,7 +23,7 @@ namespace Leopod {
          * Creates a new podcast by iterating through the queue and finding appropriate
          * key/value pairs
          */
-        private Podcast create_podcast_from_queue () {
+        private Podcast create_podcast_from_queue (string? fallback_feed_uri) {
 
             // Create the new podcast object
             Podcast podcast = null;
@@ -64,7 +64,7 @@ namespace Leopod {
                 }
 
                 // Most feeds use the new-feed-url enclosure, but if not we have to check links manually
-                else if (current == "link" && found_podcast_link == false) {
+                else if ((current == "link" || current == "atom:link") && found_podcast_link == false) {
                     i++;
                     string href = null;
                     bool store_ref = false;
@@ -223,12 +223,16 @@ namespace Leopod {
                 }
             }
 
-            if (podcast == null) {
-                podcast = new Podcast(
-                    name, podcast_description, feed_uri, remote_art_uri,
-                    license, content_type
-                );
+            if (feed_uri == null) {
+                feed_uri = fallback_feed_uri;
             }
+
+            podcast = new Podcast(
+                name, podcast_description, feed_uri, remote_art_uri,
+                license, content_type
+            );
+
+            info ("%s %s %s %s", name, podcast_description, feed_uri, remote_art_uri);
             
             podcast.add_episodes (episodes);
 
@@ -347,9 +351,12 @@ namespace Leopod {
             Podcast podcast = null;
 
             if (root->name == "feed") {
+                info ("parsing atom feed");
                 podcast = create_podcast_from_queue_atom (root);
             } else {
-                podcast = create_podcast_from_queue ();
+                info ("parsing rss feed");
+                podcast = create_podcast_from_queue (path);
+                info ("parsed rss feed for %s", podcast.name);
             }
 
             if (podcast.name.length < 1) {
@@ -506,7 +513,7 @@ namespace Leopod {
             Episode previous_newest_episode = null;
 
             if (podcast.episodes.size > 0) {
-                previous_newest_episode = podcast.episodes[podcast.episodes.size - 1];
+                previous_newest_episode = podcast.episodes[0];
             }
 
             string path = podcast.feed_uri;

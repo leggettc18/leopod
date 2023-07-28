@@ -118,7 +118,7 @@ namespace Leopod {
             DateTime datetime_released = null;
             DownloadStatus current_download_status =
                 DownloadStatus.NOT_DOWNLOADED;
-            EpisodeStatus status = EpisodeStatus.UNPLAYED;
+            EpisodeStatus status = EpisodeStatus.PLAYED;
             int64 last_played_position = 0;
             Podcast parent = null;
             string podcast_uri = null;
