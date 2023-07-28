@@ -528,7 +528,12 @@ namespace Leopod {
 		    write_episode_to_database (episode);
 		}
 
-		public void delete_podcast (Podcast podcast) {
+		public async void delete_podcast (Podcast podcast) {
+            SourceFunc callback = delete_podcast.callback;
+
+            podcasts.remove(podcast);
+
+            ThreadFunc<void> run = () => {
 		    // Delete all the episodes
 		    foreach (Episode episode in podcast.episodes) {
 		        // Delete from filesystem
@@ -586,7 +591,10 @@ namespace Leopod {
 		            db.errmsg ()
 		        );
 		    }
-            podcasts.remove(podcast);
+            Idle.add ((owned) callback);
+            };
+            new Thread<void> ("delete_podcast", (owned) run);
+            yield;
 		}
 	}
 }

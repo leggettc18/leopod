@@ -44,8 +44,8 @@ public class ObservableArrayList<T> : ListModel, Gee.ArrayList<T> {
         return result;
     }
 
-    public new void sort (CompareDataFunc<T> sort_func) {
-        base.sort(sort_func);
+    public new void sort (owned CompareDataFunc<T> sort_func) {
+        base.sort((owned) sort_func);
         items_changed (0, size, size);
     }
 }

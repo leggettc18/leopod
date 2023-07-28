@@ -294,7 +294,7 @@ public class MainWindow : Gtk.ApplicationWindow {
         });
         episodes_box.podcast_delete_requested.connect ((podcast) => {
             switch_visible_page (main_box);
-            podcast_delete_requested (podcast);
+            controller.library.delete_podcast.begin (podcast);
             //episodes_scrolled.remove (episodes_box);
         });
         episodes_scrolled.show();
@@ -361,7 +361,7 @@ public class MainWindow : Gtk.ApplicationWindow {
             back_button.show();
         } else {
             if (back_button != null) {
-                back_button.destroy ();
+                header_bar.remove (back_button);
             }
         }
     }

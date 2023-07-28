@@ -43,7 +43,9 @@ namespace Leopod {
 			window = new MainWindow (this);
 
 			window.podcast_delete_requested.connect ((podcast) => {
-				library.delete_podcast (podcast);
+				library.delete_podcast.begin (podcast, (obj, res) => {
+                    library.delete_podcast.end(res);
+                });
 				//library.refill_library ();
 				//window.populate_views ();
 			});
@@ -120,11 +122,8 @@ namespace Leopod {
 		public async void add_podcast_async (string podcast_uri) {
             SourceFunc callback = add_podcast_async.callback;
 
-            ThreadFunc<void> run = () => {
-                add_podcast (podcast_uri);
-                Idle.add((owned) callback);
-            };
-            new Thread<void> ("add_podcast", (owned) run);
+            add_podcast (podcast_uri);
+            Idle.add((owned) callback);
             yield;
 		}
 
