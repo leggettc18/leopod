@@ -44,8 +44,8 @@ namespace Leopod {
 
 			window.podcast_delete_requested.connect ((podcast) => {
 				library.delete_podcast (podcast);
-				library.refill_library ();
-				window.populate_views ();
+				//library.refill_library ();
+				//window.populate_views ();
 			});
 
 			//player.eos.connect (window.on_stream_ended);
@@ -151,7 +151,7 @@ namespace Leopod {
 
 		            if (new_episode_count > 0) {
 		                info ("Repopulating views after update is finished");
-		                library.refill_library ();
+		                //library.refill_library ();
 		                window.populate_views_async.begin ((obj, res) => {
                             window.populate_views_async.end (res);
                         });

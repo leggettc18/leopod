@@ -74,12 +74,14 @@ public class PodcastView : Gtk.Box {
         //prepend (left_box);
         CoverArt coverart = new CoverArt (podcast);
         left_box.prepend(coverart);
-        left_box.append(new Gtk.Label (podcast.description) {
+        string description = Utils.html_to_markup (podcast.description);
+        left_box.append(new Gtk.Label (description) {
             wrap = true,
             width_chars = 25,
             max_width_chars = 30,
             single_line_mode = true,
             hexpand = false,
+            use_markup = true,
         });
         Gtk.Button podcast_delete_button = new Gtk.Button.with_label
         (_("Unsubscribe")) {
@@ -90,7 +92,7 @@ public class PodcastView : Gtk.Box {
             hexpand = false
         };
         podcast_delete_box.append (podcast_delete_button);
-        podcast_delete_button.get_style_context ().add_class ("danger");
+        podcast_delete_button.add_css_class (Granite.STYLE_CLASS_DESTRUCTIVE_ACTION);
         left_box.append(podcast_delete_box);
         podcast_delete_button.clicked.connect(() => {
             podcast_delete_requested (podcast);

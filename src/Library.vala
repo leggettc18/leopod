@@ -10,7 +10,7 @@ namespace Leopod {
 	}
 
 	public class Library {
-		public Gee.ArrayList<Podcast> podcasts;
+		public ObservableArrayList<Podcast> podcasts { get; set; }
 		public Controller controller;
 
 		private Sqlite.Database db; // the Database
@@ -33,7 +33,7 @@ namespace Leopod {
             this.db_location = this.db_directory + """/leopod.db""";
 		    info (db_location);
 
-		    podcasts = new Gee.ArrayList<Podcast> ();
+		    podcasts = new ObservableArrayList<Podcast> ();
 
 		    settings = new GLib.Settings ("com.github.leggettc18.leopod");
 
@@ -84,8 +84,8 @@ namespace Leopod {
                 }
 
                 while (added > 0) {
-                    new_episodes.add (podcast.episodes[added]);
-                    write_episode_to_database (podcast.episodes[added]);
+                    new_episodes.add (podcast.episodes[added - 1]);
+                    write_episode_to_database (podcast.episodes[added - 1]);
                     added--;
                 }
 
@@ -177,6 +177,9 @@ namespace Leopod {
             }
          }
 
+        private int SortPodcasts (Podcast a, Podcast b) {
+            return a.name.ascii_casecmp(b.name);
+        }
 		/*
 		 * Adds a podcast to the database and the active podcast list
 		 */
@@ -189,19 +192,24 @@ namespace Leopod {
 		            podcast.episodes[i].status = EpisodeStatus.PLAYED;
 		        }
 		    }
+            info ("marked all episodes but the latest one as played");
 
 		    cache_album_art(podcast);
 
 		    // Add the podcast
 		    if (write_podcast_to_database (podcast)) {
+            info ("wrote podcast to the database");
 		        // Add it to the local arraylist
 		        podcasts.add (podcast);
+                podcasts.sort (SortPodcasts);
+                info ("added podcast to the in-memory list");
 
 		        // Fill in the podcast's episodes
 		        foreach (Episode episode in podcast.episodes) {
 		            episode.podcast_uri = podcast.feed_uri;
 		            write_episode_to_database (episode);
 		        }
+                info ("wrote episodes to database");
 		    } else {
 		        warning ("failed adding podcast '%s'.", podcast.name);
 		    }
@@ -578,6 +586,7 @@ namespace Leopod {
 		            db.errmsg ()
 		        );
 		    }
+            podcasts.remove(podcast);
 		}
 	}
 }

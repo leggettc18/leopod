@@ -17,8 +17,6 @@ public class MainWindow : Gtk.ApplicationWindow {
     public Gtk.Button back_button;
     public Gtk.Box main_box;
 
-    private Gee.ArrayList<CoverArt> coverarts;
-
     public Granite.Placeholder welcome;
     public Gtk.Stack notebook;
 
@@ -36,6 +34,11 @@ public class MainWindow : Gtk.ApplicationWindow {
     private int width;
     private int height;
 
+    private Gtk.Widget CreateCoverartsFromPodcasts (Object podcast) {
+        CoverArt coverart = new CoverArt ((Podcast) podcast);
+        coverart.clicked.connect (on_podcast_clicked);
+        return coverart;
+    }
 
     public MainWindow (Controller controller) {
         width = 0;
@@ -54,8 +57,6 @@ public class MainWindow : Gtk.ApplicationWindow {
         });
 
         this.controller = controller;
-
-        coverarts = new Gee.ArrayList<CoverArt> ();
 
         var add_podcast_action = new SimpleAction ("add-podcast", null);
 
@@ -143,6 +144,8 @@ public class MainWindow : Gtk.ApplicationWindow {
             margin_top = margin_bottom = margin_start = margin_end = 5,
             selection_mode = Gtk.SelectionMode.NONE
         };
+
+        all_flowbox.bind_model(controller.library.podcasts, CreateCoverartsFromPodcasts);
 
         all_scrolled = new Gtk.ScrolledWindow ();
         all_scrolled.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
@@ -253,31 +256,8 @@ public class MainWindow : Gtk.ApplicationWindow {
         add_podcast.response.connect (on_add_podcast);
     }
 
-    public void add_podcast_feed (Podcast podcast) {
-        var coverart = new CoverArt (podcast);
-        coverart.clicked.connect (on_podcast_clicked);
-        coverarts.add (coverart);
-        all_flowbox.prepend(coverart);
-    }
 
     public void populate_views () {
-        //if (all_flowbox != null) {
-        //    info ("Clearing existing podcast list.");
-        //    var size = coverarts.size;
-        //    for (int i = 0; i < size; i++) {
-        //        info ("Removing CoverArt %s", coverarts[i].podcast.name);
-        //        all_flowbox.remove (all_flowbox.get_child_at_index (0));
-        //    }
-        //    coverarts.clear ();
-        //}
-        //info ("Adding updated podcast lists.");
-        if (coverarts.is_empty) {
-            foreach (Podcast podcast in controller.library.podcasts) {
-                add_podcast_feed (podcast);
-            }
-        }
-        info ("populating main window");
-        info ("populating new episodes window");
         new_episodes.rebuild (controller.library);
     }
 
@@ -286,16 +266,8 @@ public class MainWindow : Gtk.ApplicationWindow {
      */
     public async void populate_views_async () {
         SourceFunc callback = populate_views_async.callback;
-
-        ThreadFunc<void> run = () => {
-
-            populate_views ();
-
-            Idle.add ((owned) callback);
-        };
-
-        info ("starting populate-views thread");
-        new Thread<void> ("populate_views", (owned) run);
+        populate_views ();
+        Idle.add ((owned) callback);
         yield;
     }
 

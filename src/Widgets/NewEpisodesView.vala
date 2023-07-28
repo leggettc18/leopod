@@ -10,6 +10,8 @@ public class NewEpisodesView : Gtk.Box {
     public Gtk.Box main_box;
     public Gtk.ListBox list_box;
 
+    private ObservableArrayList<Episode> episodes;
+
     // Signals
     public signal void episode_download_requested (Episode episode);
     public signal void episode_delete_requested (Episode episode);
@@ -54,7 +56,7 @@ public class NewEpisodesView : Gtk.Box {
             show_separators = true
         };
         list_box.add_css_class(Granite.STYLE_CLASS_RICH_LIST);
-	    ObservableArrayList<Episode> episodes = get_new_episodes(library.podcasts);
+	    episodes = get_new_episodes(library.podcasts);
         list_box.bind_model (episodes, CreateListBoxForNewEpisode);
         //list_box.get_children ().foreach ((child) => {
         //    child.get_style_context ().add_class ("episode-list");
@@ -98,7 +100,7 @@ public class NewEpisodesView : Gtk.Box {
 	public void rebuild (Library library) {
         info ("rebuilding new episodes list");
 	    main_box.remove (list_box);
-	    ObservableArrayList<Episode> episodes = get_new_episodes(library.podcasts);
+	    episodes = get_new_episodes(library.podcasts);
         list_box.bind_model (episodes, CreateListBoxForNewEpisode);        //list_box.get_children ().foreach ((child) => {
         //    child.get_style_context ().add_class ("episode-list");
         //});
