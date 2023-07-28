@@ -20,7 +20,7 @@ public class MainWindow : Gtk.ApplicationWindow {
     private Gee.ArrayList<CoverArt> coverarts;
 
     public Granite.Placeholder welcome;
-    private Gtk.Stack notebook;
+    public Gtk.Stack notebook;
 
     public AddPodcastDialog add_podcast;
     public PlaybackBox playback_box;
@@ -299,7 +299,7 @@ public class MainWindow : Gtk.ApplicationWindow {
      * Handles what happens when a podcast coverart is clicked
      */
     public async void on_podcast_clicked (Podcast podcast) {
-        episodes_box = new PodcastView (podcast);
+        episodes_box = new PodcastView (podcast, notebook.transition_duration);
         episodes_scrolled.set_child(episodes_box);
         episodes_box.episode_download_requested.connect ((episode) => {
             on_download_requested (episode);

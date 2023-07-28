@@ -7,6 +7,8 @@ namespace Leopod {
 
 public class PodcastView : Gtk.Box {
     public Podcast podcast { get; construct; }
+    public uint transition_duration { get; construct; }
+
     // Signals
     public signal void episode_download_requested (Episode episode);
     public signal void episode_delete_requested (Episode episode);
@@ -15,6 +17,8 @@ public class PodcastView : Gtk.Box {
 
     // Widgets
     public Gtk.FlowBox episodes_list;
+    private Gtk.Box right_box;
+    private Granite.Placeholder placeholder;
 
     // Data
     public ObservableArrayList<EpisodeListItem> episodes;
@@ -43,8 +47,11 @@ public class PodcastView : Gtk.Box {
         * -1;
     }
 
-    public PodcastView (Podcast podcast) {
-        Object(podcast: podcast);
+    public PodcastView (Podcast podcast, uint transition_duration = 500) {
+        Object(
+            podcast: podcast,
+            transition_duration: transition_duration
+        );
     }
 
     construct {
@@ -56,26 +63,14 @@ public class PodcastView : Gtk.Box {
             vexpand = false,
             margin_start = margin_end = margin_top = margin_bottom = 20
         };
-        Gtk.ScrolledWindow right_scrolled = new Gtk.ScrolledWindow () {
-            vexpand = true,
-            hexpand = true,
-        };
-        Gtk.Box right_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 10) {
+        right_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 10) {
             vexpand = true,
             margin_start = 20,
         };
+        placeholder = new Granite.Placeholder ("Loading Episodes...");
+        right_box.append(placeholder);
         //right_scrolled.get_style_context ().add_class ("episode-list-box");
         //prepend (left_box);
-        episodes_list = new Gtk.FlowBox () {
-            vexpand = true,
-            margin_end = 10,
-            selection_mode = Gtk.SelectionMode.NONE,
-            homogeneous = true,
-        };
-        episodes_list.add_css_class(Granite.STYLE_CLASS_RICH_LIST);
-        episodes_list.set_sort_func(EpisodeListItemSortFunc);
-        right_scrolled.set_child (episodes_list);
-        right_box.prepend (right_scrolled);
         CoverArt coverart = new CoverArt (podcast);
         left_box.prepend(coverart);
         left_box.append(new Gtk.Label (podcast.description) {
@@ -98,7 +93,6 @@ public class PodcastView : Gtk.Box {
         podcast_delete_button.clicked.connect(() => {
             podcast_delete_requested (podcast);
         });
-        episodes_list.bind_model(podcast.episodes, CreateEpisodeListItem);
         Gtk.Paned paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL) {
             start_child = left_box,
             shrink_start_child = true,
@@ -108,6 +102,39 @@ public class PodcastView : Gtk.Box {
             resize_end_child = true,
         };
         append(paned);
+            populate_episode_list.begin((obj, res) => {
+                populate_episode_list.end(res);
+            });
+    }
+
+    private async void populate_episode_list () {
+        SourceFunc callback = populate_episode_list.callback;
+        info ("transition_duration: %u", transition_duration);
+        
+        Timeout.add(transition_duration, () => {
+            ThreadFunc<void> run = () => {
+                Gtk.ScrolledWindow right_scrolled = new Gtk.ScrolledWindow () {
+                    vexpand = true,
+                    hexpand = true,
+                };
+                episodes_list = new Gtk.FlowBox () {
+                    vexpand = true,
+                    margin_end = 10,
+                    selection_mode = Gtk.SelectionMode.NONE,
+                    homogeneous = true,
+                };
+                episodes_list.add_css_class(Granite.STYLE_CLASS_RICH_LIST);
+                episodes_list.set_sort_func(EpisodeListItemSortFunc);
+                right_scrolled.set_child (episodes_list);
+                episodes_list.bind_model(podcast.episodes, CreateEpisodeListItem);
+                right_box.remove(placeholder);
+                right_box.append(right_scrolled);
+                Idle.add((owned) callback);
+            };
+            new Thread<void> ("populate_episode_list", (owned) run);
+            return false;
+            });
+        yield;
     }
 }
 

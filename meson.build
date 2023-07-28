@@ -53,6 +53,7 @@ executable(
         dependency('gee-0.8'),
         dependency('sqlite3'),
         dependency('gstreamer-1.0'),
+        dependency('glib-2.0'),
     ],
     install: true
 )
