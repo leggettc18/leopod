@@ -109,9 +109,11 @@ public class MainWindow : Gtk.ApplicationWindow {
 
         info ("Creating notebook");
 
-        notebook = new Gtk.Stack ();
-        notebook.transition_type = Gtk.StackTransitionType.SLIDE_LEFT_RIGHT;
-        notebook.transition_duration = 200;
+        notebook = new Gtk.Stack () {
+            hhomogeneous = vhomogeneous = true,
+            transition_type = Gtk.StackTransitionType.SLIDE_LEFT_RIGHT,
+            transition_duration = 200,
+        };
 
         info ("Creating welcome screen");
         // Create a welcome screen and add it to the notebook whether first run or not
@@ -168,7 +170,8 @@ public class MainWindow : Gtk.ApplicationWindow {
         var main_stack = new Gtk.Stack () {
             transition_type = Gtk.StackTransitionType.SLIDE_LEFT_RIGHT,
             transition_duration = 200,
-            vexpand = true
+            vexpand = true,
+            hhomogeneous = vhomogeneous = true,
         };
 
         main_stack.add_titled (all_scrolled, "all", _("All Podcasts"));
@@ -258,18 +261,20 @@ public class MainWindow : Gtk.ApplicationWindow {
     }
 
     public void populate_views () {
-        if (all_flowbox != null) {
-            info ("Clearing existing podcast list.");
-            var size = coverarts.size;
-            for (int i = 0; i < size; i++) {
-                info ("Removing CoverArt %s", coverarts[i].podcast.name);
-                all_flowbox.remove (all_flowbox.get_child_at_index (0));
+        //if (all_flowbox != null) {
+        //    info ("Clearing existing podcast list.");
+        //    var size = coverarts.size;
+        //    for (int i = 0; i < size; i++) {
+        //        info ("Removing CoverArt %s", coverarts[i].podcast.name);
+        //        all_flowbox.remove (all_flowbox.get_child_at_index (0));
+        //    }
+        //    coverarts.clear ();
+        //}
+        //info ("Adding updated podcast lists.");
+        if (coverarts.is_empty) {
+            foreach (Podcast podcast in controller.library.podcasts) {
+                add_podcast_feed (podcast);
             }
-            coverarts.clear ();
-        }
-        info ("Adding updated podcast lists.");
-        foreach (Podcast podcast in controller.library.podcasts) {
-            add_podcast_feed (podcast);
         }
         info ("populating main window");
         info ("populating new episodes window");
@@ -282,23 +287,23 @@ public class MainWindow : Gtk.ApplicationWindow {
     public async void populate_views_async () {
         SourceFunc callback = populate_views_async.callback;
 
-        ThreadFunc<void*> run = () => {
+        ThreadFunc<void> run = () => {
 
             populate_views ();
 
             Idle.add ((owned) callback);
-            return null;
         };
 
-        new Thread<void*> ("populate-views", (owned) run);
-
+        info ("starting populate-views thread");
+        new Thread<void> ("populate_views", (owned) run);
         yield;
     }
 
     /*
      * Handles what happens when a podcast coverart is clicked
      */
-    public async void on_podcast_clicked (Podcast podcast) {
+    public void on_podcast_clicked (Podcast podcast) {
+        switch_visible_page(episodes_scrolled);
         episodes_box = new PodcastView (podcast, notebook.transition_duration);
         episodes_scrolled.set_child(episodes_box);
         episodes_box.episode_download_requested.connect ((episode) => {
@@ -321,7 +326,6 @@ public class MainWindow : Gtk.ApplicationWindow {
             //episodes_scrolled.remove (episodes_box);
         });
         episodes_scrolled.show();
-        switch_visible_page(episodes_scrolled);
     }
     
     public void on_download_requested (Episode episode) {

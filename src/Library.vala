@@ -62,45 +62,37 @@ namespace Leopod {
             return podcasts.size == 0;
         }
 
-        public async Gee.ArrayList<Episode> check_for_updates () {
-            SourceFunc callback = check_for_updates.callback;
+        public Gee.ArrayList<Episode> check_for_updates () {
             Gee.ArrayList<Episode> new_episodes = new Gee.ArrayList<Episode> ();
 
             FeedParser parser = new FeedParser ();
 
-            ThreadFunc<void*> run = () => {
-                foreach (Podcast podcast in podcasts) {
-                    int added = -1;
-                    if (podcast.feed_uri != null && podcast.feed_uri.length > 4) {
-                        info ("updating feed %s", podcast.feed_uri);
+            foreach (Podcast podcast in podcasts) {
+                int added = -1;
+                if (podcast.feed_uri != null && podcast.feed_uri.length > 4) {
+                    info ("updating feed %s", podcast.feed_uri);
 
-                        try {
-                            added = parser.update_feed (podcast);
-                        } catch (Error e) {
-                            warning (
+                    try {
+                        added = parser.update_feed (podcast);
+                    } catch (Error e) {
+                        warning (
                                 "Failed to update feed for podcast: %s. %s",
                                 podcast.name, e.message
-                            );
-                            continue;
-                        }
-                    }
-
-                    while (added > 0) {
-                        new_episodes.add (podcast.episodes[added]);
-                        write_episode_to_database (podcast.episodes[added]);
-                        added--;
-                    }
-
-                    if (added == -1) {
-                        critical ("Unable to update podcast due to missing feed url");
+                                );
+                        continue;
                     }
                 }
-                Idle.add ((owned) callback);
-                return null;
-            };
-            Thread.create<void*> (run, false);
 
-            yield;
+                while (added > 0) {
+                    new_episodes.add (podcast.episodes[added]);
+                    write_episode_to_database (podcast.episodes[added]);
+                    added--;
+                }
+
+                if (added == -1) {
+                    critical ("Unable to update podcast due to missing feed url");
+                }
+            }
 
             return new_episodes;
         }

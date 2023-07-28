@@ -18,7 +18,7 @@ namespace Leopod {
 
 		// Runtime Flags
 		public bool first_run = true;
-	    public bool checking_for_updates;
+	    public bool checking_for_updates = false;
 	    public bool currently_repopulating = false;
 
 	    // System
@@ -94,11 +94,15 @@ namespace Leopod {
 		        window.playback_box.hide ();
 		        info ("switching to all_scrolled view");
 		        window.switch_visible_page (window.main_box);
-		        on_update_request ();
+		        on_update_request.begin ((obj, res) => {
+                    on_update_request.end (res);
+                });
 		    }
 
 		    GLib.Timeout.add (300000, () => {
-		        on_update_request ();
+		        on_update_request.begin ((obj, res) => {
+                    on_update_request.end (res);
+                });
 		        return true;
 		    });
 		}
@@ -124,38 +128,40 @@ namespace Leopod {
             yield;
 		}
 
-		public void on_update_request () {
+		public async void on_update_request () {
 		    if (!checking_for_updates) {
-		        info ("Checking for updates.");
+                SourceFunc callback = on_update_request.callback;
 
-		        checking_for_updates = true;
-		        update_status_changed (true);
+                ThreadFunc<void> run = () => {
+		            info ("Checking for updates.");
 
-		        Gee.ArrayList<Episode> new_episodes = new Gee.ArrayList<Episode> ();
+		            checking_for_updates = true;
+		            update_status_changed (true);
 
-		        var loop = new MainLoop ();
-		        library.check_for_updates.begin ((obj, res) => {
-		            try {
-		                new_episodes = library.check_for_updates.end (res);
-		            } catch (Error e) {
-		                warning (e.message);
+		            Gee.ArrayList<Episode> new_episodes = new Gee.ArrayList<Episode> ();
+
+		            new_episodes = library.check_for_updates ();
+
+		            checking_for_updates = false;
+		            update_status_changed (false);
+
+		            int new_episode_count = new_episodes.size;
+
+		            new_episodes = null;
+
+		            if (new_episode_count > 0) {
+		                info ("Repopulating views after update is finished");
+		                library.refill_library ();
+		                window.populate_views_async.begin ((obj, res) => {
+                            window.populate_views_async.end (res);
+                        });
 		            }
-		            loop.quit ();
-		        });
-		        loop.run ();
+                    Idle.add((owned) callback);
+                };
 
-		        checking_for_updates = false;
-		        update_status_changed (false);
-
-		        int new_episode_count = new_episodes.size;
-
-		        new_episodes = null;
-
-		        if (new_episode_count > 0) {
-		            info ("Repopulating views after update is finished");
-		            library.refill_library ();
-		            window.populate_views ();
-		        }
+                info ("starting on_update_request thread");
+                new Thread<void> ("on_update_request", (owned) run);
+                yield;
 		    } else {
 		        info ("Leopod is already updating.");
 		    }

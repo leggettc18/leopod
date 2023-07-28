@@ -70,6 +70,7 @@ public class NewEpisodesView : Gtk.Box {
 	 * podcast will not flood this list.
 	 */
 	public ObservableArrayList<Episode> get_new_episodes (Gee.ArrayList<Podcast> podcasts) {
+        info ("getting new episodes");
 		var new_episodes = new ObservableArrayList<Episode> ();
 		foreach (Podcast podcast in podcasts) {
 			foreach (Episode episode in podcast.episodes) {
@@ -95,6 +96,7 @@ public class NewEpisodesView : Gtk.Box {
 	}
 
 	public void rebuild (Library library) {
+        info ("rebuilding new episodes list");
 	    main_box.remove (list_box);
 	    ObservableArrayList<Episode> episodes = get_new_episodes(library.podcasts);
         list_box.bind_model (episodes, CreateListBoxForNewEpisode);        //list_box.get_children ().foreach ((child) => {

@@ -17,8 +17,9 @@ public class PodcastView : Gtk.Box {
 
     // Widgets
     public Gtk.FlowBox episodes_list;
-    private Gtk.Box right_box;
     private Granite.Placeholder placeholder;
+    private Gtk.Paned paned;
+    private Gtk.ScrolledWindow right_scrolled;
 
     // Data
     public ObservableArrayList<EpisodeListItem> episodes;
@@ -55,20 +56,20 @@ public class PodcastView : Gtk.Box {
     }
 
     construct {
-        info ("Creating the podcast episodes view");
+        info ("Creating the podcast episodes view for %s", podcast.name);
         // Create the view that will display all the episodes of a given podcast.
         orientation = Gtk.Orientation.HORIZONTAL;
-        spacing = 5;
         Gtk.Box left_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
             vexpand = false,
+            hexpand = false,
             margin_start = margin_end = margin_top = margin_bottom = 20
         };
-        right_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 10) {
-            vexpand = true,
-            margin_start = 20,
-        };
         placeholder = new Granite.Placeholder ("Loading Episodes...");
-        right_box.append(placeholder);
+        right_scrolled = new Gtk.ScrolledWindow () {
+            vexpand = true,
+            hexpand = true,
+            child = placeholder,
+        };
         //right_scrolled.get_style_context ().add_class ("episode-list-box");
         //prepend (left_box);
         CoverArt coverart = new CoverArt (podcast);
@@ -78,6 +79,7 @@ public class PodcastView : Gtk.Box {
             width_chars = 25,
             max_width_chars = 30,
             single_line_mode = true,
+            hexpand = false,
         });
         Gtk.Button podcast_delete_button = new Gtk.Button.with_label
         (_("Unsubscribe")) {
@@ -93,47 +95,37 @@ public class PodcastView : Gtk.Box {
         podcast_delete_button.clicked.connect(() => {
             podcast_delete_requested (podcast);
         });
-        Gtk.Paned paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL) {
+        paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL) {
             start_child = left_box,
-            shrink_start_child = true,
+            shrink_start_child = false,
             resize_start_child = false,
-            end_child = right_box,
+            end_child = right_scrolled,
             shrink_end_child = false,
             resize_end_child = true,
         };
-        append(paned);
+        append (paned);
+        Timeout.add(transition_duration + 100, () => {
             populate_episode_list.begin((obj, res) => {
                 populate_episode_list.end(res);
             });
+            return false;
+        });
     }
 
     private async void populate_episode_list () {
         SourceFunc callback = populate_episode_list.callback;
-        info ("transition_duration: %u", transition_duration);
         
-        Timeout.add(transition_duration, () => {
-            ThreadFunc<void> run = () => {
-                Gtk.ScrolledWindow right_scrolled = new Gtk.ScrolledWindow () {
-                    vexpand = true,
-                    hexpand = true,
-                };
-                episodes_list = new Gtk.FlowBox () {
-                    vexpand = true,
-                    margin_end = 10,
-                    selection_mode = Gtk.SelectionMode.NONE,
-                    homogeneous = true,
-                };
-                episodes_list.add_css_class(Granite.STYLE_CLASS_RICH_LIST);
-                episodes_list.set_sort_func(EpisodeListItemSortFunc);
-                right_scrolled.set_child (episodes_list);
-                episodes_list.bind_model(podcast.episodes, CreateEpisodeListItem);
-                right_box.remove(placeholder);
-                right_box.append(right_scrolled);
-                Idle.add((owned) callback);
-            };
-            new Thread<void> ("populate_episode_list", (owned) run);
-            return false;
-            });
+        episodes_list = new Gtk.FlowBox () {
+            vexpand = true,
+            margin_end = 10,
+            selection_mode = Gtk.SelectionMode.NONE,
+            homogeneous = true,
+        };
+        episodes_list.add_css_class(Granite.STYLE_CLASS_RICH_LIST);
+        episodes_list.set_sort_func(EpisodeListItemSortFunc);
+        episodes_list.bind_model(podcast.episodes, CreateEpisodeListItem);
+        right_scrolled.child = episodes_list;
+        Idle.add((owned) callback);
         yield;
     }
 }
