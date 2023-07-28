@@ -110,18 +110,16 @@ namespace Leopod {
 		}
 
 		public async void add_podcast_async (string podcast_uri) {
-		    SourceFunc callback = add_podcast_async.callback;
+            SourceFunc callback = add_podcast_async.callback;
 
-            ThreadFunc<void*> run = () => {
+            ThreadFunc<void> run = () => {
 
-                add_podcast (podcast_uri);
-
-                Idle.add ((owned) callback);
-                return null;
+                Podcast podcast = new FeedParser ().get_podcast_from_file (podcast_uri);
+                library.add_podcast (podcast);
+                window.populate_views ();
+                Idle.add((owned) callback);
             };
-
-            new Thread<void*> ("add-podcast", (owned) run);
-
+            new Thread<void> ("add_podcast", run);
             yield;
 		}
 

@@ -408,11 +408,13 @@ public class MainWindow : Gtk.ApplicationWindow {
      * Handles adding adding the podcast from the dialog
      */
     public void on_add_podcast (int response_id) {
-        if (response_id == Gtk.ResponseType.ACCEPT) {
-            controller.add_podcast(add_podcast.podcast_uri_entry.get_text ());
-            switch_visible_page (main_box);
-        }
         add_podcast.destroy ();
+        if (response_id == Gtk.ResponseType.ACCEPT) {
+            switch_visible_page (main_box);
+            controller.add_podcast_async.begin(add_podcast.podcast_uri_entry.get_text (), (obj, res) => {
+                controller.add_podcast_async.end(res);
+            });
+        }
     }
 
     /*
