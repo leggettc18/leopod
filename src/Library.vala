@@ -27,10 +27,9 @@ namespace Leopod {
 		public Library (Controller controller) {
 		    this.controller = controller;
 
-		    leopod_config_dir =
-		        GLib.Environment.get_user_config_dir () + """/leopod""";
-            this.db_directory = leopod_config_dir + """/database""";
-            this.db_location = this.db_directory + """/leopod.db""";
+		    leopod_config_dir = GLib.Environment.get_user_config_dir () + "/leopod";
+            this.db_directory = leopod_config_dir + "/database";
+            this.db_location = this.db_directory + "/leopod.db";
 		    info (db_location);
 
 		    podcasts = new ObservableArrayList<Podcast> ();
@@ -38,7 +37,7 @@ namespace Leopod {
 		    settings = new GLib.Settings ("com.github.leggettc18.leopod");
 
 		    // Set the local library directory and replace ~ with absolute path
-		    local_library_path = GLib.Environment.get_user_data_dir () + """/leopod""";
+		    local_library_path = GLib.Environment.get_user_data_dir () + "/leopod";
 		    local_library_path = local_library_path.replace (
 		        "~",
 		        GLib.Environment.get_home_dir ()
@@ -106,9 +105,7 @@ namespace Leopod {
 
             Sqlite.Statement stmt;
 
-            string prepared_query = """
-                SELECT * FROM Podcast ORDER BY name;
-            """;
+            string prepared_query = "SELECT * FROM Podcast ORDER BY name;";
             int ec = db.prepare_v2 (prepared_query, prepared_query.length, out stmt);
             if (ec != Sqlite.OK) {
                 warning ("%d: %s", db.errcode (), db.errmsg ());
@@ -122,13 +119,13 @@ namespace Leopod {
 
             stmt.reset ();
             foreach (Podcast podcast in podcasts) {
-                prepared_query = """
-                    SELECT e.*, p.name as parent_podcast_name
-                    FROM Episode e
-                    LEFT JOIN Podcast p on p.feed_uri = e.podcast_uri
-                    WHERE podcast_uri = '%s'
-                    ORDER BY e.released ASC;
-                """.printf (podcast.feed_uri);;
+                prepared_query = string.join(" ",
+                    "SELECT e.*, p.name as parent_podcast_name",
+                    "FROM Episode e",
+                    "LEFT JOIN Podcast p on p.feed_uri = e.podcast_uri",
+                    "WHERE podcast_uri = '%s'",
+                    "ORDER BY e.released ASC;"
+                ).printf (podcast.feed_uri);
                 ec = db.prepare_v2 (prepared_query, prepared_query.length, out stmt);
                 if (ec != Sqlite.OK) {
                     warning ("%d: %s", db.errcode (), db.errmsg ());
@@ -256,8 +253,8 @@ namespace Leopod {
 		public bool setup_library () {
 		    prepare_database ();
 
-		    local_library_path = GLib.Environment.get_user_data_dir () + """/leopod""";
-		    local_library_path = local_library_path.replace (
+		    local_library_path = GLib.Environment.get_user_data_dir () + "/leopod";
+		    local_library_path = local_library_path.replace(
 		        "~",
 		        GLib.Environment.get_home_dir ()
 		    );
@@ -277,43 +274,37 @@ namespace Leopod {
 		public void create_db_schema () {
 		    prepare_database ();
 
-		    string query = """
-		        BEGIN TRANSACTION;
-
-		        CREATE TABLE Podcast (
-		            name                TEXT                    NOT NULL,
-		            feed_uri            TEXT    PRIMARY_KEY     NOT NULL,
-		            album_art_url       TEXT,
-		            album_art_local_uri TEXT,
-		            description         TEXT                    NOT NULL,
-		            content_type        TEXT,
-		            license             TEXT
-		        );
-
-		        CREATE INDEX podcast_name ON Podcast (name);
-
-		        CREATE TABLE Episode (
-		            title               TEXT                    NOT NULL,
-		            podcast_uri         TEXT                    NOT NULL,
-		            uri                 TEXT                    NOT NULL,
-		            local_uri           TEXT,
-		            released            INT,
-		            description         TEXT,
-		            latest_position     TEXT,
-		            download_status     TEXT,
-		            play_status         TEXT,
-		            guid                TEXT,
-		            link                TEXT
-		        );
-
-		        CREATE UNIQUE INDEX episode_guid ON Episode (guid, link, podcast_uri);
-		        CREATE INDEX episode_title ON Episode (title);
-		        CREATE INDEX episode_released ON Episode (released);
-
-		        PRAGMA user_version = 1;
-
-		        END TRANSACTION;
-		    """;
+		    string query = string.join("\n",
+		        "BEGIN TRANSACTION;",
+		        "CREATE TABLE Podcast (",
+		        "    name                TEXT                    NOT NULL,",
+		        "    feed_uri            TEXT    PRIMARY_KEY     NOT NULL,",
+		        "    album_art_url       TEXT,",
+		        "    album_art_local_uri TEXT,",
+		        "    description         TEXT                    NOT NULL,",
+		        "    content_type        TEXT,",
+		        "    license             TEXT,",
+		        ");",
+		        "CREATE INDEX podcast_name ON Podcast (name);",
+		        "CREATE TABLE Episode (",
+		        "    title               TEXT                    NOT NULL,",
+		        "    podcast_uri         TEXT                    NOT NULL,",
+		        "    uri                 TEXT                    NOT NULL,",
+		        "    local_uri           TEXT,",
+		        "    released            INT,",
+		        "    description         TEXT,",
+		        "    latest_position     TEXT,",
+		        "    download_status     TEXT,",
+		        "    play_status         TEXT,",
+		        "    guid                TEXT,",
+		        "    link                TEXT",
+		        ",);",
+		        "CREATE UNIQUE INDEX episode_guid ON Episode (guid, link, podcast_uri);",
+		        "CREATE INDEX episode_title ON Episode (title);",
+		        "CREATE INDEX episode_released ON Episode (released);",
+		        "PRAGMA user_version = 1;",
+		        "END TRANSACTION;"
+		    );
 
 		    int ec = db.exec (query, null);
 		    if (ec != Sqlite.OK) {
@@ -397,12 +388,11 @@ namespace Leopod {
 		public bool write_episode_to_database (Episode episode) {
 		    assert (episode.podcast_uri != null && episode.podcast_uri != "");
 
-		    string query = """
-		        INSERT OR REPLACE INTO Episode
-		        (title, podcast_uri, uri, local_uri, released, description,
-		        latest_position, download_status, play_status, guid, link)
-		        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11);
-		    """;
+		    string query = 
+		        "INSERT OR REPLACE INTO Episode " +
+		        "(title, podcast_uri, uri, local_uri, released, description, " +
+		        "latest_position, download_status, play_status, guid, link) " +
+		        "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11);";
 
 		    Sqlite.Statement stmt;
 		    int ec = db.prepare_v2(query, query.length, out stmt);
@@ -552,10 +542,9 @@ namespace Leopod {
 		        // Delete from filesystem
 		        delete_episode (episode);
 		        // Delete from database
-		        string query = """
-		            DELETE FROM Episode
-		            WHERE guid = ?1;
-		        """;
+		        string query = 
+		            "DELETE FROM Episode " +
+		            "WHERE guid = ?1;";
 		        Sqlite.Statement stmt;
 		        int ec = db.prepare_v2 (query, query.length, out stmt);
 
