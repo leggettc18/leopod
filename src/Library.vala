@@ -183,7 +183,8 @@ namespace Leopod {
 		/*
 		 * Adds a podcast to the database and the active podcast list
 		 */
-		public bool add_podcast (Podcast podcast) throws LeopodLibraryError {
+		public async bool add_podcast (Podcast podcast) throws LeopodLibraryError {
+            SourceFunc callback = add_podcast.callback;
 		    info ("Podcast %s is being added to the library", podcast.name);
 
 		    // Set all but the most recent episode as played
@@ -195,26 +196,38 @@ namespace Leopod {
             info ("marked all episodes but the latest one as played");
 
 		    cache_album_art(podcast);
-
-		    // Add the podcast
-		    if (write_podcast_to_database (podcast)) {
-            info ("wrote podcast to the database");
-		        // Add it to the local arraylist
-		        podcasts.add (podcast);
-                podcasts.sort (SortPodcasts);
-                info ("added podcast to the in-memory list");
-
-		        // Fill in the podcast's episodes
-		        foreach (Episode episode in podcast.episodes) {
-		            episode.podcast_uri = podcast.feed_uri;
-		            write_episode_to_database (episode);
-		        }
-                info ("wrote episodes to database");
-		    } else {
-		        warning ("failed adding podcast '%s'.", podcast.name);
-		    }
+            
+            // Add it to the local arraylist
+		    podcasts.add (podcast);
+            podcasts.sort (SortPodcasts);
+            info ("added podcast to the in-memory list");
+            Idle.add ((owned) callback);
+            yield save_podcast (podcast);
+            yield;
 		    return true;
 		}
+
+        private async void save_podcast (Podcast podcast) throws LeopodLibraryError {
+            SourceFunc callback = save_podcast.callback;
+            ThreadFunc<void> run = () => {
+
+		        if (write_podcast_to_database (podcast)) {
+                    info ("wrote podcast to the database");
+		            
+		            // Fill in the podcast's episodes
+		            foreach (Episode episode in podcast.episodes) {
+		                episode.podcast_uri = podcast.feed_uri;
+		                write_episode_to_database (episode);
+		            }
+                    info ("wrote episodes to database");
+		        } else {
+		            warning ("failed adding podcast '%s'.", podcast.name);
+		        }
+                Idle.add ((owned) callback);
+            };
+            new Thread<void> ("save_podcast", (owned) run);
+            yield;
+        }
 
 		/*
 		 * Opens the database connection, creating the database if it does

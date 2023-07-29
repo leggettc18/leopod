@@ -112,18 +112,40 @@ namespace Leopod {
 		public void add_podcast (string podcast_uri) {
             try {
 		        Podcast podcast = new FeedParser ().get_podcast_from_file (podcast_uri);
-		        library.add_podcast (podcast);
+		        library.add_podcast.begin (podcast);
 			    window.populate_views ();
             } catch (Error e) {
                 error (e.message);
             }
 		}
 
+        private async Podcast download_podcast (string podcast_uri) {
+            SourceFunc callback = download_podcast.callback;
+            Podcast podcast = null;
+            ThreadFunc<Podcast> run = () => {
+                try {
+                    podcast = new FeedParser ().get_podcast_from_file (podcast_uri);
+                } catch (Error e) {
+                    error (e.message);
+                }
+                Idle.add ((owned) callback);
+                return podcast;
+            };
+            new Thread<Podcast> ("download_and_store_podcast", (owned) run);
+            yield;
+            return podcast;
+        }
+
 		public async void add_podcast_async (string podcast_uri) {
             SourceFunc callback = add_podcast_async.callback;
-
-            add_podcast (podcast_uri);
-            Idle.add((owned) callback);
+            Podcast podcast = yield download_podcast(podcast_uri);
+            try {
+                yield library.add_podcast (podcast);
+            } catch (Error e) {
+                error (e.message);
+            }
+            window.populate_views ();
+            Idle.add ((owned) callback);
             yield;
 		}
 
@@ -132,8 +154,6 @@ namespace Leopod {
                 SourceFunc callback = on_update_request.callback;
 
                 ThreadFunc<void> run = () => {
-		            info ("Checking for updates.");
-
 		            checking_for_updates = true;
 		            update_status_changed (true);
 
@@ -149,7 +169,6 @@ namespace Leopod {
 		            new_episodes = null;
 
 		            if (new_episode_count > 0) {
-		                info ("Repopulating views after update is finished");
 		                //library.refill_library ();
 		                window.populate_views_async.begin ((obj, res) => {
                             window.populate_views_async.end (res);
@@ -158,7 +177,6 @@ namespace Leopod {
                     Idle.add((owned) callback);
                 };
 
-                info ("starting on_update_request thread");
                 new Thread<void> ("on_update_request", (owned) run);
                 yield;
 		    } else {
