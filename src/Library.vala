@@ -9,9 +9,9 @@ namespace Leopod {
 	    ADD_ERROR, IMPORT_ERROR, MISSING_URI;
 	}
 
-	public class Library {
+	public class Library : Object {
 		public ObservableArrayList<Podcast> podcasts { get; set; }
-		public Controller controller;
+		public Controller controller { get; construct; }
 
 		private Sqlite.Database db; // the Database
 
@@ -25,8 +25,10 @@ namespace Leopod {
 		public signal void library_loaded ();
 
 		public Library (Controller controller) {
-		    this.controller = controller;
+            Object (controller: controller);
+        }
 
+        construct {
 		    leopod_config_dir = GLib.Environment.get_user_config_dir () + "/leopod";
             this.db_directory = leopod_config_dir + "/database";
             this.db_location = this.db_directory + "/leopod.db";
@@ -440,7 +442,7 @@ namespace Leopod {
 		/*
 		 * Downloads an episode to the filesystem
 		 */
-		public DownloadDetailBox download_episode (Episode episode) throws LeopodLibraryError {
+		public DownloadDetailBox? download_episode (Episode episode) throws LeopodLibraryError {
 		    string podcast_path = local_library_path + "/%s".printf (
  		        episode.parent.name.replace ("%27", "'").replace ("%", "_")
  		    );
@@ -452,61 +454,57 @@ namespace Leopod {
  		    DownloadDetailBox detail_box = null;
 
 
- 		    // Locally cache the album art if necessary
- 		    try {
- 		        //Check if the remote file exists
- 		        GLib.File remote_episode = GLib.File.new_for_uri (episode.uri);
- 		        if (remote_episode.query_exists ()) {
- 		            // If the episode file exists, set path for new file and create object for the local file
- 		            string episode_path =
- 		                podcast_path + "/" +
- 		                remote_episode.get_basename ().replace ("%", "_");
- 		            GLib.File local_episode = GLib.File.new_for_path (episode_path);
+            // Locally cache the album art if necessary
+            //Check if the remote file exists
+            GLib.File remote_episode = GLib.File.new_for_uri (episode.uri);
+            if (remote_episode.query_exists ()) {
+                // If the episode file exists, set path for new file and create object for the local file
+                string episode_path =
+                    podcast_path + "/" +
+                    remote_episode.get_basename ().replace ("%", "_");
+                GLib.File local_episode = GLib.File.new_for_path (episode_path);
 
- 		            if (!local_episode.query_exists ()) {
- 		                //Create the DownloadDetailBox and GLib.Cancellable
- 		                detail_box = new DownloadDetailBox (episode);
- 		                FileProgressCallback callback = detail_box.download_delegate;
- 		                GLib.Cancellable cancellable = new GLib.Cancellable ();
+                if (!local_episode.query_exists ()) {
+                    //Create the DownloadDetailBox and GLib.Cancellable
+                    detail_box = new DownloadDetailBox (episode);
+                    FileProgressCallback callback = detail_box.download_delegate;
+                    GLib.Cancellable cancellable = new GLib.Cancellable ();
 
- 		                detail_box.cancel_requested.connect ((episode) => {
- 		                    cancellable.cancel ();
- 		                    if (local_episode.query_exists ()) {
- 		                        try {
- 		                            local_episode.delete ();
- 		                        } catch (Error e) {
- 		                            error ("unable to delete file.");
- 		                        }
- 		                    }
- 		                });
+                    detail_box.cancel_requested.connect ((episode) => {
+                        cancellable.cancel ();
+                        if (local_episode.query_exists ()) {
+                            try {
+                                local_episode.delete ();
+                            } catch (Error e) {
+                                error ("unable to delete file.");
+                            }
+                        }
+                    });
 
- 		                detail_box.download_completed.connect ((episode) => {
- 		                    // Mark the local path on the episode.
-         		            episode.local_uri = "file://" + episode_path;
-         		            episode.current_download_status = DownloadStatus.DOWNLOADED;
-         		            episode.download_status_changed ();
-         		            write_episode_to_database (episode);
- 		                });
- 		                // Download the episode
- 		                remote_episode.copy_async.begin (
- 		                    local_episode,
- 		                    FileCopyFlags.OVERWRITE,
- 		                    GLib.Priority.DEFAULT,
- 		                    cancellable,
- 		                    callback
- 		                );
- 		            } else {
- 		                episode.current_download_status = DownloadStatus.DOWNLOADED;
- 		                episode.download_status_changed ();
- 		                write_episode_to_database (episode);
- 		                return null;
- 		            }
- 		        }
- 		    } catch (Error e) {
- 		        error ("unable to save a local copy of episode. %s", e.message);
- 		    }
- 		    return detail_box;
-		}
+                    detail_box.download_completed.connect ((episode) => {
+                        // Mark the local path on the episode.
+                        episode.local_uri = "file://" + episode_path;
+                        episode.current_download_status = DownloadStatus.DOWNLOADED;
+                        episode.download_status_changed ();
+                        write_episode_to_database (episode);
+                    });
+                    // Download the episode
+                    remote_episode.copy_async.begin (
+                        local_episode,
+                        FileCopyFlags.OVERWRITE,
+                        GLib.Priority.DEFAULT,
+                        cancellable,
+                        callback
+                    );
+                } else {
+                    episode.current_download_status = DownloadStatus.DOWNLOADED;
+                    episode.download_status_changed ();
+                    write_episode_to_database (episode);
+                    return null;
+                }
+            }
+            return detail_box;
+        }
 
 		public void delete_episode (Episode episode) {
 		    GLib.File local_file = GLib.File.new_for_uri (episode.local_uri);
