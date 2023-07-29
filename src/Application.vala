@@ -7,6 +7,7 @@ namespace Leopod {
 
 public class MyApp : Gtk.Application {
 	public string[] args;
+    private Controller controller;
 
 	public MyApp () {
         Object (
@@ -27,7 +28,7 @@ public class MyApp : Gtk.Application {
           Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         );
 
-        var controller = new Controller(this);
+        controller = new Controller(this);
 
     }
 
