@@ -7,27 +7,27 @@ namespace Leopod {
 
 public class MainWindow : Gtk.ApplicationWindow {
     // Core Components
-    private Controller controller;
+    public Controller controller { private get; construct; }
     private GLib.Settings settings;
-    public Gtk.HeaderBar header_bar;
-    public Gtk.FlowBox all_flowbox;
-    public Gtk.ScrolledWindow all_scrolled;
-    public PodcastView episodes_box;
-    public Gtk.ScrolledWindow episodes_scrolled;
-    public Gtk.Button back_button;
-    public Gtk.Box main_box;
+    public Gtk.HeaderBar header_bar { get; private set; }
+    public Gtk.FlowBox all_flowbox { get; private set; }
+    public Gtk.ScrolledWindow all_scrolled { get; private set; }
+    public PodcastView episodes_box { get; private set; }
+    public Gtk.ScrolledWindow episodes_scrolled { get; private set; }
+    public Gtk.Button back_button { get; private set; }
+    public Gtk.Box main_box { get; private set; }
 
-    public Granite.Placeholder welcome;
-    public Gtk.Stack notebook;
+    public Granite.Placeholder welcome { get; private set; }
+    public Gtk.Stack notebook {get; private set; }
 
-    public AddPodcastDialog add_podcast;
-    public PlaybackBox playback_box;
+    public AddPodcastDialog add_podcast { get; private set; }
+    public PlaybackBox playback_box { get; private set; }
     private DownloadsPopover downloads;
-    public NewEpisodesView new_episodes;
-    public ArtworkPopover artwork_popover;
+    public NewEpisodesView new_episodes { get; private set; }
+    public ArtworkPopover artwork_popover { get; private set; }
 
-    public Gtk.Widget current_widget;
-    public Gtk.Widget previous_widget;
+    public Gtk.Widget current_widget { get; private set; }
+    public Gtk.Widget previous_widget { get; private set; }
 
     public signal void podcast_delete_requested (Podcast podcast);
 
@@ -41,6 +41,10 @@ public class MainWindow : Gtk.ApplicationWindow {
     }
 
     public MainWindow (Controller controller) {
+        Object(controller: controller);
+    }
+
+    construct {
         width = 0;
         height = 0;
         var granite_settings = Granite.Settings.get_default ();
@@ -55,8 +59,6 @@ public class MainWindow : Gtk.ApplicationWindow {
                 gtk_settings.gtk_application_prefer_dark_theme =
                     granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
         });
-
-        this.controller = controller;
 
         var add_podcast_action = new SimpleAction ("add-podcast", null);
 
@@ -118,15 +120,22 @@ public class MainWindow : Gtk.ApplicationWindow {
 
         info ("Creating welcome screen");
         // Create a welcome screen and add it to the notebook whether first run or not
-
+        Icon welcome_icon = null;
+        Icon welcome_add_icon = null;
+        try {
+        welcome_icon = Icon.new_for_string("leopod-symbolic");
+        welcome_add_icon = Icon.new_for_string("list-add");
+        } catch (Error e) {
+            warning (e.message);
+        }
         welcome = new Granite.Placeholder (
             _("Welcome to Leopod")
         ) {
             description =  _("Build your library by adding podcasts."),
-            icon = Icon.new_for_string("leopod-symbolic"),
+            icon = welcome_icon,
         };
         var welcome_add_action = welcome.append_button (
-            GLib.Icon.new_for_string("list-add"),
+            welcome_add_icon,
             _(" Add a new Feed"),
             _(" Provide the web address of a podcast feed.")
         );
