@@ -122,7 +122,8 @@ public class MainWindow : Gtk.ApplicationWindow {
         welcome = new Granite.Placeholder (
             _("Welcome to Leopod")
         ) {
-            description =  _("Build your library by adding podcasts.")
+            description =  _("Build your library by adding podcasts."),
+            icon = Icon.new_for_string("leopod-symbolic"),
         };
         var welcome_add_action = welcome.append_button (
             GLib.Icon.new_for_string("list-add"),
@@ -141,7 +142,7 @@ public class MainWindow : Gtk.ApplicationWindow {
             halign = Gtk.Align.FILL,
             valign = Gtk.Align.START,
             homogeneous = true,
-            margin_top = margin_bottom = margin_start = margin_end = 5,
+            margin_top = margin_bottom = margin_start = margin_end = 12,
             selection_mode = Gtk.SelectionMode.NONE
         };
 
