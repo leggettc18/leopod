@@ -4,12 +4,12 @@
  */
 
 namespace Leopod {
-    public class Controller : GLib.Object {
+    public class Controller : Object {
         // Objects
-        public MainWindow window = null;
-        public Library library = null;
-        public MyApp app = null;
-        public Player player;
+        public MainWindow window { get; private set; }
+        public Library library { get; private set; }
+        public MyApp app { get; construct; }
+        public Player player { get; set; }
 
         // Signals
         public signal void playback_status_changed (string status);
@@ -19,9 +19,9 @@ namespace Leopod {
         public signal void update_status_changed (bool currently_updating);
 
         // Runtime Flags
-        public bool first_run = true;
-        public bool checking_for_updates = false;
-        public bool currently_repopulating = false;
+        public bool first_run { get; private set; default = true; }
+        public bool checking_for_updates { get; private set; default = false; }
+        public bool currently_repopulating { get; private set; default = false; }
 
         // System
         //public Gst.PbUtils.InstallPluginsContext context;
@@ -30,7 +30,10 @@ namespace Leopod {
         public Episode current_episode;
 
         public Controller (MyApp app) {
-            this.app = app;
+            Object (app: app);
+        }
+
+        construct {
             player = Player.get_default (app.args);
             library = new Library (this);
 
