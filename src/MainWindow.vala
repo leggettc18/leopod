@@ -34,14 +34,8 @@ public class MainWindow : Gtk.ApplicationWindow {
     private int width;
     private int height;
 
-    private Gtk.Widget CreateCoverartsFromPodcasts (Object podcast) {
-        CoverArt coverart = new CoverArt ((Podcast) podcast);
-        coverart.clicked.connect (on_podcast_clicked);
-        return coverart;
-    }
-
     public MainWindow (Controller controller) {
-        Object(controller: controller);
+        Object (controller: controller);
     }
 
     construct {
@@ -65,24 +59,24 @@ public class MainWindow : Gtk.ApplicationWindow {
         this.controller.app.add_action (add_podcast_action);
         this.controller.app.set_accels_for_action ("app.add-podcast", {"<Control>a"});
 
-        var add_podcast_button = new Gtk.Button.from_icon_name("list-add") {
+        var add_podcast_button = new Gtk.Button.from_icon_name ("list-add") {
             action_name = "app.add-podcast",
-            tooltip_markup = Granite.markup_accel_tooltip(
+            tooltip_markup = Granite.markup_accel_tooltip (
                 this.controller.app.get_accels_for_action ("app.add-podcast"),
                 _("Add Podcast")
             )
         };
-        var download_button = new Gtk.Button.from_icon_name("browser-download") {
+        var download_button = new Gtk.Button.from_icon_name ("browser-download") {
             tooltip_text = _("Downloads")
         };
         download_button.clicked.connect (show_downloads_popover);
 
-        header_bar = new Gtk.HeaderBar (){ 
+        header_bar = new Gtk.HeaderBar () {
             show_title_buttons = false,
         };
-        header_bar.add_css_class(Granite.STYLE_CLASS_FLAT);
-        header_bar.pack_start(new Gtk.WindowControls (Gtk.PackType.START));
-        header_bar.pack_end(new Gtk.WindowControls (Gtk.PackType.END));
+        header_bar.add_css_class (Granite.STYLE_CLASS_FLAT);
+        header_bar.pack_start (new Gtk.WindowControls (Gtk.PackType.START));
+        header_bar.pack_end (new Gtk.WindowControls (Gtk.PackType.END));
         header_bar.pack_end (add_podcast_button);
         header_bar.pack_end (download_button);
 
@@ -95,7 +89,7 @@ public class MainWindow : Gtk.ApplicationWindow {
         // });
         // header_bar.pack_end (repopulate_button);
 
-        downloads = new DownloadsPopover(download_button);
+        downloads = new DownloadsPopover (download_button);
 
         add_podcast_action.activate.connect (() => {
             on_add_podcast_clicked ();
@@ -107,8 +101,8 @@ public class MainWindow : Gtk.ApplicationWindow {
         this.set_icon_name ("com.github.leggettc18.leopod");
         title = _("Leopod");
 
-        Gtk.Grid main_layout = new Gtk.Grid();
-        main_layout.attach(header_bar, 0, 0);
+        Gtk.Grid main_layout = new Gtk.Grid ();
+        main_layout.attach (header_bar, 0, 0);
 
         info ("Creating notebook");
 
@@ -123,15 +117,15 @@ public class MainWindow : Gtk.ApplicationWindow {
         Icon welcome_icon = null;
         Icon welcome_add_icon = null;
         try {
-        welcome_icon = Icon.new_for_string("leopod-symbolic");
-        welcome_add_icon = Icon.new_for_string("list-add");
+        welcome_icon = Icon.new_for_string ("leopod-symbolic");
+        welcome_add_icon = Icon.new_for_string ("list-add");
         } catch (Error e) {
             warning (e.message);
         }
         welcome = new Granite.Placeholder (
             _("Welcome to Leopod")
         ) {
-            description =  _("Build your library by adding podcasts."),
+            description = _("Build your library by adding podcasts."),
             icon = welcome_icon,
         };
         var welcome_add_action = welcome.append_button (
@@ -155,11 +149,11 @@ public class MainWindow : Gtk.ApplicationWindow {
             selection_mode = Gtk.SelectionMode.NONE
         };
 
-        all_flowbox.bind_model(controller.library.podcasts, CreateCoverartsFromPodcasts);
+        all_flowbox.bind_model (controller.library.podcasts, create_coverarts_from_podcasts);
 
         all_scrolled = new Gtk.ScrolledWindow ();
         all_scrolled.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
-        all_scrolled.set_child(all_flowbox);
+        all_scrolled.set_child (all_flowbox);
 
 
         episodes_scrolled = new Gtk.ScrolledWindow ();
@@ -174,7 +168,7 @@ public class MainWindow : Gtk.ApplicationWindow {
         });
         new_episodes.episode_play_requested.connect ((episode) => {
             controller.current_episode = episode;
-            header_bar.title_widget = new Gtk.Label(episode.title);
+            header_bar.title_widget = new Gtk.Label (episode.title);
             playback_box.set_artwork_image (episode.parent.coverart_uri);
             artwork_popover.show_notes = episode.description;
             controller.play ();
@@ -197,8 +191,8 @@ public class MainWindow : Gtk.ApplicationWindow {
         };
 
         main_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-        main_box.prepend(main_switcher);
-        main_box.append(main_stack);
+        main_box.prepend (main_switcher);
+        main_box.append (main_stack);
 
 
         notebook.add_titled (main_box, "main", _("Main"));
@@ -210,22 +204,22 @@ public class MainWindow : Gtk.ApplicationWindow {
 
         // Actions
 
-        var playpause_action = new SimpleAction("play_pause", null);
-        this.controller.app.add_action(playpause_action);
+        var playpause_action = new SimpleAction ("play_pause", null);
+        this.controller.app.add_action (playpause_action);
         this.controller.app.set_accels_for_action ("app.play_pause", {"k",
         "space"});
         playpause_action.activate.connect (() => {
             this.controller.play_pause ();
         });
 
-        var seek_forward_action = new SimpleAction("seek_forward", null);
+        var seek_forward_action = new SimpleAction ("seek_forward", null);
         this.controller.app.add_action (seek_forward_action);
         this.controller.app.set_accels_for_action ("app.seek_forward", {"l"});
         seek_forward_action.activate.connect (() => {
             this.controller.seek_forward ();
         });
 
-        var seek_backward_action = new SimpleAction("seek_backward", null);
+        var seek_backward_action = new SimpleAction ("seek_backward", null);
         this.controller.app.add_action (seek_backward_action);
         this.controller.app.set_accels_for_action ("app.seek_backward", {"h"});
         seek_backward_action.activate.connect (() => {
@@ -247,13 +241,13 @@ public class MainWindow : Gtk.ApplicationWindow {
             controller.player.rate = r;
             settings.set_double ("playback-rate", r);
         });
-        var gesture_click = new Gtk.GestureClick();
-        playback_box.artwork.add_controller(gesture_click);
+        var gesture_click = new Gtk.GestureClick ();
+        playback_box.artwork.add_controller (gesture_click);
 
         gesture_click.released.connect (() => {
-            this.artwork_popover.show();
+            this.artwork_popover.show ();
         });
-        
+
         controller.playback_status_changed.connect (() => {
             playback_box.toggle_playing ();
         });
@@ -285,9 +279,9 @@ public class MainWindow : Gtk.ApplicationWindow {
      * Handles what happens when a podcast coverart is clicked
      */
     public void on_podcast_clicked (Podcast podcast) {
-        switch_visible_page(episodes_scrolled);
+        switch_visible_page (episodes_scrolled);
         episodes_box = new PodcastView (podcast, notebook.transition_duration);
-        episodes_scrolled.set_child(episodes_box);
+        episodes_scrolled.set_child (episodes_box);
         episodes_box.episode_download_requested.connect ((episode) => {
             on_download_requested (episode);
         });
@@ -296,7 +290,7 @@ public class MainWindow : Gtk.ApplicationWindow {
         });
         episodes_box.episode_play_requested.connect ((episode) => {
             controller.current_episode = episode;
-            header_bar.title_widget = new Gtk.Label("%s - %s".printf
+            header_bar.title_widget = new Gtk.Label ("%s - %s".printf
             (episode.parent.name, episode.title));
             playback_box.set_artwork_image (episode.parent.coverart_uri);
             artwork_popover.show_notes = episode.description;
@@ -307,20 +301,20 @@ public class MainWindow : Gtk.ApplicationWindow {
             controller.library.delete_podcast.begin (podcast);
             //episodes_scrolled.remove (episodes_box);
         });
-        episodes_scrolled.show();
+        episodes_scrolled.show ();
     }
-    
+
     public void on_download_requested (Episode episode) {
         try {
             DownloadDetailBox detail_box = controller.library.download_episode (episode);
 
             if (detail_box != null) {
                 downloads.add_download (detail_box);
-                detail_box.show();
-                downloads.show();
+                detail_box.show ();
+                downloads.show ();
             }
         } catch {
-            critical("LeopodLibraryError");
+            critical ("LeopodLibraryError");
         }
     }
 
@@ -368,7 +362,7 @@ public class MainWindow : Gtk.ApplicationWindow {
                 switch_visible_page (back_widget);
             });
             header_bar.pack_start (back_button);
-            back_button.show();
+            back_button.show ();
         } else {
             if (back_button != null) {
                 header_bar.remove (back_button);
@@ -387,7 +381,7 @@ public class MainWindow : Gtk.ApplicationWindow {
     private void on_add_podcast_clicked () {
         add_podcast = new AddPodcastDialog (this);
         add_podcast.response.connect (on_add_podcast);
-        add_podcast.show();
+        add_podcast.show ();
     }
 
     /*
@@ -397,8 +391,8 @@ public class MainWindow : Gtk.ApplicationWindow {
         add_podcast.destroy ();
         if (response_id == Gtk.ResponseType.ACCEPT) {
             switch_visible_page (main_box);
-            controller.add_podcast_async.begin(add_podcast.podcast_uri_entry.get_text (), (obj, res) => {
-                controller.add_podcast_async.end(res);
+            controller.add_podcast_async.begin (add_podcast.podcast_uri_entry.get_text (), (obj, res) => {
+                controller.add_podcast_async.end (res);
             });
         }
     }
@@ -408,6 +402,12 @@ public class MainWindow : Gtk.ApplicationWindow {
      */
     public void show_downloads_popover () {
         this.downloads.show ();
+    }
+
+    private Gtk.Widget create_coverarts_from_podcasts (Object podcast) {
+        CoverArt coverart = new CoverArt ((Podcast) podcast);
+        coverart.clicked.connect (on_podcast_clicked);
+        return coverart;
     }
 }
 

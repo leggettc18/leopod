@@ -6,16 +6,16 @@
 namespace Leopod {
     public class CoverArt : Gtk.Box {
         public Podcast podcast { get; construct; }
-        
+
         public CoverArt (Podcast podcast) {
-            Object(podcast: podcast);
+            Object (podcast: podcast);
         }
 
         construct {
             orientation = Gtk.Orientation.VERTICAL;
             var controller = new Gtk.GestureClick ();
-            controller.released.connect((num_presses, x, y) => {
-                    clicked(this.podcast);
+            controller.released.connect ((num_presses, x, y) => {
+                    clicked (this.podcast);
                     });
             add_controller (controller);
             Gtk.Image image = new Gtk.Image () {
@@ -37,9 +37,9 @@ namespace Leopod {
                 info (podcast.local_art_uri);
                 file = GLib.File.new_for_uri (podcast.local_art_uri);
             }
-            image.set_from_file(file.get_path());
+            image.set_from_file (file.get_path ());
             image.pixel_size = 170;
-            image.show();
+            image.show ();
             name.show ();
             show ();
 
@@ -60,12 +60,12 @@ namespace Leopod {
      * already exist.
      */
      private void cache_album_art (Podcast podcast) {
-	    // Set the local library directory and replace ~ with absolute path
-	    string local_library_path = GLib.Environment.get_user_data_dir () + """/leopod""";
-	    local_library_path = local_library_path.replace (
-	        "~",
-	        GLib.Environment.get_home_dir ()
-	    );
+        // Set the local library directory and replace ~ with absolute path
+        string local_library_path = GLib.Environment.get_user_data_dir () + """/leopod""";
+        local_library_path = local_library_path.replace (
+            "~",
+            GLib.Environment.get_home_dir ()
+        );
         try {
             podcast.cache_album_art (local_library_path);
         } catch (Error e) {

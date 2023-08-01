@@ -27,10 +27,10 @@ namespace Leopod {
                 margin_end = 12,
                 margin_top = 12,
             };
-            hbox.append(add_label);
-            hbox.append(this.podcast_uri_entry);
+            hbox.append (add_label);
+            hbox.append (this.podcast_uri_entry);
             var content = get_content_area ();
-            content.append(hbox);
+            content.append (hbox);
 
             // Add buttons to button area at the bottom
             add_button (_("Cancel"), Gtk.ResponseType.CANCEL);
@@ -44,7 +44,7 @@ namespace Leopod {
                 }
             });
 
-            show();
+            show ();
         }
     }
 }

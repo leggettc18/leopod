@@ -66,7 +66,7 @@ public class Player : Playback, GLib.Object {
                 new_position_available ();
             }
             if (new_launch && get_duration () > 0.0) {
-                new_position_available();
+                new_position_available ();
                 new_launch = false;
             }
             return true;
@@ -75,7 +75,9 @@ public class Player : Playback, GLib.Object {
 
     public bool set_position (int64 pos) {
         //info ("Position: %" + int64.FORMAT, pos);
-        return pipe.playbin.seek(_rate, Gst.Format.TIME, Gst.SeekFlags.FLUSH, Gst.SeekType.SET, pos, Gst.SeekType.NONE, get_duration ());
+        return pipe.playbin.seek (
+            _rate, Gst.Format.TIME, Gst.SeekFlags.FLUSH, Gst.SeekType.SET, pos, Gst.SeekType.NONE, get_duration ()
+        );
     }
 
     /* Pauses the player */
@@ -168,7 +170,7 @@ public class Player : Playback, GLib.Object {
         pipe.playbin.set_property ("volume", val);
     }
 
-    
+
     /*
      * Gets the current volume
      */

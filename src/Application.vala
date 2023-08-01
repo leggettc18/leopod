@@ -6,10 +6,10 @@
 namespace Leopod {
 
 public class MyApp : Gtk.Application {
-	public string[] args;
+    public string[] args;
     private Controller controller;
 
-	public MyApp () {
+    public MyApp () {
         Object (
             application_id: "com.github.leggettc18.leopod",
             flags: ApplicationFlags.FLAGS_NONE
@@ -22,13 +22,13 @@ public class MyApp : Gtk.Application {
 
         var provider = new Gtk.CssProvider ();
         provider.load_from_resource ("/com/github/leggettc18/leopod/application.css");
-        Gtk.StyleContext.add_provider_for_display(
-          Gdk.Display.get_default(),
+        Gtk.StyleContext.add_provider_for_display (
+          Gdk.Display.get_default (),
           provider,
           Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         );
 
-        controller = new Controller(this);
+        controller = new Controller (this);
 
     }
 

@@ -58,18 +58,18 @@ namespace Leopod {
             title.get_style_context ().add_class ("h3");
             string desc_text = Utils.html_to_markup (episode.description);
 
-            Regex carriageReturns = new Regex ("\\n", RegexCompileFlags.CASELESS);
-            desc_text = carriageReturns.replace (desc_text, -1, 0, " ");
+            Regex carriage_returns = new Regex ("\\n", RegexCompileFlags.CASELESS);
+            desc_text = carriage_returns.replace (desc_text, -1, 0, " ");
             Regex condense_spaces = new Regex ("\\s{2,}");
             desc_text = condense_spaces.replace (desc_text, -1, 0, " ").strip ();
             desc = new Gtk.Label (desc_text) {
-            	valign = Gtk.Align.START,
+                valign = Gtk.Align.START,
                 max_width_chars = 30,
-            	ellipsize = Pango.EllipsizeMode.END,
-            	wrap = true,
-            	use_markup = true,
-            	lines = 3,
-            	single_line_mode = true
+                ellipsize = Pango.EllipsizeMode.END,
+                wrap = true,
+                use_markup = true,
+                lines = 3,
+                single_line_mode = true
             };
             title_box.prepend (title);
             title_box.append (desc);
@@ -80,13 +80,13 @@ namespace Leopod {
 
             episode.download_status_changed.connect (() => {
                 if (episode.current_download_status == DownloadStatus.NOT_DOWNLOADED) {
-                    buttons_box.remove(play_button);
-                    buttons_box.remove(delete_button);
-                    buttons_box.append(download_button);
+                    buttons_box.remove (play_button);
+                    buttons_box.remove (delete_button);
+                    buttons_box.append (download_button);
                 } else {
-                    buttons_box.remove(download_button);
-                    buttons_box.append(play_button);
-                    buttons_box.append(delete_button);
+                    buttons_box.remove (download_button);
+                    buttons_box.append (play_button);
+                    buttons_box.append (delete_button);
                 }
             });
         }
@@ -114,14 +114,14 @@ namespace Leopod {
             show_notes_popover.title = episode.title;
 
             info_button.clicked.connect (() => {
-                show_notes_popover.show();
+                show_notes_popover.show ();
             });
 
             download_button = new Gtk.Button.from_icon_name (
                 "folder-download-symbolic"
-            ){
+            ) {
                 hexpand = true,
-            	tooltip_text = _("Download"),
+                tooltip_text = _("Download"),
                 has_frame = true,
                 css_classes = { "episode-button" },
             };
@@ -132,8 +132,8 @@ namespace Leopod {
 
             play_button = new Gtk.Button.from_icon_name (
                 "media-playback-start-symbolic"
-            ){
-            	tooltip_text = _("Play"),
+            ) {
+                tooltip_text = _("Play"),
                 hexpand = true,
                 has_frame = true,
                 css_classes = { "episode-button" },
@@ -144,8 +144,8 @@ namespace Leopod {
 
             delete_button = new Gtk.Button.from_icon_name (
                 "user-trash-symbolic"
-            ){
-            	tooltip_text = _("Delete"),
+            ) {
+                tooltip_text = _("Delete"),
                 hexpand = true,
                 has_frame = true,
                 css_classes = { "episode-button" },
@@ -155,12 +155,12 @@ namespace Leopod {
                 delete_requested (episode);
             });
 
-            buttons_box.prepend(info_button);
+            buttons_box.prepend (info_button);
             if (episode.current_download_status == DownloadStatus.NOT_DOWNLOADED) {
-                buttons_box.append(download_button);
+                buttons_box.append (download_button);
             } else {
-                buttons_box.append(play_button);
-                buttons_box.append(delete_button);
+                buttons_box.append (play_button);
+                buttons_box.append (delete_button);
             }
 
             return buttons_box;

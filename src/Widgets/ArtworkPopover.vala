@@ -27,10 +27,10 @@ public class ArtworkPopover : Gtk.Popover {
     }
 
     public ArtworkPopover (Gtk.Widget parent) {
-        set_parent(parent);
+        set_parent (parent);
 
-        var scrolled = new Gtk.ScrolledWindow();
-        title_label = new Granite.HeaderLabel("");
+        var scrolled = new Gtk.ScrolledWindow ();
+        title_label = new Granite.HeaderLabel ("");
         var shownotes_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
         var info_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5);
         show_notes_label = new Gtk.Label ("") {
@@ -41,12 +41,12 @@ public class ArtworkPopover : Gtk.Popover {
         };
         scrolled.set_size_request (200, 200);
         scrolled.hscrollbar_policy = Gtk.PolicyType.NEVER;
-        info_box.append(title_label);
-        info_box.append(show_notes_label);
-        scrolled.set_child(info_box);
-        scrolled.add_css_class("padded");
-        shownotes_box.prepend(scrolled);
-        set_child(shownotes_box);
+        info_box.append (title_label);
+        info_box.append (show_notes_label);
+        scrolled.set_child (info_box);
+        scrolled.add_css_class ("padded");
+        shownotes_box.prepend (scrolled);
+        set_child (shownotes_box);
     }
 }
 }

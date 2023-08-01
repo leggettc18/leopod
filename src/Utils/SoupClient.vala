@@ -10,13 +10,13 @@ public class SoupClient {
         soup_session = new Soup.Session ();
     }
 
-    public string request_as_string(HttpMethod method, string url) throws Error {
+    public string request_as_string (HttpMethod method, string url) throws Error {
         var message = new Soup.Message (method.to_string (), url);
 
-        var response = soup_session.send_and_read(message);
+        var response = soup_session.send_and_read (message);
         check_response_headers (message);
 
-        return (string) response.get_data();
+        return (string) response.get_data ();
     }
 
     public InputStream request (HttpMethod method, string url) throws Error {

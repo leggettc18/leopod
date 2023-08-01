@@ -8,77 +8,77 @@ namespace Leopod {
         ROW_PARSING_ERROR;
     }
 
-	public class Episode : GLib.Object {
+    public class Episode : GLib.Object {
 
         public string guid { get; construct; }
         public string link { get; construct; }
-		public string title { get; construct; }
-		public string description { get; construct; }
-		public string uri { get; construct set; }
-		public string local_uri { get; construct set; }
-		public string podcast_uri { get; construct set; }
-		public int64 last_played_position { get; construct set; }
-		public Podcast parent { get; construct set; }
-		public DateTime datetime_released { get; construct; }
+        public string title { get; construct; }
+        public string description { get; construct; }
+        public string uri { get; construct set; }
+        public string local_uri { get; construct set; }
+        public string podcast_uri { get; construct set; }
+        public int64 last_played_position { get; construct set; }
+        public Podcast parent { get; construct set; }
+        public DateTime datetime_released { get; construct; }
 
-		public EpisodeStatus status { get; construct set; default = EpisodeStatus.UNPLAYED; }
-		public DownloadStatus current_download_status { get; construct set; default = DownloadStatus.NOT_DOWNLOADED; }
+        public EpisodeStatus status { get; construct set; default = EpisodeStatus.UNPLAYED; }
+        public DownloadStatus current_download_status { get; construct set; default = DownloadStatus.NOT_DOWNLOADED; }
 
-		public signal void download_status_changed ();
+        public signal void download_status_changed ();
 
-		/*
-		 * Gets the playback uri based on whether the file is local or remote
-		 * Sets the playback uri based on whether it's local or remote
-		 */
-		public string playback_uri {
-			get {
-				GLib.File local;
+        /*
+         * Gets the playback uri based on whether the file is local or remote
+         * Sets the playback uri based on whether it's local or remote
+         */
+        public string playback_uri {
+            get {
+                GLib.File local;
 
-				if (local_uri != null) {
-					if (local_uri.contains ("file://")) {
-						local = GLib.File.new_for_uri (local_uri);
-					} else {
-						local = GLib.File.new_for_uri ("file://" + local_uri);
-					}
+                if (local_uri != null) {
+                    if (local_uri.contains ("file://")) {
+                        local = GLib.File.new_for_uri (local_uri);
+                    } else {
+                        local = GLib.File.new_for_uri ("file://" + local_uri);
+                    }
 
-					if (local.query_exists ()) {
-						if (local_uri.contains ("file://")) {
-							return local_uri;
-						} else {
-							local_uri = "file://" + local_uri;
-							return local_uri;
-						}
-					} else {
-						return uri;
-					}
-				} else {
-					return uri;
-				}
-			}
+                    if (local.query_exists ()) {
+                        if (local_uri.contains ("file://")) {
+                            return local_uri;
+                        } else {
+                            local_uri = "file://" + local_uri;
+                            return local_uri;
+                        }
+                    } else {
+                        return uri;
+                    }
+                } else {
+                    return uri;
+                }
+            }
 
-			set {
-				string[] split = value.split (":");
-				if (split[0] == "http" || split[0] == "HTTP") {
-					uri = value;
-				} else {
-					if (!value.contains ("file://")) {
-						local_uri = """file://""" + value;
-					} else {
-						local_uri = value;
-					}
-				}
-			}
-		}
+            set {
+                string[] split = value.split (":");
+                if (split[0] == "http" || split[0] == "HTTP") {
+                    uri = value;
+                } else {
+                    if (!value.contains ("file://")) {
+                        local_uri = """file://""" + value;
+                    } else {
+                        local_uri = value;
+                    }
+                }
+            }
+        }
 
-		//public Episode () {
-		//    parent = null;
-		//    local_uri = null;
-		//    status = EpisodeStatus.UNPLAYED;
+        //public Episode () {
+        //    parent = null;
+        //    local_uri = null;
+        //    status = EpisodeStatus.UNPLAYED;
         //    current_download_status = DownloadStatus.NOT_DOWNLOADED;
         //    last_played_position = 0;
-		//}
+        //}
 
-        public Episode(
+        public Episode (
             string title,
             string uri,
             string date_released,
@@ -109,7 +109,7 @@ namespace Leopod {
             );
         }
 
-        public Episode.from_sqlite_row(Sqlite.Statement stmt)
+        public Episode.from_sqlite_row (Sqlite.Statement stmt)
             throws EpisodeConstructionError.ROW_PARSING_ERROR {
             string title = null;
             string description = null;
@@ -124,7 +124,7 @@ namespace Leopod {
             string podcast_uri = null;
             string guid = null;
             string link = null;
- 
+
             for (int i = 0; i < stmt.column_count (); i++) {
                 string column_name = stmt.column_name (i) ?? "<none>";
                 string val = stmt.column_text (i) ?? "<none>";
@@ -176,7 +176,7 @@ namespace Leopod {
             if (title == null || description == null || uri == null || local_uri
             == null || datetime_released == null || parent == null ||
             podcast_uri == null || guid == null || link == null) {
-                throw new EpisodeConstructionError.ROW_PARSING_ERROR("Required column was missing");
+                throw new EpisodeConstructionError.ROW_PARSING_ERROR ("Required column was missing");
             }
             Object (
                 title: title,
@@ -193,9 +193,9 @@ namespace Leopod {
                 link: link
             );
         }
-	}
+    }
 
-	/*
+    /*
      * Possible episode playback statuses, either played or unplayed. In Vocal 2.0 it would be
      * beneficial to have an additional value to determine if the episode is finished
      * or simply started.

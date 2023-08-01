@@ -210,10 +210,10 @@ namespace Leopod {
 
 
                     // Add the new episode to the podcast
-                    Episode episode = new Episode(
+                    Episode episode = new Episode (
                         title, uri, date_released, description, guid, link
                     );
-                    episodes.add(episode);
+                    episodes.add (episode);
 
                 }
 
@@ -227,13 +227,13 @@ namespace Leopod {
                 feed_uri = fallback_feed_uri;
             }
 
-            podcast = new Podcast(
+            podcast = new Podcast (
                 name, podcast_description, feed_uri, remote_art_uri,
                 license, content_type
             );
 
             info ("%s %s %s %s", name, podcast_description, feed_uri, remote_art_uri);
-            
+
             podcast.add_episodes (episodes);
 
             return podcast;
@@ -411,10 +411,10 @@ namespace Leopod {
             Xml.Doc* doc;
 
             if (!raw_data) {
-				doc = Xml.Parser.parse_file (path);
-        	} else {
-        		doc = Xml.Parser.parse_memory (path, path.length);
-        	}
+                doc = Xml.Parser.parse_file (path);
+            } else {
+                doc = Xml.Parser.parse_memory (path, path.length);
+            }
 
             // Make sure that it didn't return a null reference
             if (doc == null) {
@@ -636,7 +636,7 @@ namespace Leopod {
 
                         }
 
-                        Episode episode = new Episode(
+                        Episode episode = new Episode (
                             title, uri, date_released, description, guid, link
                         );
 
@@ -702,45 +702,45 @@ namespace Leopod {
             string guid = null;
             string link = null;
 
-            for (Xml.Node* iterEntry = iter->children; iterEntry != null; iterEntry = iterEntry->next) {
-                switch (iterEntry->name) {
+            for (Xml.Node* iter_entry = iter->children; iter_entry != null; iter_entry = iter_entry->next) {
+                switch (iter_entry->name) {
                     case "title":
-                        title= iterEntry->get_content ();
+                        title= iter_entry->get_content ();
                         break;
                     case "content":
-                        description= iterEntry->get_content ();
+                        description= iter_entry->get_content ();
                         break;
                     case "updated":
                         GLib.Time tm = GLib.Time ();
-                        tm.strptime ( iterEntry->get_content (), "%Y-%m-%dT%H:%M:%S%Z");
+                        tm.strptime ( iter_entry->get_content (), "%Y-%m-%dT%H:%M:%S%Z");
                         date_released=tm.format ("%a, %d %b %Y %H:%M:%S %Z");
                         break;
                     case "link":
-                        for (Xml.Attr* propEntry = iterEntry->properties; propEntry != null; propEntry = propEntry->next) {  // vala-lint=line-length
-                            string attr_name = propEntry->name;
+                        for (Xml.Attr* prop_entry = iter_entry->properties; prop_entry != null; prop_entry = prop_entry->next) {  // vala-lint=line-length
+                            string attr_name = prop_entry->name;
                             if (attr_name == "href") {
-                                uri=propEntry->children->content;
+                                uri=prop_entry->children->content;
                                 link = uri;
                             } else if (
                                 attr_name == "type" && podcast != null
                                 && podcast.content_type != MediaType.UNKNOWN
                             ) {
-                                if (propEntry->children->content.contains ("audio/")) {
+                                if (prop_entry->children->content.contains ("audio/")) {
                                     podcast.content_type = MediaType.AUDIO;
-                                } else if (propEntry->children->content.contains ("video/")) {
+                                } else if (prop_entry->children->content.contains ("video/")) {
                                     podcast.content_type = MediaType.VIDEO;
                                 }
                             }
                         }
                         break;
                     case "id":
-                        guid = iterEntry->get_content ();
+                        guid = iter_entry->get_content ();
                         break;
                     default:
                         break;
                 }
             }
-            Episode entry = new Episode(
+            Episode entry = new Episode (
                 title, uri, date_released, description, guid, link
             );
 
@@ -771,7 +771,7 @@ namespace Leopod {
     private Podcast create_podcast_from_queue_atom ( Xml.Node* node) {
 
         Podcast podcast = null;
-        ObservableArrayList<Episode> episodes = new ObservableArrayList<Episode>();
+        ObservableArrayList<Episode> episodes = new ObservableArrayList<Episode> ();
 
         string name = null;
         string description = null;
@@ -811,13 +811,12 @@ namespace Leopod {
             }
         }
 
-        podcast = new Podcast(name, description, feed_uri, remote_art_uri, license, content_type);
+        podcast = new Podcast (name, description, feed_uri, remote_art_uri, license, content_type);
 
         episodes = create_podcast_from_queue_atom_new_episodes (node, podcast, null);
 
-        podcast.add_episodes(episodes);
+        podcast.add_episodes (episodes);
 
         return podcast;
     }
 }
-

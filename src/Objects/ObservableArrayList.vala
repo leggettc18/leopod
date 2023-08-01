@@ -1,37 +1,37 @@
 public class ObservableArrayList<T> : ListModel, Gee.ArrayList<T> {
-    public Object? get_item(uint position) {
+    public Object? get_item (uint position) {
         if ((int)position > size) {
             return null;
         }
 
-        return (Object?) this.get((int)position);
+        return (Object?) this.get ((int)position);
     }
 
-    public Type get_item_type() {
+    public Type get_item_type () {
         return element_type;
     }
 
-    public uint get_n_items() {
+    public uint get_n_items () {
         return (uint)size;
     }
 
-    public new Object? get_object(uint position) {
+    public new Object? get_object (uint position) {
         if ((int)position > size) {
             return null;
         }
-        return (Object)this.get((int)position);
+        return (Object)this.get ((int)position);
     }
 
     public new bool add (T item) {
-        bool result = base.add(item);
+        bool result = base.add (item);
         if (result) {
-            items_changed(size - 1, 0, 1);
+            items_changed (size - 1, 0, 1);
         }
         return result;
     }
 
     public new void insert (int index, T item) {
-        base.insert(index, item);
+        base.insert (index, item);
         items_changed (index, 0, 1);
     }
 
@@ -45,7 +45,7 @@ public class ObservableArrayList<T> : ListModel, Gee.ArrayList<T> {
     }
 
     public new void sort (owned CompareDataFunc<T> sort_func) {
-        base.sort((owned) sort_func);
+        base.sort ((owned) sort_func);
         items_changed (0, size, size);
     }
 }

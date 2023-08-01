@@ -8,18 +8,18 @@ namespace Leopod {
         ROW_PARSE_ERROR
     }
 
-	public class Podcast : Object {
+    public class Podcast : Object {
 
-	    public ObservableArrayList<Episode> episodes { get; private set; }
+        public ObservableArrayList<Episode> episodes { get; private set; }
 
-		public string remote_art_uri { get; construct set; }
-		public string local_art_uri { get; construct set; }
-		public string name { get; construct; }
-		public string description { get; construct; } 
-		public string feed_uri { get; construct set; }
-		public License license { get; construct; default = License.UNKNOWN; }
+        public string remote_art_uri { get; construct set; }
+        public string local_art_uri { get; construct set; }
+        public string name { get; construct; }
+        public string description { get; construct; }
+        public string feed_uri { get; construct set; }
+        public License license { get; construct; default = License.UNKNOWN; }
 
-		public MediaType content_type { 
+        public MediaType content_type {
             get; construct set; default = MediaType.UNKNOWN;
         }
 
@@ -57,7 +57,7 @@ namespace Leopod {
             }
         }
 
-		public Podcast (
+        public Podcast (
             string name,
             string description,
             string feed_uri,
@@ -73,7 +73,7 @@ namespace Leopod {
                 license: license,
                 content_type: content_type
             );
-		}
+        }
 
         public Podcast.from_sqlite_row (Sqlite.Statement stmt) throws PodcastConstructionError {
             string name = null;
@@ -120,7 +120,7 @@ namespace Leopod {
             }
 
             if (description == null || name == null) {
-                throw new PodcastConstructionError.ROW_PARSE_ERROR("Required database column is not present");
+                throw new PodcastConstructionError.ROW_PARSE_ERROR ("Required database column is not present");
             }
 
             Object (
@@ -134,8 +134,8 @@ namespace Leopod {
             );
         }
 
-		public Podcast.with_name (string name) {
-            Object(name: name);
+        public Podcast.with_name (string name) {
+            Object (name: name);
         }
 
         construct {
@@ -151,22 +151,22 @@ namespace Leopod {
         }
 
         public void add_episodes (ListModel episodes) {
-            if (episodes.get_item_type() == typeof(Episode)) {
-                for (int i = 0; i < episodes.get_n_items(); i++) {
-                    Episode episode = (Episode) episodes.get_item(i);
+            if (episodes.get_item_type () == typeof (Episode)) {
+                for (int i = 0; i < episodes.get_n_items (); i++) {
+                    Episode episode = (Episode) episodes.get_item (i);
                     episode.podcast_uri = this.feed_uri;
-                    this.episodes.add(episode);
+                    this.episodes.add (episode);
                 }
             }
         }
 
         public void cache_album_art (string local_library_path) throws Error {
             string podcast_path = local_library_path + "/%s".printf (
- 		        name.replace ("%27", "'").replace ("%", "_")
- 		    );
+                name.replace ("%27", "'").replace ("%", "_")
+            );
 
- 		    // Create a directory for downloads and artwork caching
- 		    GLib.DirUtils.create_with_parents (podcast_path, 0775);
+            // Create a directory for downloads and artwork caching
+            GLib.DirUtils.create_with_parents (podcast_path, 0775);
 
             // Locally cache the album art if necessary
             // Don't user the coverart_path getter, use the remote_uri
@@ -184,7 +184,7 @@ namespace Leopod {
                 local_art_uri = "file://" + art_path;
             }
         }
-	}
+    }
 
     /*
      * The possible types of media that a podcast might contain, generally either audio or video.
