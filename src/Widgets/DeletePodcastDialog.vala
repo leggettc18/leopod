@@ -17,7 +17,7 @@ namespace Leopod {
         }
 
         construct {
-            set_transient_for (parent_window);
+            transient_for = parent_window;
             set_default_response (Gtk.ResponseType.CANCEL);
             create_widgets ();
         }
@@ -31,17 +31,10 @@ namespace Leopod {
                 warning (e.message);
             }
 
-            // Layout Widgets
-            var hbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 12) {
-                margin_start = 12,
-                margin_end = 12,
-                margin_top = 12,
-            };
             image_icon = delete_icon;
-            primary_text = _("Are you sure you want to unsubscribe from this podcast?");
+            primary_text = _("Are you sure you want to unsubscribe from the following podcast? - ")
+                + "%s".printf (podcast.name);
             secondary_text = _("This action cannot be undone");
-            var content = get_content_area ();
-            content.append (hbox);
 
             // Add buttons to button area at the bottom
             add_button (_("Cancel"), Gtk.ResponseType.CANCEL);

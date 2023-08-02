@@ -40,6 +40,7 @@ public class MainWindow : Gtk.ApplicationWindow {
     }
 
     construct {
+        titlebar = new Gtk.Grid () { visible = false };
         width = 0;
         height = 0;
         var granite_settings = Granite.Settings.get_default ();
@@ -255,7 +256,6 @@ public class MainWindow : Gtk.ApplicationWindow {
 
         main_layout.attach (playback_box, 0, 2);
 
-        titlebar = new Gtk.Grid () { visible = false };
         child = main_layout;
 
         add_podcast.response.connect (on_add_podcast);
