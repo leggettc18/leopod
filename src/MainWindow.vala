@@ -21,6 +21,7 @@ public class MainWindow : Gtk.ApplicationWindow {
     public Gtk.Stack notebook {get; private set; }
 
     public AddPodcastDialog add_podcast { get; private set; }
+    public DeletePodcastDialog delete_podcast { get; private set; }
     public PlaybackBox playback_box { get; private set; }
     private DownloadsPopover downloads;
     public NewEpisodesView new_episodes { get; private set; }
@@ -297,11 +298,20 @@ public class MainWindow : Gtk.ApplicationWindow {
             controller.play ();
         });
         episodes_box.podcast_delete_requested.connect ((podcast) => {
-            switch_visible_page (main_box);
-            controller.library.delete_podcast.begin (podcast);
+            delete_podcast = new DeletePodcastDialog (this, podcast);
+            delete_podcast.response.connect (on_delete_podcast);
+            delete_podcast.show ();
             //episodes_scrolled.remove (episodes_box);
         });
         episodes_scrolled.show ();
+    }
+
+    private void on_delete_podcast (int response) {
+        delete_podcast.destroy ();
+        if (response == Gtk.ResponseType.ACCEPT) {
+            switch_visible_page (main_box);
+            controller.library.delete_podcast.begin (delete_podcast.podcast);
+        }
     }
 
     public void on_download_requested (Episode episode) {
