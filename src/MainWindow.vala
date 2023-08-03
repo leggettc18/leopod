@@ -16,6 +16,8 @@ public class MainWindow : Gtk.ApplicationWindow {
     public Gtk.ScrolledWindow episodes_scrolled { get; private set; }
     public Gtk.Button back_button { get; private set; }
     public Gtk.Box main_box { get; private set; }
+    private Gtk.Overlay overlay;
+    private Granite.OverlayBar overlay_bar;
 
     public Granite.Placeholder welcome { get; private set; }
     public Gtk.Stack notebook {get; private set; }
@@ -40,6 +42,11 @@ public class MainWindow : Gtk.ApplicationWindow {
 
     construct {
         titlebar = new Gtk.Grid () { visible = false };
+        overlay = new Gtk.Overlay ();
+        overlay_bar = new Granite.OverlayBar (overlay) {
+            visible = false,
+        };
+        overlay_bar.add_css_class (Granite.STYLE_CLASS_VIEW);
         width = 0;
         height = 0;
         var granite_settings = Granite.Settings.get_default ();
@@ -254,7 +261,8 @@ public class MainWindow : Gtk.ApplicationWindow {
 
         main_layout.attach (playback_box, 0, 2);
 
-        child = main_layout;
+        overlay.child = main_layout;
+        child = overlay;
 
         add_podcast.response.connect (on_add_podcast);
     }
@@ -307,7 +315,14 @@ public class MainWindow : Gtk.ApplicationWindow {
         delete_podcast.destroy ();
         if (response == Gtk.ResponseType.ACCEPT) {
             switch_visible_page (main_box);
-            controller.library.delete_podcast.begin (delete_podcast.podcast);
+            overlay_bar.label = "Deleting Podcast: " + delete_podcast.podcast.name;
+            overlay_bar.active = true;
+            overlay_bar.show ();
+            controller.library.delete_podcast.begin (delete_podcast.podcast, (obj, res) => {
+                controller.library.delete_podcast.end (res);
+                overlay_bar.active = false;
+                overlay_bar.hide ();
+            });
         }
     }
 
@@ -398,8 +413,13 @@ public class MainWindow : Gtk.ApplicationWindow {
         add_podcast.destroy ();
         if (response_id == Gtk.ResponseType.ACCEPT) {
             switch_visible_page (main_box);
+            overlay_bar.label = "Adding Podcast";
+            overlay_bar.active = true;
+            overlay_bar.show ();
             controller.add_podcast_async.begin (add_podcast.podcast_uri_entry.get_text (), (obj, res) => {
                 controller.add_podcast_async.end (res);
+                overlay_bar.active = false;
+                overlay_bar.hide ();
             });
         }
     }
