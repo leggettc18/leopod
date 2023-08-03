@@ -6,9 +6,10 @@
 namespace Leopod {
     public class CoverArt : Gtk.Box {
         public Podcast podcast { get; construct; }
+        public bool title_visible { get; construct; }
 
-        public CoverArt (Podcast podcast) {
-            Object (podcast: podcast);
+        public CoverArt (Podcast podcast, bool title_visible = true) {
+            Object (podcast: podcast, title_visible: title_visible);
         }
 
         construct {
@@ -20,9 +21,6 @@ namespace Leopod {
             add_controller (controller);
             Gtk.Image image = new Gtk.Image () {
                 margin_top = margin_end = margin_start = margin_bottom = 2,
-            };
-            Granite.HeaderLabel name = new Granite.HeaderLabel (podcast.name) {
-                halign = Gtk.Align.CENTER,
             };
             Gtk.Button button = new Gtk.Button () {
                 tooltip_text = _("Browse Podcast Episodes"),
@@ -40,11 +38,15 @@ namespace Leopod {
             image.set_from_file (file.get_path ());
             image.pixel_size = 170;
             image.show ();
-            name.show ();
             show ();
 
             append (image);
-            append (name);
+            if (title_visible) {
+                Granite.HeaderLabel name = new Granite.HeaderLabel (podcast.name) {
+                    halign = Gtk.Align.CENTER,
+                };
+                append (name);
+            }
         }
 
         public signal void clicked (Podcast podcast);

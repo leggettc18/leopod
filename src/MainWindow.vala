@@ -25,7 +25,6 @@ public class MainWindow : Gtk.ApplicationWindow {
     public PlaybackBox playback_box { get; private set; }
     private DownloadsPopover downloads;
     public NewEpisodesView new_episodes { get; private set; }
-    public ArtworkPopover artwork_popover { get; private set; }
 
     public Gtk.Widget current_widget { get; private set; }
     public Gtk.Widget previous_widget { get; private set; }
@@ -172,7 +171,6 @@ public class MainWindow : Gtk.ApplicationWindow {
             controller.current_episode = episode;
             header_bar.title_widget = new Gtk.Label (episode.title);
             playback_box.set_artwork_image (episode.parent.coverart_uri);
-            artwork_popover.show_notes = episode.description;
             controller.play ();
         });
 
@@ -233,7 +231,6 @@ public class MainWindow : Gtk.ApplicationWindow {
         controller.player.rate = playback_rate;
         playback_box.playback_rate_button.label = "x%g".printf (playback_rate);
 
-        artwork_popover = new ArtworkPopover (playback_box.artwork);
 
         playback_box.scale_changed.connect (() => {
             var new_progress = playback_box.get_progress_bar_fill ();
@@ -247,7 +244,8 @@ public class MainWindow : Gtk.ApplicationWindow {
         playback_box.artwork.add_controller (gesture_click);
 
         gesture_click.released.connect (() => {
-            this.artwork_popover.show ();
+            EpisodeWindow window = new EpisodeWindow (this.controller.current_episode);
+            window.show ();
         });
 
         controller.playback_status_changed.connect (() => {
@@ -294,7 +292,6 @@ public class MainWindow : Gtk.ApplicationWindow {
             header_bar.title_widget = new Gtk.Label ("%s - %s".printf
             (episode.parent.name, episode.title));
             playback_box.set_artwork_image (episode.parent.coverart_uri);
-            artwork_popover.show_notes = episode.description;
             controller.play ();
         });
         episodes_box.podcast_delete_requested.connect ((podcast) => {

@@ -6,7 +6,7 @@
 namespace Leopod {
     public class EpisodeListItem : Gtk.Box {
         // Data
-        public Episode episode;
+        public Episode episode { get; construct; }
         public int desc_lines {
             get {
                 return desc.lines;
@@ -16,6 +16,7 @@ namespace Leopod {
                 desc.lines = value;
             }
         } //Amount of lines the description is allowed to be.
+        private string desc_text = null;
 
         // Widgets
         public Gtk.Box buttons_box;
@@ -34,6 +35,9 @@ namespace Leopod {
 
         // Constructors
         public EpisodeListItem (Episode episode) {
+            Object (episode: episode);
+        }
+        construct {
             margin_top = margin_bottom = margin_start = margin_end = 5;
             valign = Gtk.Align.CENTER;
             css_classes = { Granite.STYLE_CLASS_CARD, Granite.STYLE_CLASS_ROUNDED, "padded" };
@@ -56,7 +60,7 @@ namespace Leopod {
                 ellipsize = Pango.EllipsizeMode.END
             };
             title.get_style_context ().add_class ("h3");
-            string desc_text = Utils.html_to_markup (episode.description);
+            desc_text = Utils.html_to_markup (episode.description);
 
             try {
                 Regex carriage_returns = new Regex ("\\n", RegexCompileFlags.CASELESS);
@@ -113,12 +117,9 @@ namespace Leopod {
                 css_classes = { "episode-button" }
             };
 
-            ArtworkPopover show_notes_popover = new ArtworkPopover (info_button);
-            show_notes_popover.show_notes = episode.description;
-            show_notes_popover.title = episode.title;
-
             info_button.clicked.connect (() => {
-                show_notes_popover.show ();
+                EpisodeWindow window = new EpisodeWindow (episode);
+                window.show ();
             });
 
             download_button = new Gtk.Button.from_icon_name (

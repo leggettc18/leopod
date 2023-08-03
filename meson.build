@@ -44,8 +44,8 @@ executable(
     'src' / 'Widgets' / 'PodcastView.vala',
     'src' / 'Widgets' / 'PlaybackBox.vala',
     'src' / 'Widgets' / 'NewEpisodesView.vala',
-    'src' / 'Widgets' / 'ArtworkPopover.vala',
     'src' / 'Widgets' / 'PlaybackRatePopover.vala',
+    'src' / 'Windows' / 'EpisodeWindow.vala',
     dependencies: [
         dependency('gtk4'),
         dependency('granite-7'),
