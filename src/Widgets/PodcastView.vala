@@ -39,14 +39,6 @@ public class PodcastView : Gtk.Box {
         return episode_list_item;
     }
 
-    private int episode_sort_func (Object row1, Object row2) {
-        Episode item1 = (Episode) row1;
-        Episode item2 = (Episode) row2;
-
-        return
-        item1.datetime_released.compare (item2.datetime_released)
-        * -1;
-    }
 
     public PodcastView (Podcast podcast, uint transition_duration = 500) {
         Object (
@@ -124,7 +116,7 @@ public class PodcastView : Gtk.Box {
             homogeneous = true,
         };
         episodes_list.add_css_class (Granite.STYLE_CLASS_RICH_LIST);
-        podcast.episodes.sort (episode_sort_func);
+        podcast.episodes.sort (Episode.episode_sort_func);
         episodes_list.bind_model (podcast.episodes, create_episode_list_item);
         right_scrolled.child = episodes_list;
         Idle.add ((owned) callback);

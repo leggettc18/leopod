@@ -58,10 +58,14 @@ namespace Leopod {
             title.get_style_context ().add_class ("h3");
             string desc_text = Utils.html_to_markup (episode.description);
 
-            Regex carriage_returns = new Regex ("\\n", RegexCompileFlags.CASELESS);
-            desc_text = carriage_returns.replace (desc_text, -1, 0, " ");
-            Regex condense_spaces = new Regex ("\\s{2,}");
-            desc_text = condense_spaces.replace (desc_text, -1, 0, " ").strip ();
+            try {
+                Regex carriage_returns = new Regex ("\\n", RegexCompileFlags.CASELESS);
+                desc_text = carriage_returns.replace (desc_text, -1, 0, " ");
+                Regex condense_spaces = new Regex ("\\s{2,}");
+                desc_text = condense_spaces.replace (desc_text, -1, 0, " ").strip ();
+            } catch (RegexError e) {
+                warning (e.message);
+            }
             desc = new Gtk.Label (desc_text) {
                 valign = Gtk.Align.START,
                 max_width_chars = 30,
@@ -92,7 +96,7 @@ namespace Leopod {
         }
 
         private Gtk.Box create_buttons_box () {
-            buttons_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5) {
+            buttons_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6) {
                 margin_top = 10,
                 margin_bottom = 10,
                 vexpand = false,

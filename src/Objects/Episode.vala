@@ -77,6 +77,9 @@ namespace Leopod {
         //    current_download_status = DownloadStatus.NOT_DOWNLOADED;
         //    last_played_position = 0;
         //}
+        public static int episode_sort_func (Episode item1, Episode item2) {
+            return item1.datetime_released.compare (item2.datetime_released) * -1;
+        }
 
         public Episode (
             string title,

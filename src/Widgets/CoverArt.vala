@@ -50,11 +50,6 @@ namespace Leopod {
         public signal void clicked (Podcast podcast);
     }
 
-    private async Gdk.Pixbuf load_image_async (string url) {
-        var soup_client = new SoupClient ();
-        return yield new Gdk.Pixbuf.from_stream_async (soup_client.request (HttpMethod.GET, url));
-    }
-
     /*
      * Downloads and Caches a podcast's album art if it doesn't
      * already exist.
