@@ -8,7 +8,6 @@ namespace Leopod {
 public class MainWindow : Gtk.ApplicationWindow {
     // Core Components
     public Controller controller { private get; construct; }
-    private GLib.Settings settings;
     public Gtk.HeaderBar header_bar { get; private set; }
     public Gtk.FlowBox all_flowbox { get; private set; }
     public Gtk.ScrolledWindow all_scrolled { get; private set; }
@@ -51,7 +50,6 @@ public class MainWindow : Gtk.ApplicationWindow {
         height = 0;
         var granite_settings = Granite.Settings.get_default ();
         var gtk_settings = Gtk.Settings.get_default ();
-        settings = new GLib.Settings ("com.github.leggettc18.leopod");
 
         // Check if user prefers dark theme or not
         gtk_settings.gtk_application_prefer_dark_theme =
@@ -233,10 +231,9 @@ public class MainWindow : Gtk.ApplicationWindow {
             this.controller.seek_backward ();
         });
 
-        playback_box = new PlaybackBox (this.controller.app);
-        double playback_rate = settings.get_double ("playback-rate");
+        double playback_rate = controller.app.settings.get_double ("playback-rate");
         controller.player.rate = playback_rate;
-        playback_box.playback_rate_button.label = "x%g".printf (playback_rate);
+        playback_box = new PlaybackBox (this.controller.app);
 
 
         playback_box.scale_changed.connect (() => {
@@ -245,7 +242,7 @@ public class MainWindow : Gtk.ApplicationWindow {
         });
         playback_box.playback_rate_selected.connect ((t, r) => {
             controller.player.rate = r;
-            settings.set_double ("playback-rate", r);
+            controller.app.settings.set_double ("playback-rate", r);
         });
         var gesture_click = new Gtk.GestureClick ();
         playback_box.artwork.add_controller (gesture_click);

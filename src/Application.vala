@@ -7,7 +7,8 @@ namespace Leopod {
 
 public class MyApp : Gtk.Application {
     public string[] args;
-    private Controller controller;
+    public GLib.Settings settings { get; private set; }
+    public Controller controller { get; private set; }
 
     public MyApp () {
         Object (
@@ -28,6 +29,7 @@ public class MyApp : Gtk.Application {
           Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         );
 
+        settings = new GLib.Settings ("com.github.leggettc18.leopod");
         controller = new Controller (this);
 
     }

@@ -17,9 +17,9 @@ public class PlaybackBox : Gtk.Box {
     public Gtk.Button seek_back_button;
     public Gtk.Button playpause_button;
     public Gtk.Button seek_forward_button;
-    public Gtk.Button playback_rate_button;
     public Gtk.Box artwork;
     public Gtk.Image artwork_image;
+    private PlaybackRatePopover playback_rate_popover;
     private Gtk.Image play_image;
     private Gtk.Image pause_image;
     private Gtk.ProgressBar progress_bar;
@@ -60,19 +60,9 @@ public class PlaybackBox : Gtk.Box {
         podcast_label.xalign = 0.0f;
         podcast_label.max_width_chars = 20;
 
-        playback_rate_button = new Gtk.Button.with_label ("x1.0") {
-            tooltip_text = _("Playback Rate"),
-            has_frame = false,
-        };
-        playback_rate_button.get_style_context ().add_class ("h3");
-        PlaybackRatePopover rate_popover = new PlaybackRatePopover (playback_rate_button);
-        playback_rate_button.clicked.connect (() => {
-            rate_popover.show ();
-        });
-        rate_popover.rate_selected.connect ((t, r) => {
-            playback_rate_button.label = "x%g".printf (r);
+        playback_rate_popover = new PlaybackRatePopover (app.settings.get_double ("playback-rate"));
+        playback_rate_popover.rate_selected.connect ((t, r) => {
             playback_rate_selected (r);
-            rate_popover.popdown ();
         });
 
         seek_back_button = new Gtk.Button.from_icon_name (
@@ -146,7 +136,7 @@ public class PlaybackBox : Gtk.Box {
         label_box.halign = Gtk.Align.START;
 
         var button_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 3);
-        button_box.append (playback_rate_button);
+        button_box.append (playback_rate_popover);
         button_box.append (seek_back_button);
         button_box.append (playpause_button);
         button_box.append (seek_forward_button);
