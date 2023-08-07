@@ -14,24 +14,28 @@ public class DownloadDetailBox : Gtk.Box {
     public signal void new_percentage_available ();
 
     //Widgets
-    public Gtk.Label title_label;
-    public Gtk.Label podcast_label;
-    public Gtk.ProgressBar progress_bar;
-    public Gtk.Label download_label;
+    private Gtk.Label title_label;
+    private Gtk.Label podcast_label;
+    private Gtk.ProgressBar progress_bar;
+    private Gtk.Label download_label;
 
     //State Data
-    public double percentage;
-    public int secs_elapsed;
-    public bool download_complete;
-    public Episode episode;
+    private double percentage;
+    private int secs_elapsed;
+    private bool download_complete;
+    public Episode episode { get; construct; }
     private bool signal_sent;
-    string data_output;
-    string time_output;
-    string outdated_time_output;
+    private string data_output;
+    private string time_output;
+    private string outdated_time_output;
 
     //Constructors
     public DownloadDetailBox (Episode episode) {
-        this.episode = episode;
+        Object (episode: episode);
+    }
+
+    construct {
+        add_css_class (Granite.STYLE_CLASS_BACKGROUND);
         orientation = Gtk.Orientation.VERTICAL;
 
         secs_elapsed = 0;
@@ -46,7 +50,7 @@ public class DownloadDetailBox : Gtk.Box {
         //Spacing
         //margin = 5;
         //margin_left = margin_right = 12;
-        spacing = 5;
+        //spacing = 5;
 
         //Title Label
         title_label = new Gtk.Label (episode.title.replace ("%27", "'"));
@@ -61,17 +65,17 @@ public class DownloadDetailBox : Gtk.Box {
         podcast_label.max_width_chars = 15;
 
         //Label Box
-        var label_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-        label_box.append (title_label);
+        var label_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 3);
         label_box.append (podcast_label);
+        label_box.append (title_label);
 
         //Details Box
-        var details_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
+        var details_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 12);
         details_box.append (image);
         details_box.append (label_box);
 
         //Progress Bar and cancel button (and containing Box)
-        var progress_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
+        var progress_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 12);
 
         progress_bar = new Gtk.ProgressBar ();
         progress_bar.show_text = false;

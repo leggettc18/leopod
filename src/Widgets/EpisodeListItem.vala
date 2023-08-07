@@ -37,6 +37,7 @@ namespace Leopod {
         public EpisodeListItem (Episode episode) {
             Object (episode: episode);
         }
+
         construct {
             margin_top = margin_bottom = margin_start = margin_end = 5;
             valign = Gtk.Align.CENTER;

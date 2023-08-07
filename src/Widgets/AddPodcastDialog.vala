@@ -5,11 +5,17 @@
 
 namespace Leopod {
     public class AddPodcastDialog : Granite.Dialog {
-        public Gtk.Entry podcast_uri_entry;
+        public Gtk.Entry podcast_uri_entry { get; private set; }
+        public Gtk.Window parent_window { get; construct; }
+
         private Gtk.Widget add_podcast_button;
 
-        public AddPodcastDialog (Gtk.Window parent) {
-            set_transient_for (parent);
+        public AddPodcastDialog (Gtk.Window parent_window) {
+            Object (parent_window: parent_window);
+        }
+
+        construct {
+            set_transient_for (parent_window);
             set_default_response (Gtk.ResponseType.ACCEPT);
             create_widgets ();
         }

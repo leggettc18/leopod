@@ -8,7 +8,7 @@ namespace Leopod {
         ROW_PARSING_ERROR;
     }
 
-    public class Episode : GLib.Object {
+    public class Episode : Object {
 
         public string guid { get; construct; }
         public string link { get; construct; }

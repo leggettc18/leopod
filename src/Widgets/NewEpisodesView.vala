@@ -7,8 +7,10 @@ namespace Leopod {
 
 
 public class NewEpisodesView : Gtk.Box {
-    public Gtk.Box main_box;
-    public Gtk.ListBox list_box;
+    private Gtk.Box main_box;
+    private Gtk.ListBox list_box;
+
+    public Library library { get; construct; }
 
     private ObservableArrayList<Episode> episodes;
 
@@ -39,6 +41,10 @@ public class NewEpisodesView : Gtk.Box {
     }
 
     public NewEpisodesView (Library library) {
+        Object (library: library);
+    }
+
+    construct {
         Gtk.ScrolledWindow main_scrolled = new Gtk.ScrolledWindow () {
             margin_bottom = margin_start = margin_end = 20,
             margin_top = 0,
@@ -55,7 +61,7 @@ public class NewEpisodesView : Gtk.Box {
         list_box = new Gtk.ListBox () {
             show_separators = true
         };
-        list_box.add_css_class (Granite.STYLE_CLASS_RICH_LIST);
+        list_box.add_css_class (Granite.STYLE_CLASS_BACKGROUND);
         episodes = get_new_episodes (library.podcasts);
         list_box.bind_model (episodes, create_list_box_for_new_episode);
         //list_box.get_children ().foreach ((child) => {
