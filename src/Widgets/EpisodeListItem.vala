@@ -27,6 +27,9 @@ namespace Leopod {
         public Gtk.Button delete_button;
         public Gtk.Label title;
         public Gtk.Label desc;
+        private Gtk.Box box;
+        private CoverArt coverart;
+        public bool show_coverart { get; construct; }
 
         // Signals
         public signal void download_clicked (Episode episode);
@@ -34,19 +37,26 @@ namespace Leopod {
         public signal void play_requested (Episode episode);
 
         // Constructors
-        public EpisodeListItem (Episode episode) {
-            Object (episode: episode);
+        public EpisodeListItem (Episode episode, bool show_coverart = false) {
+            Object (episode: episode, show_coverart: show_coverart);
         }
 
         construct {
+            if (show_coverart) {
+                coverart = new CoverArt (episode.parent, false);
+                append (coverart);
+            }
+            box = new Gtk.Box (Gtk.Orientation.VERTICAL, 3) {
+                valign = Gtk.Align.CENTER,
+                vexpand = true,
+                hexpand = true,
+                halign = Gtk.Align.FILL,
+                valign = Gtk.Align.FILL,
+            };
             margin_top = margin_bottom = margin_start = margin_end = 5;
-            valign = Gtk.Align.CENTER;
             css_classes = { Granite.STYLE_CLASS_CARD, Granite.STYLE_CLASS_ROUNDED, "padded" };
-            vexpand = true;
-            hexpand = true;
-            halign = Gtk.Align.FILL;
-            valign = Gtk.Align.FILL;
-            orientation = Gtk.Orientation.VERTICAL;
+            append (box);
+            orientation = Gtk.Orientation.HORIZONTAL;
             this.episode = episode;
             title_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 5) {
                 vexpand = true,
@@ -82,10 +92,10 @@ namespace Leopod {
             };
             title_box.prepend (title);
             title_box.append (desc);
-            prepend (title_box);
+            box.prepend (title_box);
 
             buttons_box = create_buttons_box ();
-            append (buttons_box);
+            box.append (buttons_box);
 
             episode.download_status_changed.connect (() => {
                 if (episode.current_download_status == DownloadStatus.NOT_DOWNLOADED) {

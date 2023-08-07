@@ -21,8 +21,7 @@ public class NewEpisodesView : Gtk.Box {
 
     private Gtk.Widget create_list_box_for_new_episode (GLib.Object object) {
         Episode episode = (Episode) object;
-        var coverart = new CoverArt (episode.parent);
-        var list_item = new EpisodeListItem ((Episode) episode) {
+        var list_item = new EpisodeListItem ((Episode) episode, true) {
             desc_lines = 8
         };
         list_item.download_clicked.connect ((episode) => {
@@ -34,10 +33,7 @@ public class NewEpisodesView : Gtk.Box {
         list_item.play_requested.connect ((e) => {
                 episode_play_requested (e);
                 });
-        var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 5);
-        box.append (coverart);
-        box.append (list_item);
-        return box;
+        return list_item;
     }
 
     public NewEpisodesView (Library library) {
