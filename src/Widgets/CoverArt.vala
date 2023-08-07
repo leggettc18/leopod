@@ -7,6 +7,7 @@ namespace Leopod {
     public class CoverArt : Gtk.Box {
         public Podcast podcast { get; construct; }
         public bool title_visible { get; construct; }
+        private Gtk.Image image;
 
         public CoverArt (Podcast podcast, bool title_visible = true) {
             Object (podcast: podcast, title_visible: title_visible);
@@ -19,8 +20,9 @@ namespace Leopod {
                     clicked (this.podcast);
                     });
             add_controller (controller);
-            Gtk.Image image = new Gtk.Image () {
+            image = new Gtk.Image () {
                 margin_top = margin_end = margin_start = margin_bottom = 2,
+                pixel_size = 170,
             };
             Gtk.Button button = new Gtk.Button () {
                 tooltip_text = _("Browse Podcast Episodes"),
@@ -29,15 +31,7 @@ namespace Leopod {
 
             //Load the actual coverart
             info (podcast.local_art_uri);
-            var file = GLib.File.new_for_uri (podcast.local_art_uri);
-            if (!file.query_exists ()) {
-                cache_album_art (podcast);
-                info (podcast.local_art_uri);
-                file = GLib.File.new_for_uri (podcast.local_art_uri);
-            }
-            image.set_from_file (file.get_path ());
-            image.pixel_size = 170;
-            image.show ();
+            load_album_art.begin ();
             show ();
 
             append (image);
@@ -50,6 +44,19 @@ namespace Leopod {
         }
 
         public signal void clicked (Podcast podcast);
+
+        private async void load_album_art () {
+            SourceFunc callback = load_album_art.callback;
+            Idle.add ((owned) callback);
+            yield;
+            var file = File.new_for_uri (podcast.local_art_uri);
+            if (!file.query_exists ()) {
+                cache_album_art (podcast);
+                file = GLib.File.new_for_uri (podcast.local_art_uri);
+            }
+            image.set_from_file (file.get_path ());
+            image.show ();
+        }
     }
 
     /*
@@ -69,5 +76,6 @@ namespace Leopod {
             error ("unable to save a local copy of album art. %s", e.message);
         }
     }
+
 
 }
