@@ -43,7 +43,9 @@ namespace Leopod {
 
         construct {
             if (show_coverart) {
-                coverart = new CoverArt (episode.parent, false);
+                coverart = new CoverArt (episode.parent, false) {
+                    margin_end = 6,
+                };
                 append (coverart);
             }
             box = new Gtk.Box (Gtk.Orientation.VERTICAL, 3) {
@@ -54,6 +56,7 @@ namespace Leopod {
                 valign = Gtk.Align.FILL,
             };
             margin_top = margin_bottom = margin_start = margin_end = 5;
+            valign = Gtk.Align.CENTER;
             css_classes = { Granite.STYLE_CLASS_CARD, Granite.STYLE_CLASS_ROUNDED, "padded" };
             append (box);
             orientation = Gtk.Orientation.HORIZONTAL;

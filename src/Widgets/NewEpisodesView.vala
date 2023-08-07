@@ -8,33 +8,16 @@ namespace Leopod {
 
 public class NewEpisodesView : Gtk.Box {
     private Gtk.Box main_box;
-    private Gtk.ListBox list_box;
-
+    private EpisodeList list_box;
     public Library library { get; construct; }
-
-    private ObservableArrayList<Episode> episodes;
 
     // Signals
     public signal void episode_download_requested (Episode episode);
     public signal void episode_delete_requested (Episode episode);
     public signal void episode_play_requested (Episode episode);
 
-    private Gtk.Widget create_list_box_for_new_episode (GLib.Object object) {
-        Episode episode = (Episode) object;
-        var list_item = new EpisodeListItem ((Episode) episode, true) {
-            desc_lines = 8
-        };
-        list_item.download_clicked.connect ((episode) => {
-                episode_download_requested (episode);
-                });
-        list_item.delete_requested.connect ((episode) => {
-                episode_delete_requested (episode);
-                });
-        list_item.play_requested.connect ((e) => {
-                episode_play_requested (e);
-                });
-        return list_item;
-    }
+    private ObservableArrayList<Episode> episodes;
+
 
     public NewEpisodesView (Library library) {
         Object (library: library);
@@ -54,15 +37,18 @@ public class NewEpisodesView : Gtk.Box {
         };
         main_scrolled.set_child (main_box);
         prepend (main_scrolled);
-        list_box = new Gtk.ListBox () {
-            show_separators = true
-        };
-        list_box.add_css_class (Granite.STYLE_CLASS_BACKGROUND);
         episodes = get_new_episodes (library.podcasts);
-        list_box.bind_model (episodes, create_list_box_for_new_episode);
-        //list_box.get_children ().foreach ((child) => {
-        //    child.get_style_context ().add_class ("episode-list");
-        //});
+        list_box = new EpisodeList (episodes, true, EpisodeListType.LIST, 8);
+        list_box.episode_download_requested.connect ((episode) => {
+            episode_download_requested (episode);
+        });
+        list_box.episode_delete_requested.connect ((episode) => {
+            episode_delete_requested (episode);
+        });
+        list_box.episode_play_requested.connect ((episode) => {
+            episode_play_requested (episode);
+        });
+        list_box.add_css_class (Granite.STYLE_CLASS_BACKGROUND);
         main_box.prepend (list_box);
     }
 
@@ -103,9 +89,7 @@ public class NewEpisodesView : Gtk.Box {
         info ("rebuilding new episodes list");
         main_box.remove (list_box);
         episodes = get_new_episodes (library.podcasts);
-        list_box.bind_model (episodes, create_list_box_for_new_episode);        //list_box.get_children ().foreach ((child) => {
-        //    child.get_style_context ().add_class ("episode-list");
-        //});
+        list_box.bind_model (episodes);
         main_box.append (list_box);
         main_box.show ();
     }

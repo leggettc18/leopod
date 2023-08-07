@@ -38,6 +38,7 @@ executable(
     'src' / 'Widgets' / 'CoverArt.vala',
     'src' / 'Widgets' / 'AddPodcastDialog.vala',
     'src' / 'Widgets' / 'DeletePodcastDialog.vala',
+    'src' / 'Widgets' / 'EpisodeList.vala',
     'src' / 'Widgets' / 'EpisodeListItem.vala',
     'src' / 'Widgets' / 'DownloadDetailBox.vala',
     'src' / 'Widgets' / 'DownloadsPopover.vala',

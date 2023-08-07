@@ -16,29 +16,13 @@ public class PodcastView : Gtk.Box {
     public signal void podcast_delete_requested (Podcast podcast);
 
     // Widgets
-    public Gtk.FlowBox episodes_list;
+    public EpisodeList episodes_list;
     private Granite.Placeholder placeholder;
     private Gtk.Paned paned;
     private Gtk.ScrolledWindow right_scrolled;
 
     // Data
     public ObservableArrayList<EpisodeListItem> episodes;
-
-    private Gtk.Widget create_episode_list_item (GLib.Object object) {
-        Episode episode = (Episode) object;
-        var episode_list_item = new EpisodeListItem (episode);
-        episode_list_item.download_clicked.connect ((episode) => {
-                episode_download_requested (episode);
-                });
-        episode_list_item.delete_requested.connect ((episode) => {
-                episode_delete_requested (episode);
-                });
-        episode_list_item.play_requested.connect ((e) => {
-                episode_play_requested (e);
-                });
-        return episode_list_item;
-    }
-
 
     public PodcastView (Podcast podcast, uint transition_duration = 500) {
         Object (
@@ -108,16 +92,11 @@ public class PodcastView : Gtk.Box {
 
     private async void populate_episode_list () {
         SourceFunc callback = populate_episode_list.callback;
-
-        episodes_list = new Gtk.FlowBox () {
-            vexpand = true,
-            margin_end = 10,
-            selection_mode = Gtk.SelectionMode.NONE,
-            homogeneous = true,
+        podcast.episodes.sort (Episode.episode_sort_func);
+        episodes_list = new EpisodeList (podcast.episodes, false, EpisodeListType.GRID, 3) {
+            margin_end = 6,
         };
         episodes_list.add_css_class (Granite.STYLE_CLASS_RICH_LIST);
-        podcast.episodes.sort (Episode.episode_sort_func);
-        episodes_list.bind_model (podcast.episodes, create_episode_list_item);
         right_scrolled.child = episodes_list;
         Idle.add ((owned) callback);
         yield;
