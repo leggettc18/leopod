@@ -33,7 +33,9 @@ public class EpisodeList : Gtk.Widget {
 
     construct {
         layout_manager = new Gtk.BoxLayout (Gtk.Orientation.VERTICAL);
-        list_box = new Gtk.FlowBox ();
+        list_box = new Gtk.FlowBox () {
+            homogeneous = true,
+        };
         if (list_type == EpisodeListType.LIST) {
             list_box.max_children_per_line = 1;
         }
