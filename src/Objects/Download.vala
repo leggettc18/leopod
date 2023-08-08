@@ -86,6 +86,7 @@ public class Download<T> : Object {
     public void cancel () {
         if (cancellable != null) {
             cancellable.cancel ();
+            cancelled ();
             if (local_file.query_exists ()) {
                 try {
                     local_file.delete ();
