@@ -10,6 +10,7 @@ namespace Leopod {
         public Library library { get; private set; }
         public MyApp app { get; construct; }
         public Player player { get; set; }
+        public DownloadManager download_manager { get; private set; }
 
         // Signals
         public signal void playback_status_changed (string status);
@@ -34,6 +35,7 @@ namespace Leopod {
         }
 
         construct {
+            download_manager = new DownloadManager ();
             player = Player.get_default (app.args);
             library = new Library (this);
 

@@ -96,6 +96,15 @@ public class PodcastView : Gtk.Box {
         episodes_list = new EpisodeList (podcast.episodes, false, EpisodeListType.GRID, 3) {
             margin_end = 6,
         };
+        episodes_list.episode_download_requested.connect ((episode) => {
+            episode_download_requested (episode);
+        });
+        episodes_list.episode_delete_requested.connect ((episode) => {
+            episode_delete_requested (episode);
+        });
+        episodes_list.episode_play_requested.connect ((episode) => {
+            episode_play_requested (episode);
+        });
         episodes_list.add_css_class (Granite.STYLE_CLASS_RICH_LIST);
         right_scrolled.child = episodes_list;
         Idle.add ((owned) callback);

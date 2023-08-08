@@ -442,68 +442,18 @@ namespace Leopod {
         /*
          * Downloads an episode to the filesystem
          */
-        public DownloadDetailBox? download_episode (Episode episode) throws LeopodLibraryError {
-            string podcast_path = local_library_path + "/%s".printf (
-                episode.parent.name.replace ("%27", "'").replace ("%", "_")
-            );
-
-            info (podcast_path);
-
-            // Create a directory for downloads if it doesn't already exist.
-            GLib.DirUtils.create_with_parents (podcast_path, 0775);
-            DownloadDetailBox detail_box = null;
-
-
-            // Locally cache the album art if necessary
-            //Check if the remote file exists
-            GLib.File remote_episode = GLib.File.new_for_uri (episode.uri);
-            if (remote_episode.query_exists ()) {
-                // If the episode file exists, set path for new file and create object for the local file
-                string episode_path =
-                    podcast_path + "/" +
-                    remote_episode.get_basename ().replace ("%", "_");
-                GLib.File local_episode = GLib.File.new_for_path (episode_path);
-
-                if (!local_episode.query_exists ()) {
-                    //Create the DownloadDetailBox and GLib.Cancellable
-                    detail_box = new DownloadDetailBox (episode);
-                    FileProgressCallback callback = detail_box.download_delegate;
-                    GLib.Cancellable cancellable = new GLib.Cancellable ();
-
-                    detail_box.cancel_requested.connect ((episode) => {
-                        cancellable.cancel ();
-                        if (local_episode.query_exists ()) {
-                            try {
-                                local_episode.delete ();
-                            } catch (Error e) {
-                                error ("unable to delete file.");
-                            }
-                        }
-                    });
-
-                    detail_box.download_completed.connect ((episode) => {
-                        // Mark the local path on the episode.
-                        episode.local_uri = "file://" + episode_path;
-                        episode.current_download_status = DownloadStatus.DOWNLOADED;
-                        episode.download_status_changed ();
-                        write_episode_to_database (episode);
-                    });
-                    // Download the episode
-                    remote_episode.copy_async.begin (
-                        local_episode,
-                        FileCopyFlags.OVERWRITE,
-                        GLib.Priority.DEFAULT,
-                        cancellable,
-                        callback
-                    );
-                } else {
-                    episode.current_download_status = DownloadStatus.DOWNLOADED;
-                    episode.download_status_changed ();
-                    write_episode_to_database (episode);
-                    return null;
-                }
+        public void download_episode (Episode episode) throws LeopodLibraryError {
+            try {
+                controller.download_manager.add_episode_download (episode);
+            } catch (DownloadError e) {
+                error (e.message);
             }
-            return detail_box;
+            episode.download_status_changed.connect (() => {
+                if (episode.current_download_status == DownloadStatus.DOWNLOADED) {
+                    episode.local_uri = "file://" + episode.local_uri;
+                    write_episode_to_database (episode);
+                }
+            });
         }
 
         public void delete_episode (Episode episode) {

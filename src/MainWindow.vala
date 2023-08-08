@@ -65,16 +65,18 @@ public class MainWindow : Gtk.ApplicationWindow {
         this.controller.app.add_action (add_podcast_action);
         this.controller.app.set_accels_for_action ("app.add-podcast", {"<Control>a"});
 
-        var add_podcast_button = new Gtk.Button.from_icon_name ("list-add") {
+        var add_podcast_button = new Gtk.Button () {
+            child = new Gtk.Image.from_icon_name ("list-add") {
+                pixel_size = 24,
+            },
+            has_frame = false,
             action_name = "app.add-podcast",
             tooltip_markup = Granite.markup_accel_tooltip (
                 this.controller.app.get_accels_for_action ("app.add-podcast"),
                 _("Add Podcast")
             )
         };
-        var download_button = new Gtk.Button.from_icon_name ("browser-download") {
-            tooltip_text = _("Downloads")
-        };
+        var download_button = new DownloadsButton (controller.download_manager);
         download_button.clicked.connect (show_downloads_popover);
 
         header_bar = new Gtk.HeaderBar () {
@@ -95,7 +97,7 @@ public class MainWindow : Gtk.ApplicationWindow {
         // });
         // header_bar.pack_end (repopulate_button);
 
-        downloads = new DownloadsPopover (download_button);
+        downloads = new DownloadsPopover (download_button, controller.download_manager);
 
         add_podcast_action.activate.connect (() => {
             on_add_podcast_clicked ();
@@ -325,13 +327,7 @@ public class MainWindow : Gtk.ApplicationWindow {
 
     public void on_download_requested (Episode episode) {
         try {
-            DownloadDetailBox detail_box = controller.library.download_episode (episode);
-
-            if (detail_box != null) {
-                downloads.add_download (detail_box);
-                detail_box.show ();
-                downloads.show ();
-            }
+            controller.library.download_episode (episode);
         } catch {
             critical ("LeopodLibraryError");
         }

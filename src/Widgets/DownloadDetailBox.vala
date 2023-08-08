@@ -20,18 +20,40 @@ public class DownloadDetailBox : Gtk.Box {
     private Gtk.Label download_label;
 
     //State Data
-    private double percentage;
     private int secs_elapsed;
     private bool download_complete;
-    public Episode episode { get; construct; }
+    public Download<Episode> download { get; construct; }
     private bool signal_sent;
     private string data_output;
     private string time_output;
     private string outdated_time_output;
 
     //Constructors
-    public DownloadDetailBox (Episode episode) {
-        Object (episode: episode);
+    public DownloadDetailBox (Download download) {
+        Object (download: download);
+        download.new_percentage_available.connect (() => {
+            progress_bar.set_fraction (download.percentage);
+            data_output = "%s / %s".printf (
+                GLib.format_size (download.bytes_downloaded),
+                GLib.format_size (download.bytes_total)
+            );
+            int time_val_to_display;
+            string units;
+
+            if (download.num_secs_remaining > 60) {
+                time_val_to_display = download.num_secs_remaining / 60;
+                units = ngettext ("minute", "minutes", time_val_to_display);
+            } else {
+                time_val_to_display = download.num_secs_remaining;
+                units = ngettext ("second", "seconds", time_val_to_display);
+            }
+            time_output = ", about %d %s remaining.".printf (time_val_to_display, units);
+            if (outdated_time_output == null) {
+                outdated_time_output = time_output;
+            }
+
+            download_label.label = data_output + outdated_time_output;
+        });
     }
 
     construct {
@@ -40,6 +62,7 @@ public class DownloadDetailBox : Gtk.Box {
 
         secs_elapsed = 0;
         signal_sent = false;
+        Episode episode = download.metadata;
 
         //Load coverart
         var file = GLib.File.new_for_uri (episode.parent.coverart_uri);
@@ -90,7 +113,7 @@ public class DownloadDetailBox : Gtk.Box {
         cancel_button.get_style_context ().add_class ("flat");
         cancel_button.tooltip_text = _("Cancel Download");
         cancel_button.clicked.connect (() => {
-            cancel_requested (this.episode);
+            download.cancel ();
         });
 
         progress_box.append (progress_bar);
@@ -120,63 +143,5 @@ public class DownloadDetailBox : Gtk.Box {
         });
     }
 
-    /*
-     * Sets download progress as the download progresses. Intended to be called
-     * as the FileProgressCallback delegate function in a GLib.File.copy
-     * call.
-     */
-    public void download_delegate (int64 current_num_bytes, int64 total_num_bytes) {
-        //If download is complete and necessary signals have not been sent yet.
-        if (current_num_bytes == total_num_bytes && !signal_sent) {
-            //Set percentage to 100% and send new percentage available signal
-            //for any listensers.
-            percentage = 1.0;
-            download_completed (episode);
-            ready_for_removal (this);
-            signal_sent = true;
-            new_percentage_available ();
-            return;
-        }
-
-        percentage = ((double)current_num_bytes / (double)total_num_bytes);
-        double mb_downloaded = (double) current_num_bytes / 1000000;
-        double mb_total = (double) total_num_bytes / 1000000;
-        double mb_remaining = mb_total - mb_downloaded;
-
-        progress_bar.set_fraction (percentage);
-
-        double mbps = mb_downloaded / secs_elapsed;
-
-        int num_secs_remaining = (int) (mb_remaining / mbps);
-        int time_val_to_display;
-        string units;
-
-        if (num_secs_remaining > 60) {
-            time_val_to_display = num_secs_remaining / 60;
-            units = ngettext ("minute", "minutes", time_val_to_display);
-        } else {
-            time_val_to_display = num_secs_remaining;
-            units = ngettext ("second", "seconds", time_val_to_display);
-        }
-
-        data_output = "%s / %s".printf (
-            GLib.format_size (current_num_bytes),
-            GLib.format_size (total_num_bytes)
-        );
-        time_output = """, about %d %s remaining.""".printf (time_val_to_display, units);
-
-        //Always use the "outdated" time when setting the label.
-        //A timer (see constructor) updates this value every second,
-        //which is much less jarring than how often this will be called.
-
-        if (outdated_time_output == null) {
-            outdated_time_output = time_output;
-        }
-
-        download_label.label = data_output + outdated_time_output;
-
-        new_percentage_available ();
-    }
 }
-
 }

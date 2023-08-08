@@ -9,15 +9,21 @@ public class DownloadsPopover : Gtk.Popover {
     private Gtk.Box box;
     private Gtk.FlowBox listbox;
     private Gtk.Label downloads_complete;
-    public ObservableArrayList<DownloadDetailBox> downloads { get; private set; }
     public Gtk.Widget parent_widget { get; construct; }
+    public DownloadManager download_manager { get; construct; }
 
     private Gtk.Widget create_download_detail_box (Object object) {
-        return (DownloadDetailBox) object;
+        return new DownloadDetailBox ((Download) object);
     }
 
-    public DownloadsPopover (Gtk.Widget parent_widget) {
-        Object (parent_widget: parent_widget);
+    public DownloadsPopover (Gtk.Widget parent_widget, DownloadManager download_manager) {
+        Object (parent_widget: parent_widget, download_manager: download_manager);
+        download_manager.download_added.connect (hide_downloads_complete);
+        download_manager.download_removed.connect (() => {
+            if (download_manager.downloads.size == 0) {
+                show_downloads_complete ();
+            }
+        });
         this.set_parent (parent_widget);
     }
 
@@ -36,8 +42,7 @@ public class DownloadsPopover : Gtk.Popover {
         listbox.add_css_class (Granite.STYLE_CLASS_BACKGROUND);
         this.width_request = 425;
 
-        downloads = new ObservableArrayList<DownloadDetailBox> ();
-        listbox.bind_model (downloads, create_download_detail_box);
+        listbox.bind_model (download_manager.downloads, create_download_detail_box);
         var scroll = new Gtk.ScrolledWindow ();
         scroll.add_css_class (Granite.STYLE_CLASS_BACKGROUND);
         scroll.hscrollbar_policy = Gtk.PolicyType.NEVER;
@@ -54,38 +59,9 @@ public class DownloadsPopover : Gtk.Popover {
         set_child (scroll);
     }
 
-    /*
-     * Adds a download detail box to the popover listbox
-     */
-    public void add_download (DownloadDetailBox details) {
-        hide_downloads_complete ();
-
-        details.ready_for_removal.connect (() => {
-            remove_details_box (details);
-        });
-        details.cancel_requested.connect (() => {
-            remove_details_box (details);
-        });
-
-        downloads.add (details);
-        listbox.bind_model (downloads, create_download_detail_box);
-        listbox.show ();
-    }
-
     private void hide_downloads_complete () {
         //downloads_complete.no_show_all = true;
         downloads_complete.set_visible (false);
-    }
-
-    /*
-     * Removes a download detail box to the popover listbox
-     */
-    public void remove_details_box (DownloadDetailBox box) {
-        downloads.remove (box);
-        listbox.bind_model (downloads, create_download_detail_box);
-        if (downloads.size < 1) {
-            show_downloads_complete ();
-        }
     }
 
     private void show_downloads_complete () {
