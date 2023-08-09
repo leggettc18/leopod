@@ -134,10 +134,8 @@ namespace Leopod {
                     warning ("%d: %s", db.errcode (), db.errmsg ());
                     return;
                 }
-                info ("loading episodes for %s from db", podcast.name);
                 while (stmt.step () == Sqlite.ROW) {
                     Episode episode = episode_from_row (stmt);
-                    info ("loaded episode %s from db", episode.title);
                     episode.parent = podcast;
 
                     podcast.add_episode (episode);

@@ -34,7 +34,6 @@ namespace Leopod {
                 return local_uri_internal;
             }
             private set {
-                info ("%s", value);
                 local_uri_internal = value;
             }
         }
@@ -163,7 +162,6 @@ namespace Leopod {
                     uri = val;
                 } else if (column_name == "local_uri") {
                     if (val != null && val != "<none>") {
-                        info ("%s", val);
                         local_uri_internal = val;
                     }
                 } else if (column_name == "released") {
