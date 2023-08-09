@@ -45,20 +45,8 @@ public class MainWindow : Gtk.ApplicationWindow {
         overlay_bar = new Granite.OverlayBar (overlay) {
             visible = false,
         };
-        overlay_bar.add_css_class (Granite.STYLE_CLASS_VIEW);
         width = 0;
         height = 0;
-        var granite_settings = Granite.Settings.get_default ();
-        var gtk_settings = Gtk.Settings.get_default ();
-
-        // Check if user prefers dark theme or not
-        gtk_settings.gtk_application_prefer_dark_theme =
-            granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
-        // Listen for changes to user's dark theme preference
-        granite_settings.notify["prefers-color-scheme"].connect (() => {
-                gtk_settings.gtk_application_prefer_dark_theme =
-                    granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
-        });
 
         var add_podcast_action = new SimpleAction ("add-podcast", null);
 
