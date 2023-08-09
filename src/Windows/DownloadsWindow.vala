@@ -1,11 +1,11 @@
 /*
  * SPDX-License-Identifier: LGPL-3.0.or-later
- * SPDX-FileCopyrightText: 2021 Christopher Leggett <chris@leggett.dev>
+ * SPDX-FileCopyrightText: 2023 Christopher Leggett <chris@leggett.dev>
  */
 
 namespace Leopod {
 
-public class DownloadsPopover : Gtk.Popover {
+public class DownloadsWindow : Gtk.Window {
     private Gtk.Box box;
     private Gtk.FlowBox listbox;
     private Gtk.Label downloads_complete;
@@ -16,19 +16,33 @@ public class DownloadsPopover : Gtk.Popover {
         return new DownloadDetailBox ((Download) object);
     }
 
-    public DownloadsPopover (Gtk.Widget parent_widget, DownloadManager download_manager) {
-        Object (parent_widget: parent_widget, download_manager: download_manager);
+    public DownloadsWindow (DownloadManager download_manager) {
+        Object (download_manager: download_manager);
         download_manager.download_added.connect (hide_downloads_complete);
         download_manager.download_removed.connect (() => {
             if (download_manager.downloads.size == 0) {
                 show_downloads_complete ();
             }
         });
-        this.set_parent (parent_widget);
     }
 
     construct {
+        title = _("Downloads");
+        titlebar = new Gtk.Grid () {
+            visible = false,
+        };
+        Gtk.HeaderBar header_bar = new Gtk.HeaderBar () {
+            show_title_buttons = false,
+        };
+        header_bar.add_css_class (Granite.STYLE_CLASS_FLAT);
+        header_bar.pack_start (new Gtk.WindowControls (Gtk.PackType.START));
+        header_bar.pack_end (new Gtk.WindowControls (Gtk.PackType.END));
         add_css_class (Granite.STYLE_CLASS_BACKGROUND);
+        Gtk.Grid layout = new Gtk.Grid () {
+            row_spacing = column_spacing = 12,
+            column_homogeneous = false,
+        };
+        layout.attach (header_bar, 0, 0);
         this.box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0) {
             valign = Gtk.Align.CENTER
         };
@@ -41,9 +55,12 @@ public class DownloadsPopover : Gtk.Popover {
         };
         listbox.add_css_class (Granite.STYLE_CLASS_BACKGROUND);
         this.width_request = 425;
+        this.height_request = 600;
 
         listbox.bind_model (download_manager.downloads, create_download_detail_box);
-        var scroll = new Gtk.ScrolledWindow ();
+        var scroll = new Gtk.ScrolledWindow () {
+            hexpand = true,
+        };
         scroll.add_css_class (Granite.STYLE_CLASS_BACKGROUND);
         scroll.hscrollbar_policy = Gtk.PolicyType.NEVER;
         scroll.min_content_height = 200;
@@ -55,8 +72,8 @@ public class DownloadsPopover : Gtk.Popover {
         downloads_complete.sensitive = false;
         //downloads_complete.margin = 12;
         box.prepend (downloads_complete);
-
-        set_child (scroll);
+        layout.attach (scroll, 0, 1);
+        set_child (layout);
     }
 
     private void hide_downloads_complete () {

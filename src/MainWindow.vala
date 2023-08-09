@@ -24,7 +24,7 @@ public class MainWindow : Gtk.ApplicationWindow {
     public AddPodcastDialog add_podcast { get; private set; }
     public DeletePodcastDialog delete_podcast { get; private set; }
     public PlaybackBox playback_box { get; private set; }
-    private DownloadsPopover downloads;
+    private DownloadsWindow downloads;
     public NewEpisodesView new_episodes { get; private set; }
 
     public Gtk.Widget current_widget { get; private set; }
@@ -77,7 +77,7 @@ public class MainWindow : Gtk.ApplicationWindow {
             )
         };
         var download_button = new DownloadsButton (controller.download_manager);
-        download_button.clicked.connect (show_downloads_popover);
+        download_button.clicked.connect (show_downloads_window);
 
         header_bar = new Gtk.HeaderBar () {
             show_title_buttons = false,
@@ -97,7 +97,7 @@ public class MainWindow : Gtk.ApplicationWindow {
         // });
         // header_bar.pack_end (repopulate_button);
 
-        downloads = new DownloadsPopover (download_button, controller.download_manager);
+        downloads = new DownloadsWindow (controller.download_manager);
 
         add_podcast_action.activate.connect (() => {
             on_add_podcast_clicked ();
@@ -420,7 +420,7 @@ public class MainWindow : Gtk.ApplicationWindow {
     /*
      * Shows the downloads popover
      */
-    public void show_downloads_popover () {
+    public void show_downloads_window () {
         this.downloads.show ();
     }
 

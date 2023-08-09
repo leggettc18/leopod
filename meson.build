@@ -44,12 +44,12 @@ executable(
     'src' / 'Widgets' / 'EpisodeListItem.vala',
     'src' / 'Widgets' / 'DownloadDetailBox.vala',
     'src' / 'Widgets' / 'DownloadsButton.vala',
-    'src' / 'Widgets' / 'DownloadsPopover.vala',
     'src' / 'Widgets' / 'PodcastView.vala',
     'src' / 'Widgets' / 'PlaybackBox.vala',
     'src' / 'Widgets' / 'NewEpisodesView.vala',
     'src' / 'Widgets' / 'PlaybackRatePopover.vala',
     'src' / 'Windows' / 'EpisodeWindow.vala',
+    'src' / 'Windows' / 'DownloadsWindow.vala',
     dependencies: [
         dependency('gtk4'),
         dependency('granite-7'),
