@@ -19,7 +19,10 @@ public class Download<T> : Object {
     private bool download_complete;
 
     public double percentage { get {
-            return ((1.0 * bytes_downloaded) / bytes_total);
+            if (bytes_total == 0) {
+                return 0.0;
+            }
+            return ((1.0 * bytes_downloaded) / bytes_total).clamp (0.0, 1.0);
         }
     }
     public int num_secs_remaining {
