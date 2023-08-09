@@ -120,6 +120,7 @@ namespace Leopod {
             }
 
             stmt.reset ();
+            info ("loading podcasts from db");
             foreach (Podcast podcast in podcasts) {
                 prepared_query = string.join (" ",
                     "SELECT e.*, p.name as parent_podcast_name",
@@ -133,9 +134,10 @@ namespace Leopod {
                     warning ("%d: %s", db.errcode (), db.errmsg ());
                     return;
                 }
-
+                info ("loading episodes for %s from db", podcast.name);
                 while (stmt.step () == Sqlite.ROW) {
                     Episode episode = episode_from_row (stmt);
+                    info ("loaded episode %s from db", episode.title);
                     episode.parent = podcast;
 
                     podcast.add_episode (episode);
@@ -158,7 +160,7 @@ namespace Leopod {
             Episode episode = null;
             try {
                 episode = new Episode.from_sqlite_row (stmt);
-            } catch (EpisodeConstructionError e) {
+            } catch (EpisodeConstructionError.ROW_PARSING_ERROR e) {
                 critical (e.message);
             }
             return episode;
@@ -239,7 +241,7 @@ namespace Leopod {
             info ("Opening/Creating Database: %s", db_location);
             int ec = Sqlite.Database.open (db_location, out db);
             if (ec != Sqlite.OK) {
-                stderr.printf (
+                critical (
                     "Can't open database: %d: %s\n",
                     db.errcode (), db.errmsg ()
                 );
@@ -416,7 +418,11 @@ namespace Leopod {
             stmt.bind_text (1, episode.title);
             stmt.bind_text (2, episode.podcast_uri);
             stmt.bind_text (3, episode.uri);
-            stmt.bind_text (4, episode.local_uri);
+            if (episode.local_uri == null) {
+                stmt.bind_null (4);
+            } else {
+                stmt.bind_text (4, episode.local_uri);
+            }
             stmt.bind_int64 (5, episode.datetime_released.to_unix ());
             stmt.bind_text (6, episode.description);
             stmt.bind_text (7, episode.last_played_position.to_string ());
@@ -450,7 +456,6 @@ namespace Leopod {
             }
             episode.download_status_changed.connect (() => {
                 if (episode.current_download_status == DownloadStatus.DOWNLOADED) {
-                    episode.local_uri = "file://" + episode.local_uri;
                     write_episode_to_database (episode);
                 }
             });

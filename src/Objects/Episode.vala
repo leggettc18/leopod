@@ -15,7 +15,29 @@ namespace Leopod {
         public string title { get; construct; }
         public string description { get; construct; }
         public string uri { get; construct set; }
-        public string local_uri { get; construct set; }
+        private string? local_uri_internal;
+        public string? local_uri {
+            get {
+                if (local_uri_internal == null) {
+                    string local_library_path = Environment.get_user_data_dir () + "/leopod";
+                    local_library_path = local_library_path.replace ("~", Environment.get_home_dir ());
+                    if (parent != null) {
+                        string podcast_path = local_library_path + "/%s".printf (
+                            parent.name.replace ("%27", "'").replace ("%", "_")
+                        );
+                        local_uri_internal = "file://" + podcast_path + "/" + Path.get_basename (uri);
+                    }
+                }
+                if (local_uri_internal != null && !(local_uri_internal.contains ("file://"))) {
+                    local_uri_internal = "file://" + local_uri_internal;
+                }
+                return local_uri_internal;
+            }
+            private set {
+                info ("%s", value);
+                local_uri_internal = value;
+            }
+        }
         public string podcast_uri { get; construct set; }
         public int64 last_played_position { get; construct set; }
         public Podcast parent { get; construct set; }
@@ -34,19 +56,19 @@ namespace Leopod {
             get {
                 GLib.File local;
 
-                if (local_uri != null) {
-                    if (local_uri.contains ("file://")) {
-                        local = GLib.File.new_for_uri (local_uri);
+                if (local_uri_internal != null) {
+                    if (local_uri_internal.contains ("file://")) {
+                        local = GLib.File.new_for_uri (local_uri_internal);
                     } else {
-                        local = GLib.File.new_for_uri ("file://" + local_uri);
+                        local = GLib.File.new_for_uri ("file://" + local_uri_internal);
                     }
 
                     if (local.query_exists ()) {
-                        if (local_uri.contains ("file://")) {
-                            return local_uri;
+                        if (local_uri_internal.contains ("file://")) {
+                            return local_uri_internal;
                         } else {
-                            local_uri = "file://" + local_uri;
-                            return local_uri;
+                            local_uri_internal = "file://" + local_uri_internal;
+                            return local_uri_internal;
                         }
                     } else {
                         return uri;
@@ -62,9 +84,9 @@ namespace Leopod {
                     uri = value;
                 } else {
                     if (!value.contains ("file://")) {
-                        local_uri = """file://""" + value;
+                        local_uri_internal = """file://""" + value;
                     } else {
-                        local_uri = value;
+                        local_uri_internal = value;
                     }
                 }
             }
@@ -114,10 +136,11 @@ namespace Leopod {
 
         public Episode.from_sqlite_row (Sqlite.Statement stmt)
             throws EpisodeConstructionError.ROW_PARSING_ERROR {
+            info ("constructing episode");
             string title = null;
             string description = null;
             string uri = null;
-            string local_uri = null;
+            string local_uri_internal = null;
             DateTime datetime_released = null;
             DownloadStatus current_download_status =
                 DownloadStatus.NOT_DOWNLOADED;
@@ -139,8 +162,9 @@ namespace Leopod {
                 } else if (column_name == "uri") {
                     uri = val;
                 } else if (column_name == "local_uri") {
-                    if (val != null) {
-                        local_uri = val;
+                    if (val != null && val != "<none>") {
+                        info ("%s", val);
+                        local_uri_internal = val;
                     }
                 } else if (column_name == "released") {
                     int64 datetime = 0;
@@ -176,8 +200,8 @@ namespace Leopod {
                     link = val;
                 }
             }
-            if (title == null || description == null || uri == null || local_uri
-            == null || datetime_released == null || parent == null ||
+            if (title == null || description == null || uri == null ||
+            datetime_released == null || parent == null ||
             podcast_uri == null || guid == null || link == null) {
                 throw new EpisodeConstructionError.ROW_PARSING_ERROR ("Required column was missing");
             }
@@ -185,7 +209,6 @@ namespace Leopod {
                 title: title,
                 description: description,
                 uri: uri,
-                local_uri: local_uri,
                 datetime_released: datetime_released,
                 current_download_status: current_download_status,
                 status: status,
@@ -195,6 +218,7 @@ namespace Leopod {
                 guid: guid,
                 link: link
             );
+            this.local_uri = local_uri;
         }
     }
 

@@ -28,14 +28,7 @@ public class DownloadManager : Object {
     }
 
     public void add_episode_download (Episode episode) throws DownloadError {
-        string local_library_path = Environment.get_user_data_dir () + "/leopod";
-        local_library_path = local_library_path.replace ("~", Environment.get_home_dir ());
-        string podcast_path = local_library_path + "/%s".printf (
-            episode.parent.name.replace ("%27", "'").replace ("%", "_")
-        );
-        string episode_path = podcast_path + "/" + Path.get_basename (episode.uri);
-
-        var download = new Download<Episode> (episode.uri, episode_path, episode);
+        var download = new Download<Episode> (episode.uri, episode.local_uri, episode);
         download.completed.connect (() => {
             episode.current_download_status = DownloadStatus.DOWNLOADED;
             episode.download_status_changed ();

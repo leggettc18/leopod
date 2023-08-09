@@ -70,7 +70,7 @@ public class Download<T> : Object {
                 "No file found at %s".printf (uri)
             );
         }
-        local_file = File.new_for_path (path);
+        local_file = File.new_for_uri (path);
         progress_callback = download_delegate;
         cancellable = new Cancellable ();
         remote_file.copy_async.begin (
