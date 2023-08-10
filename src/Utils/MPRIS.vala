@@ -129,13 +129,15 @@ namespace Leopod {
             this.conn = conn;
 
             // Set the metadata on initialization
-            this.set_media_metadata (" ", " ", """file:///usr/share/leopod/leopod-missing.png""", 60);
+            //this.set_media_metadata (" ", " ", """file:///usr/share/leopod/leopod-missing.png""", 60);
+            _metadata = new HashTable <string, Variant> (null, null);
+            trigger_metadata_update ();
         }
 
         // MPRIS requires a mpris:trackid metadata item.
         private GLib.ObjectPath get_track_id (string s) {
             string id = TRACK_ID.printf (s);
-            return new GLib.ObjectPath (id);
+            return new GLib.ObjectPath (id.replace (" ", "_"));
         }
 
         private void trigger_metadata_update () {

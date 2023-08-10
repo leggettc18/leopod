@@ -128,6 +128,20 @@ namespace Leopod {
             }
         }
 
+        public async void import_opml (string path) {
+            SourceFunc callback = import_opml.callback;
+            try {
+                string[] feeds = new FeedParser ().parse_feeds_from_OPML (path);
+                foreach (string feed in feeds) {
+                    yield add_podcast_async (feed);
+                }
+            } catch (LeopodLibraryError e) {
+                error (e.message);
+            }
+            Idle.add ((owned) callback);
+            yield;
+        }
+
         private async Podcast download_podcast (string podcast_uri) {
             SourceFunc callback = download_podcast.callback;
             Podcast podcast = null;

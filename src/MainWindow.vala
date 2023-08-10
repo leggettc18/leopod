@@ -26,6 +26,7 @@ public class MainWindow : Gtk.ApplicationWindow {
     public PlaybackBox playback_box { get; private set; }
     private DownloadsWindow downloads;
     public NewEpisodesView new_episodes { get; private set; }
+    private Gtk.FileChooserNative opml_file_dialog;
 
     public Gtk.Widget current_widget { get; private set; }
     public Gtk.Widget previous_widget { get; private set; }
@@ -49,8 +50,10 @@ public class MainWindow : Gtk.ApplicationWindow {
         height = 0;
 
         var add_podcast_action = new SimpleAction ("add-podcast", null);
+        var import_opml_action = new SimpleAction ("import-opml", null);
 
         this.controller.app.add_action (add_podcast_action);
+        this.controller.app.add_action (import_opml_action);
         this.controller.app.set_accels_for_action ("app.add-podcast", {"<Control>a"});
 
         var add_podcast_button = new Gtk.Button () {
@@ -64,6 +67,14 @@ public class MainWindow : Gtk.ApplicationWindow {
                 _("Add Podcast")
             )
         };
+        var import_opml_button = new Gtk.Button () {
+            child = new Gtk.Image.from_icon_name ("document-import") {
+                pixel_size = 24,
+            },
+            has_frame = false,
+            action_name = "app.import-opml",
+            tooltip_markup = _("Import from OPML file"),
+        };
         var download_button = new DownloadsButton (controller.download_manager);
         download_button.clicked.connect (show_downloads_window);
 
@@ -73,6 +84,7 @@ public class MainWindow : Gtk.ApplicationWindow {
         header_bar.add_css_class (Granite.STYLE_CLASS_FLAT);
         header_bar.pack_start (new Gtk.WindowControls (Gtk.PackType.START));
         header_bar.pack_end (new Gtk.WindowControls (Gtk.PackType.END));
+        header_bar.pack_end (import_opml_button);
         header_bar.pack_end (add_podcast_button);
         header_bar.pack_end (download_button);
 
@@ -89,6 +101,9 @@ public class MainWindow : Gtk.ApplicationWindow {
 
         add_podcast_action.activate.connect (() => {
             on_add_podcast_clicked ();
+        });
+        import_opml_action.activate.connect (() => {
+            on_import_opml_clicked ();
         });
 
         this.set_application (controller.app);
@@ -112,9 +127,11 @@ public class MainWindow : Gtk.ApplicationWindow {
         // Create a welcome screen and add it to the notebook whether first run or not
         Icon welcome_icon = null;
         Icon welcome_add_icon = null;
+        Icon welcome_import_icon = null;
         try {
         welcome_icon = Icon.new_for_string ("leopod-symbolic");
         welcome_add_icon = Icon.new_for_string ("list-add");
+        welcome_import_icon = Icon.new_for_string ("document-import");
         } catch (Error e) {
             warning (e.message);
         }
@@ -129,8 +146,14 @@ public class MainWindow : Gtk.ApplicationWindow {
             _(" Add a new Feed"),
             _(" Provide the web address of a podcast feed.")
         );
+        var welcome_import_action = welcome.append_button (
+            welcome_import_icon,
+            _(" Import an OPML file"),
+            _(" Import your podcast feeds from another app")
+        );
 
         welcome_add_action.clicked.connect (on_welcome);
+        welcome_import_action.clicked.connect (on_import_opml_clicked);
 
         info ("Creating All Scrolled view");
         // Create the all_scrolled view, which displays all podcasts in a grid.
@@ -385,6 +408,35 @@ public class MainWindow : Gtk.ApplicationWindow {
         add_podcast = new AddPodcastDialog (this);
         add_podcast.response.connect (on_add_podcast);
         add_podcast.show ();
+    }
+
+    private void on_import_opml_clicked () {
+        opml_file_dialog = new Gtk.FileChooserNative (
+            _("Select an OPML File"),
+            this,
+            Gtk.FileChooserAction.OPEN,
+            _("Import"),
+            _("Cancel")
+        ) {
+            filter = new Gtk.FileFilter (),
+        };
+        opml_file_dialog.filter.add_pattern ("*.opml");
+        opml_file_dialog.response.connect (on_import_opml);
+        opml_file_dialog.show ();
+    }
+
+    private void on_import_opml (int response_id) {
+        if (response_id == Gtk.ResponseType.ACCEPT) {
+            overlay_bar.label = "Adding Podcasts";
+            overlay_bar.active = true;
+            overlay_bar.show ();
+            File opml_file = opml_file_dialog.get_file ();
+            controller.import_opml.begin (opml_file.get_path (), (obj, res) => {
+                controller.import_opml.end (res);
+                overlay_bar.active = false;
+                overlay_bar.hide ();
+            });
+        }
     }
 
     /*

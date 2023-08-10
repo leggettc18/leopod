@@ -135,7 +135,6 @@ namespace Leopod {
 
         public Episode.from_sqlite_row (Sqlite.Statement stmt)
             throws EpisodeConstructionError.ROW_PARSING_ERROR {
-            info ("constructing episode");
             string title = null;
             string description = null;
             string uri = null;

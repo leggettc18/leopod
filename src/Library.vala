@@ -300,7 +300,7 @@ namespace Leopod {
                 "    play_status         TEXT,",
                 "    guid                TEXT,",
                 "    link                TEXT",
-                ",);",
+                ");",
                 "CREATE UNIQUE INDEX episode_guid ON Episode (guid, link, podcast_uri);",
                 "CREATE INDEX episode_title ON Episode (title);",
                 "CREATE INDEX episode_released ON Episode (released);",

@@ -43,6 +43,7 @@ namespace Leopod {
 
         construct {
             if (show_coverart) {
+                info ("%s, %s", episode.title, episode.parent.name);
                 coverart = new CoverArt (episode.parent, false) {
                     margin_end = 6,
                 };
