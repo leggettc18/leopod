@@ -43,6 +43,10 @@ public class EpisodeList : Gtk.Widget {
         list_box.set_parent (this);
     }
 
+    public void unbind_model () {
+        list_box.bind_model (null, null);
+    }
+
     private Gtk.Widget create_list_box_item (Object object) {
         Episode episode = (Episode) object;
         var list_item = new EpisodeListItem ((Episode) episode, show_coverart) {

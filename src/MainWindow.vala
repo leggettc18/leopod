@@ -304,7 +304,6 @@ public class MainWindow : Gtk.ApplicationWindow {
             delete_podcast = new DeletePodcastDialog (this, podcast);
             delete_podcast.response.connect (on_delete_podcast);
             delete_podcast.show ();
-            //episodes_scrolled.remove (episodes_box);
         });
         episodes_scrolled.show ();
     }
@@ -369,9 +368,6 @@ public class MainWindow : Gtk.ApplicationWindow {
             };
             back_button.get_style_context ().add_class (Granite.STYLE_CLASS_BACK_BUTTON);
             back_button.clicked.connect (() => {
-                //episodes_scrolled.remove (episodes_box);
-                //episodes_box.foreach ((child) => episodes_box.remove (child));
-                episodes_box.destroy ();
                 header_bar.remove (back_button);
                 switch_visible_page (back_widget);
             });

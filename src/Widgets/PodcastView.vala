@@ -90,6 +90,10 @@ public class PodcastView : Gtk.Box {
         });
     }
 
+    public void unbind_model () {
+        episodes_list.unbind_model ();
+    }
+
     private async void populate_episode_list () {
         SourceFunc callback = populate_episode_list.callback;
         podcast.episodes.sort (Episode.episode_sort_func);

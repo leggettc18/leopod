@@ -179,6 +179,7 @@ namespace Leopod {
         private int sort_podcasts (Podcast a, Podcast b) {
             return a.name.ascii_casecmp (b.name);
         }
+
         /*
          * Adds a podcast to the database and the active podcast list
          */
@@ -491,7 +492,14 @@ namespace Leopod {
             // Delete all the episodes
             foreach (Episode episode in podcast.episodes) {
                 // Delete from filesystem
-                delete_episode (episode);
+                GLib.File local_file = GLib.File.new_for_uri (episode.local_uri);
+                if (local_file.query_exists ()) {
+                    try {
+                        local_file.delete ();
+                    } catch (Error e) {
+                        error ("unable to delete file.");
+                    }
+                }
                 // Delete from database
                 string query =
                     "DELETE FROM Episode " +
