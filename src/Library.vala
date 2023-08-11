@@ -184,7 +184,6 @@ namespace Leopod {
          * Adds a podcast to the database and the active podcast list
          */
         public async bool add_podcast (Podcast podcast) throws LeopodLibraryError {
-            SourceFunc callback = add_podcast.callback;
             info ("Podcast %s is being added to the library", podcast.name);
 
             // Set all but the most recent episode as played
@@ -201,9 +200,7 @@ namespace Leopod {
             podcasts.add (podcast);
             podcasts.sort (sort_podcasts);
             info ("added podcast to the in-memory list");
-            Idle.add ((owned) callback);
             yield save_podcast (podcast);
-            yield;
             return true;
         }
 

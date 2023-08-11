@@ -144,32 +144,30 @@ namespace Leopod {
 
         private async Podcast download_podcast (string podcast_uri) {
             SourceFunc callback = download_podcast.callback;
-            Podcast podcast = null;
-            ThreadFunc<Podcast> run = () => {
+            Podcast* podcast = null;
+            ThreadFunc<void> run = () => {
                 try {
                     podcast = new FeedParser ().get_podcast_from_file (podcast_uri);
                 } catch (Error e) {
                     error (e.message);
                 }
                 Idle.add ((owned) callback);
-                return podcast;
             };
-            new Thread<Podcast> ("download_and_store_podcast", (owned) run);
+            new Thread<void> ("download_and_store_podcast", (owned) run);
             yield;
             return podcast;
         }
 
         public async void add_podcast_async (string podcast_uri) {
-            SourceFunc callback = add_podcast_async.callback;
+            info ("downloading podcast");
             Podcast podcast = yield download_podcast (podcast_uri);
             try {
+                info ("adding podcast to library");
                 yield library.add_podcast (podcast);
             } catch (Error e) {
                 error (e.message);
             }
             window.populate_views ();
-            Idle.add ((owned) callback);
-            yield;
         }
 
         public async void on_update_request () {
