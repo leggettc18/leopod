@@ -28,6 +28,7 @@ namespace Leopod {
          * Initializes MPRIS support
          */
         public void initialize () {
+        info ("initializing MPRIS");
 
             owner_id = Bus.own_name (BusType.SESSION,
                                     "org.mpris.MediaPlayer2.com.github.leggettc18.leopod",

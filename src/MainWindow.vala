@@ -115,15 +115,12 @@ public class MainWindow : Gtk.ApplicationWindow {
         Gtk.Grid main_layout = new Gtk.Grid ();
         main_layout.attach (header_bar, 0, 0);
 
-        info ("Creating notebook");
-
         notebook = new Gtk.Stack () {
             hhomogeneous = vhomogeneous = true,
             transition_type = Gtk.StackTransitionType.SLIDE_LEFT_RIGHT,
             transition_duration = 200,
         };
 
-        info ("Creating welcome screen");
         // Create a welcome screen and add it to the notebook whether first run or not
         Icon welcome_icon = null;
         Icon welcome_add_icon = null;
@@ -155,7 +152,6 @@ public class MainWindow : Gtk.ApplicationWindow {
         welcome_add_action.clicked.connect (on_welcome);
         welcome_import_action.clicked.connect (on_import_opml_clicked);
 
-        info ("Creating All Scrolled view");
         // Create the all_scrolled view, which displays all podcasts in a grid.
 
         all_flowbox = new Gtk.FlowBox () {
@@ -174,7 +170,6 @@ public class MainWindow : Gtk.ApplicationWindow {
         all_scrolled.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
         all_scrolled.set_child (all_flowbox);
 
-
         episodes_scrolled = new Gtk.ScrolledWindow ();
         episodes_scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
 
@@ -191,7 +186,6 @@ public class MainWindow : Gtk.ApplicationWindow {
             playback_box.set_artwork_image (episode.parent.coverart_uri);
             controller.play ();
         });
-
         var main_stack = new Gtk.Stack () {
             transition_type = Gtk.StackTransitionType.SLIDE_LEFT_RIGHT,
             transition_duration = 200,
@@ -212,16 +206,13 @@ public class MainWindow : Gtk.ApplicationWindow {
         main_box.prepend (main_switcher);
         main_box.append (main_stack);
 
-
         notebook.add_titled (main_box, "main", _("Main"));
         notebook.add_titled (welcome, "welcome", _("Welcome"));
         notebook.add_titled (episodes_scrolled, "podcast-episodes", _("Episodes"));
-        notebook.add_titled (new_episodes, "new-episodes", _("New Episodes"));
 
         main_layout.attach (notebook, 0, 1);
 
         // Actions
-
         var playpause_action = new SimpleAction ("play_pause", null);
         this.controller.app.add_action (playpause_action);
         this.controller.app.set_accels_for_action ("app.play_pause", {"k",
@@ -248,7 +239,6 @@ public class MainWindow : Gtk.ApplicationWindow {
         controller.player.rate = playback_rate;
         playback_box = new PlaybackBox (this.controller.app);
 
-
         playback_box.scale_changed.connect (() => {
             var new_progress = playback_box.get_progress_bar_fill ();
             controller.player.progress = new_progress;
@@ -273,8 +263,6 @@ public class MainWindow : Gtk.ApplicationWindow {
 
         overlay.child = main_layout;
         child = overlay;
-
-        add_podcast.response.connect (on_add_podcast);
     }
 
 

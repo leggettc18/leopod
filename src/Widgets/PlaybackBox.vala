@@ -22,7 +22,6 @@ public class PlaybackBox : Gtk.Box {
     private PlaybackRatePopover playback_rate_popover;
     private Gtk.Image play_image;
     private Gtk.Image pause_image;
-    private Gtk.ProgressBar progress_bar;
     private Gtk.Scale scale;
     private Gtk.Grid scale_grid;
     private Gtk.Label left_time;
@@ -37,10 +36,7 @@ public class PlaybackBox : Gtk.Box {
     construct {
         play_image = new Gtk.Image.from_icon_name ("media-playback-start-symbolic");
         pause_image = new Gtk.Image.from_icon_name ("media-playback-pause-symbolic");
-        this.get_style_context ().add_class ("seek-bar");
         orientation = Gtk.Orientation.HORIZONTAL;
-
-        //halign = Gtk.Align.FILL;
 
         artwork = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
 
@@ -102,15 +98,12 @@ public class PlaybackBox : Gtk.Box {
             has_frame = false
         };
 
-        progress_bar = new Gtk.ProgressBar ();
-
         scale = new Gtk.Scale.with_range (Gtk.Orientation.HORIZONTAL, 0, 1, 0.1) {
             hexpand = true,
             draw_value = false,
             halign = Gtk.Align.FILL
         };
         scale.set_value (0.0);
-        //scale.get_style_context ().add_class (Granite.STYLE_CLASS_CIRCULAR);
         left_time = new Gtk.Label ("0:00");
         right_time = new Gtk.Label ("0:00");
         left_time.width_chars = 6;
@@ -131,7 +124,7 @@ public class PlaybackBox : Gtk.Box {
         scale_grid.attach (right_time, 2, 0, 1, 1);
         scale_grid.margin_end = 10;
 
-        //hexpand = true;
+        hexpand = true;
 
         var label_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 3);
         label_box.prepend (episode_label);
