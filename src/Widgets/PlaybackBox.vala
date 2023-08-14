@@ -27,9 +27,9 @@ public class PlaybackBox : Gtk.Box {
     private Gtk.Label left_time;
     private Gtk.Label right_time;
     private bool currently_playing = false;
-    public MyApp app { get; construct; }
+    public Application app { get; construct; }
 
-    public PlaybackBox (MyApp app) {
+    public PlaybackBox (Application app) {
         Object (app: app);
     }
 

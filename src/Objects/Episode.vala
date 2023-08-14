@@ -108,7 +108,7 @@ namespace Leopod {
             string date_released,
             string description,
             string guid,
-            string link
+            string? link
         ) {
             DateTime datetime_released = null;
             if (date_released != null) {
@@ -199,7 +199,7 @@ namespace Leopod {
             }
             if (title == null || description == null || uri == null ||
             datetime_released == null || parent == null ||
-            podcast_uri == null || guid == null || link == null) {
+            podcast_uri == null || guid == null) {
                 throw new EpisodeConstructionError.ROW_PARSING_ERROR ("Required column was missing");
             }
             Object (

@@ -5,12 +5,16 @@
 
 namespace Leopod {
 
-public class MyApp : Gtk.Application {
+public class Application : Gtk.Application {
     public string[] args;
-    public GLib.Settings settings { get; private set; }
+    public LeopodSettings settings { get; private set; }
     public Controller controller { get; private set; }
+    public Library library { get; private set; }
+    public Player player { get; private set; }
+    public DownloadManager download_manager { get; private set; }
+    public MainWindow window { get; private set; }
 
-    public MyApp () {
+    public Application () {
         Object (
             application_id: "com.github.leggettc18.leopod",
             flags: ApplicationFlags.FLAGS_NONE
@@ -18,6 +22,7 @@ public class MyApp : Gtk.Application {
     }
 
     protected override void activate () {
+        base.activate ();
         var granite_settings = Granite.Settings.get_default ();
         var gtk_settings = Gtk.Settings.get_default ();
         // Check if user prefers dark theme or not
@@ -37,8 +42,22 @@ public class MyApp : Gtk.Application {
           Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         );
 
-        settings = new GLib.Settings ("com.github.leggettc18.leopod");
+        settings = LeopodSettings.get_default_instance ();
+        download_manager = new DownloadManager ();
+        library = new Library (this);
         controller = new Controller (this);
+        MPRIS mpris = new MPRIS (this);
+        mpris.initialize ();
+        player = Player.get_default (args);
+        window = new MainWindow (this);
+        window.podcast_delete_requested.connect ((podcast) => {
+            library.delete_podcast.begin (podcast, (obj, res) => {
+                library.delete_podcast.end (res);
+            });
+        });
+        controller.post_creation_sequence.begin ();
+        window.playback_box.hide ();
+        window.present ();
 
     }
 
@@ -58,7 +77,7 @@ public class MyApp : Gtk.Application {
         // Set the media role
         GLib.Environ.set_variable ({"PULSE_PROP_media.role"}, "audio", "true");
 
-        var app = new MyApp ();
+        var app = new Application ();
         app.args = args;
         app.run (args);
     }

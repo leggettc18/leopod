@@ -6,11 +6,7 @@
 namespace Leopod {
     public class Controller : Object {
         // Objects
-        public MainWindow window { get; private set; }
-        public Library library { get; private set; }
-        public MyApp app { get; construct; }
-        public Player player { get; set; }
-        public DownloadManager download_manager { get; private set; }
+        public Application app { get; construct; }
 
         // Signals
         public signal void playback_status_changed (string status);
@@ -23,6 +19,7 @@ namespace Leopod {
         public bool first_run { get; private set; default = true; }
         public bool checking_for_updates { get; private set; default = false; }
         public bool currently_repopulating { get; private set; default = false; }
+        private bool importing = false;
 
         // System
         //public Gst.PbUtils.InstallPluginsContext context;
@@ -30,41 +27,23 @@ namespace Leopod {
         // References
         public Episode current_episode;
 
-        public Controller (MyApp app) {
+        public Controller (Application app) {
             Object (app: app);
         }
 
         construct {
-            download_manager = new DownloadManager ();
-            player = Player.get_default (app.args);
-            library = new Library (this);
-
-            first_run = (!library.check_database_exists ());
+            first_run = (!app.library.check_database_exists ());
 
             if (first_run) {
-                library.setup_library ();
-            } else {
-                library.refill_library ();
+                app.library.setup_library ();
             }
 
-            window = new MainWindow (this);
-
-            window.podcast_delete_requested.connect ((podcast) => {
-                library.delete_podcast.begin (podcast, (obj, res) => {
-                    library.delete_podcast.end (res);
-                });
-                //library.refill_library ();
-                //window.populate_views ();
-            });
 
             //player.eos.connect (window.on_stream_ended);
             //player.additional_plugins_required.connect (window.on_additional_plugins_needed);
 
-            MPRIS mpris = new MPRIS (this);
-            mpris.initialize ();
-
-            player.new_position_available.connect (() => {
-                if (player.progress > 0) {
+            app.player.new_position_available.connect (() => {
+                if (app.player.progress > 0) {
                     //player.current_episode.last_played_position = (int) player.get_position ();
                 }
 
@@ -73,47 +52,46 @@ namespace Leopod {
                 int mins_elapsed;
                 int secs_elapsed;
 
-                double total_secs_elapsed = (player.duration * player.progress) / 1000000000;
+                double total_secs_elapsed = (app.player.duration * app.player.progress) / 1000000000;
 
                 mins_elapsed = (int) total_secs_elapsed / 60;
                 secs_elapsed = (int) total_secs_elapsed % 60;
 
-                double total_secs_remaining = (player.duration / 1000000000) - total_secs_elapsed;
+                double total_secs_remaining = (app.player.duration / 1000000000) - total_secs_elapsed;
 
                 mins_remaining = (int) total_secs_remaining / 60;
                 secs_remaining = (int) total_secs_remaining % 60;
 
-                if (player.progress != 0.0) {
-                    window.playback_box.set_progress (
-                        player.progress, mins_remaining, secs_remaining, mins_elapsed, secs_elapsed
+                if (app.player.progress != 0.0) {
+                    app.window.playback_box.set_progress (
+                        app.player.progress, mins_remaining, secs_remaining, mins_elapsed, secs_elapsed
                     );
                 }
             });
-
-            post_creation_sequence ();
         }
 
-        private void post_creation_sequence () {
-            if (first_run || library.empty ()) {
-                window.show ();
-                window.switch_visible_page (window.welcome);
-                window.playback_box.hide ();
+        public async void post_creation_sequence () {
+            Idle.add (post_creation_sequence.callback);
+            yield;
+            if (first_run) {
+                app.window.switch_visible_page (app.window.welcome);
             } else {
-                window.populate_views ();
-                info ("Showing main window");
-                window.show ();
-                window.playback_box.hide ();
-                info ("switching to all_scrolled view");
-                window.switch_visible_page (window.main_box);
-                on_update_request.begin ((obj, res) => {
-                    on_update_request.end (res);
-                });
+                yield app.library.refill_library ();
+                if (app.library.empty ()) {
+                     app.window.switch_visible_page (app.window.welcome);
+                } else {
+                    app.window.switch_visible_page (app.window.main_box);
+                    yield on_update_request ();
+                    app.window.populate_views ();
+                }
             }
 
             GLib.Timeout.add (300000, () => {
-                on_update_request.begin ((obj, res) => {
-                    on_update_request.end (res);
-                });
+                if (!importing) {
+                    on_update_request.begin ((obj, res) => {
+                        on_update_request.end (res);
+                    });
+                }
                 return true;
             });
         }
@@ -121,25 +99,24 @@ namespace Leopod {
         public void add_podcast (string podcast_uri) {
             try {
                 Podcast podcast = new FeedParser ().get_podcast_from_file (podcast_uri);
-                library.add_podcast.begin (podcast);
-                window.populate_views ();
+                app.library.add_podcast.begin (podcast);
+                app.window.populate_views ();
             } catch (Error e) {
                 error (e.message);
             }
         }
 
         public async void import_opml (string path) {
-            SourceFunc callback = import_opml.callback;
             try {
                 string[] feeds = new FeedParser ().parse_feeds_from_OPML (path);
+                importing = true;
                 foreach (string feed in feeds) {
                     yield add_podcast_async (feed);
                 }
+                importing = false;
             } catch (LeopodLibraryError e) {
                 error (e.message);
             }
-            Idle.add ((owned) callback);
-            yield;
         }
 
         private async Podcast download_podcast (string podcast_uri) {
@@ -163,11 +140,11 @@ namespace Leopod {
             Podcast podcast = yield download_podcast (podcast_uri);
             try {
                 info ("adding podcast to library");
-                yield library.add_podcast (podcast);
+                yield app.library.add_podcast (podcast);
             } catch (Error e) {
                 error (e.message);
             }
-            window.populate_views ();
+            app.window.populate_views ();
         }
 
         public async void on_update_request () {
@@ -180,7 +157,7 @@ namespace Leopod {
 
                     Gee.ArrayList<Episode> new_episodes = new Gee.ArrayList<Episode> ();
 
-                    new_episodes = library.check_for_updates ();
+                    new_episodes = app.library.check_for_updates ();
 
                     checking_for_updates = false;
                     update_status_changed (false);
@@ -191,8 +168,8 @@ namespace Leopod {
 
                     if (new_episode_count > 0) {
                         //library.refill_library ();
-                        window.populate_views_async.begin ((obj, res) => {
-                            window.populate_views_async.end (res);
+                        app.window.populate_views_async.begin ((obj, res) => {
+                            app.window.populate_views_async.end (res);
                         });
                     }
                     Idle.add ((owned) callback);
@@ -206,8 +183,8 @@ namespace Leopod {
         }
 
         public void play_pause () {
-            if (player != null) {
-                if (player.playing) {
+            if (app.player != null) {
+                if (app.player.playing) {
                     pause ();
                 } else {
                     play ();
@@ -220,28 +197,28 @@ namespace Leopod {
          */
         public void play () {
             if (current_episode != null) {
-                window.playback_box.show ();
-                library.mark_episode_as_played (current_episode);
+                app.window.playback_box.show ();
+                app.library.mark_episode_as_played (current_episode);
 
-                if (player.current_episode != current_episode) {
-                    if (player.current_episode != null) {
+                if (app.player.current_episode != current_episode) {
+                    if (app.player.current_episode != null) {
                         info (
                             "Setting last played position of %s: %" + int64.FORMAT,
                             current_episode.title,
-                            player.get_position ()
+                            app.player.get_position ()
                         );
-                        player.current_episode.last_played_position = player.get_position ();
-                        library.set_episode_playback_position (player.current_episode);
+                        app.player.current_episode.last_played_position = app.player.get_position ();
+                        app.library.set_episode_playback_position (app.player.current_episode);
                     }
-                    player.set_episode (current_episode);
+                    app.player.set_episode (current_episode);
                     track_changed (
                         current_episode.title.replace ("%27", "'"),
                         current_episode.parent.name,
                         current_episode.parent.coverart_uri,
-                        (uint64) player.duration
+                        (uint64) app.player.duration
                     );
                 } else {
-                    player.play ();
+                    app.player.play ();
                 }
 
                 //TODO: handle video content
@@ -261,38 +238,38 @@ namespace Leopod {
                 playback_status_changed ("Playing");
 
 
-                window.playback_box.set_info_title (
+                app.window.playback_box.set_info_title (
                     current_episode.title.replace ("%27", "'"),
                     current_episode.parent.name.replace ("%27", "'")
                 );
 
-                window.show ();
+                app.window.show ();
             }
         }
 
         public void pause () {
-            if (player.playing) {
-                player.pause ();
+            if (app.player.playing) {
+                app.player.pause ();
                 playback_status_changed ("Paused");
 
-                current_episode.last_played_position = player.get_position ();
-                library.set_episode_playback_position (current_episode);
+                current_episode.last_played_position = app.player.get_position ();
+                app.library.set_episode_playback_position (current_episode);
 
-                window.playback_box.set_info_title (
+                app.window.playback_box.set_info_title (
                     current_episode.title.replace ("%27", "'"),
                     current_episode.parent.name.replace ("%27", "'")
                 );
 
-                window.show ();
+                app.window.show ();
             }
         }
 
         public void seek_forward () {
-            player.seek_forward (10);
+            app.player.seek_forward (10);
         }
 
         public void seek_backward () {
-            player.seek_backward (10);
+            app.player.seek_backward (10);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Leopod {
         public MprisPlayer player = null;
         public MprisRoot root = null;
 
-        private Controller controller;
+        public Application app { get; construct; }
 
         private unowned DBusConnection conn;
         private uint owner_id;
@@ -20,8 +20,8 @@ namespace Leopod {
         /*
          * Default constructor that simply sets the controller.window
          */
-        public MPRIS (Controller controller) {
-            this.controller = controller;
+        public MPRIS (Application app) {
+            Object (app: app);
         }
 
         /*
@@ -53,37 +53,37 @@ namespace Leopod {
                 connection.register_object ("/org/mpris/MediaPlayer2", root);
 
                 root.quit_requested.connect (() => {
-                    controller.window.destroy ();
+                    app.window.destroy ();
                 });
                 root.raise_requiested.connect (() => {
-                    controller.window.present ();
+                    app.window.present ();
                 });
 
 
                 player = new MprisPlayer (connection);
 
                 // Set up all the signals
-                controller.track_changed.connect (player.set_media_metadata);
-                controller.playback_status_changed.connect (player.set_playback_status);
+                app.controller.track_changed.connect (player.set_media_metadata);
+                app.controller.playback_status_changed.connect (player.set_playback_status);
 
                 player.play.connect (() => {
-                    controller.play ();
+                    app.controller.play ();
                 });
 
                 player.pause.connect (() => {
-                    controller.pause ();
+                    app.controller.pause ();
                 });
 
                 player.play_pause.connect (() => {
-                    controller.play_pause ();
+                    app.controller.play_pause ();
                 });
 
                 player.next.connect (() => {
-                    controller.seek_forward ();
+                    app.controller.seek_forward ();
                 });
 
                 player.previous.connect (() => {
-                    controller.seek_backward ();
+                    app.controller.seek_backward ();
                 });
 
                 connection.register_object ("/org/mpris/MediaPlayer2", player);

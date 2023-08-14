@@ -36,8 +36,11 @@ namespace Leopod {
 
             append (image);
             if (title_visible) {
-                Granite.HeaderLabel name = new Granite.HeaderLabel (podcast.name) {
+                Gtk.Label name = new Gtk.Label (podcast.name) {
                     halign = Gtk.Align.CENTER,
+                    wrap = true,
+                    max_width_chars = 20,
+                    css_classes = { Granite.STYLE_CLASS_H4_LABEL }
                 };
                 append (name);
             }

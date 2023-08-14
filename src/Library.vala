@@ -11,7 +11,7 @@ namespace Leopod {
 
     public class Library : Object {
         public ObservableArrayList<Podcast> podcasts { get; set; }
-        public Controller controller { get; construct; }
+        public Application app { get; construct; }
 
         private Sqlite.Database db; // the Database
 
@@ -20,12 +20,10 @@ namespace Leopod {
         private string db_directory = null;
         private string local_library_path;
 
-        private GLib.Settings settings;
-
         public signal void library_loaded ();
 
-        public Library (Controller controller) {
-            Object (controller: controller);
+        public Library (Application app) {
+            Object (app: app);
         }
 
         construct {
@@ -35,8 +33,6 @@ namespace Leopod {
             info (db_location);
 
             podcasts = new ObservableArrayList<Podcast> ();
-
-            settings = new GLib.Settings ("com.github.leggettc18.leopod");
 
             // Set the local library directory and replace ~ with absolute path
             local_library_path = GLib.Environment.get_user_data_dir () + "/leopod";
@@ -101,7 +97,9 @@ namespace Leopod {
         /*
          * Refills the library from the database
          */
-        public void refill_library () {
+        public async void refill_library () {
+            Idle.add (refill_library.callback);
+            yield;
             podcasts.clear ();
             prepare_database ();
 
@@ -183,7 +181,11 @@ namespace Leopod {
         /*
          * Adds a podcast to the database and the active podcast list
          */
-        public async bool add_podcast (Podcast podcast) throws LeopodLibraryError {
+        public async bool add_podcast (Podcast? podcast) throws LeopodLibraryError {
+            if (podcast == null) {
+                warning ("Podcast is null");
+                return false;
+            }
             info ("Podcast %s is being added to the library", podcast.name);
 
             // Set all but the most recent episode as played
@@ -274,8 +276,8 @@ namespace Leopod {
         public void create_db_schema () {
             prepare_database ();
 
-            string query = string.join ("\n",
-                "BEGIN TRANSACTION;",
+            string query = string.join ("",
+                "BEGIN TRANSACTION;\n",
                 "CREATE TABLE Podcast (",
                 "    name                TEXT                    NOT NULL,",
                 "    feed_uri            TEXT    PRIMARY_KEY     NOT NULL,",
@@ -283,9 +285,9 @@ namespace Leopod {
                 "    album_art_local_uri TEXT,",
                 "    description         TEXT                    NOT NULL,",
                 "    content_type        TEXT,",
-                "    license             TEXT,",
-                ");",
-                "CREATE INDEX podcast_name ON Podcast (name);",
+                "    license             TEXT",
+                ");\n",
+                "CREATE INDEX podcast_name ON Podcast (name);\n",
                 "CREATE TABLE Episode (",
                 "    title               TEXT                    NOT NULL,",
                 "    podcast_uri         TEXT                    NOT NULL,",
@@ -298,11 +300,11 @@ namespace Leopod {
                 "    play_status         TEXT,",
                 "    guid                TEXT,",
                 "    link                TEXT",
-                ");",
-                "CREATE UNIQUE INDEX episode_guid ON Episode (guid, link, podcast_uri);",
-                "CREATE INDEX episode_title ON Episode (title);",
-                "CREATE INDEX episode_released ON Episode (released);",
-                "PRAGMA user_version = 1;",
+                ");\n",
+                "CREATE UNIQUE INDEX episode_guid ON Episode (guid, link, podcast_uri);\n",
+                "CREATE INDEX episode_title ON Episode (title);\n",
+                "CREATE INDEX episode_released ON Episode (released);\n",
+                "PRAGMA user_version = 1;\n",
                 "END TRANSACTION;"
             );
 
@@ -446,7 +448,7 @@ namespace Leopod {
          */
         public void download_episode (Episode episode) throws LeopodLibraryError {
             try {
-                controller.download_manager.add_episode_download (episode);
+                app.download_manager.add_episode_download (episode);
             } catch (DownloadError e) {
                 error (e.message);
             }

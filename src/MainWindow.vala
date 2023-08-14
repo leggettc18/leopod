@@ -7,7 +7,7 @@ namespace Leopod {
 
 public class MainWindow : Gtk.ApplicationWindow {
     // Core Components
-    public Controller controller { private get; construct; }
+    public Application app { private get; construct; }
     public Gtk.HeaderBar header_bar { get; private set; }
     public Gtk.FlowBox all_flowbox { get; private set; }
     public Gtk.ScrolledWindow all_scrolled { get; private set; }
@@ -36,8 +36,8 @@ public class MainWindow : Gtk.ApplicationWindow {
     private int width;
     private int height;
 
-    public MainWindow (Controller controller) {
-        Object (controller: controller);
+    public MainWindow (Application app) {
+        Object (app: app);
     }
 
     construct {
@@ -52,9 +52,9 @@ public class MainWindow : Gtk.ApplicationWindow {
         var add_podcast_action = new SimpleAction ("add-podcast", null);
         var import_opml_action = new SimpleAction ("import-opml", null);
 
-        this.controller.app.add_action (add_podcast_action);
-        this.controller.app.add_action (import_opml_action);
-        this.controller.app.set_accels_for_action ("app.add-podcast", {"<Control>a"});
+        this.app.add_action (add_podcast_action);
+        this.app.add_action (import_opml_action);
+        this.app.set_accels_for_action ("app.add-podcast", {"<Control>a"});
 
         var add_podcast_button = new Gtk.Button () {
             child = new Gtk.Image.from_icon_name ("list-add") {
@@ -63,7 +63,7 @@ public class MainWindow : Gtk.ApplicationWindow {
             has_frame = false,
             action_name = "app.add-podcast",
             tooltip_markup = Granite.markup_accel_tooltip (
-                this.controller.app.get_accels_for_action ("app.add-podcast"),
+                this.app.get_accels_for_action ("app.add-podcast"),
                 _("Add Podcast")
             )
         };
@@ -75,7 +75,7 @@ public class MainWindow : Gtk.ApplicationWindow {
             action_name = "app.import-opml",
             tooltip_markup = _("Import from OPML file"),
         };
-        var download_button = new DownloadsButton (controller.download_manager);
+        var download_button = new DownloadsButton (app.download_manager);
         download_button.clicked.connect (show_downloads_window);
 
         header_bar = new Gtk.HeaderBar () {
@@ -97,7 +97,7 @@ public class MainWindow : Gtk.ApplicationWindow {
         // });
         // header_bar.pack_end (repopulate_button);
 
-        downloads = new DownloadsWindow (controller.download_manager);
+        downloads = new DownloadsWindow (app.download_manager);
 
         add_podcast_action.activate.connect (() => {
             on_add_podcast_clicked ();
@@ -106,7 +106,7 @@ public class MainWindow : Gtk.ApplicationWindow {
             on_import_opml_clicked ();
         });
 
-        this.set_application (controller.app);
+        this.set_application (app);
         default_height = 600;
         default_width = 1000;
         this.set_icon_name ("com.github.leggettc18.leopod");
@@ -164,7 +164,7 @@ public class MainWindow : Gtk.ApplicationWindow {
             selection_mode = Gtk.SelectionMode.NONE
         };
 
-        all_flowbox.bind_model (controller.library.podcasts, create_coverarts_from_podcasts);
+        all_flowbox.bind_model (app.library.podcasts, create_coverarts_from_podcasts);
 
         all_scrolled = new Gtk.ScrolledWindow ();
         all_scrolled.set_policy (Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
@@ -173,18 +173,18 @@ public class MainWindow : Gtk.ApplicationWindow {
         episodes_scrolled = new Gtk.ScrolledWindow ();
         episodes_scrolled.set_policy (Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
 
-        new_episodes = new NewEpisodesView (controller.library);
+        new_episodes = new NewEpisodesView (app.library);
         new_episodes.episode_download_requested.connect ((episode) => {
             on_download_requested (episode);
         });
         new_episodes.episode_delete_requested.connect ((episode) => {
-            controller.library.delete_episode (episode);
+            app.library.delete_episode (episode);
         });
         new_episodes.episode_play_requested.connect ((episode) => {
-            controller.current_episode = episode;
+            app.controller.current_episode = episode;
             header_bar.title_widget = new Gtk.Label (episode.title);
             playback_box.set_artwork_image (episode.parent.coverart_uri);
-            controller.play ();
+            app.controller.play ();
         });
         var main_stack = new Gtk.Stack () {
             transition_type = Gtk.StackTransitionType.SLIDE_LEFT_RIGHT,
@@ -214,48 +214,48 @@ public class MainWindow : Gtk.ApplicationWindow {
 
         // Actions
         var playpause_action = new SimpleAction ("play_pause", null);
-        this.controller.app.add_action (playpause_action);
-        this.controller.app.set_accels_for_action ("app.play_pause", {"k",
+        this.app.add_action (playpause_action);
+        this.app.set_accels_for_action ("app.play_pause", {"k",
         "space"});
         playpause_action.activate.connect (() => {
-            this.controller.play_pause ();
+            app.controller.play_pause ();
         });
 
         var seek_forward_action = new SimpleAction ("seek_forward", null);
-        this.controller.app.add_action (seek_forward_action);
-        this.controller.app.set_accels_for_action ("app.seek_forward", {"l"});
+        app.add_action (seek_forward_action);
+        app.set_accels_for_action ("app.seek_forward", {"l"});
         seek_forward_action.activate.connect (() => {
-            this.controller.seek_forward ();
+            app.controller.seek_forward ();
         });
 
         var seek_backward_action = new SimpleAction ("seek_backward", null);
-        this.controller.app.add_action (seek_backward_action);
-        this.controller.app.set_accels_for_action ("app.seek_backward", {"h"});
+        app.add_action (seek_backward_action);
+        app.set_accels_for_action ("app.seek_backward", {"h"});
         seek_backward_action.activate.connect (() => {
-            this.controller.seek_backward ();
+            app.controller.seek_backward ();
         });
 
-        double playback_rate = controller.app.settings.get_double ("playback-rate");
-        controller.player.rate = playback_rate;
-        playback_box = new PlaybackBox (this.controller.app);
+        double playback_rate = app.settings.playback_rate;
+        app.player.rate = playback_rate;
+        playback_box = new PlaybackBox (app);
 
         playback_box.scale_changed.connect (() => {
             var new_progress = playback_box.get_progress_bar_fill ();
-            controller.player.progress = new_progress;
+            app.player.progress = new_progress;
         });
         playback_box.playback_rate_selected.connect ((t, r) => {
-            controller.player.rate = r;
-            controller.app.settings.set_double ("playback-rate", r);
+            app.player.rate = r;
+            app.settings.playback_rate = r;
         });
         var gesture_click = new Gtk.GestureClick ();
         playback_box.artwork.add_controller (gesture_click);
 
         gesture_click.released.connect (() => {
-            EpisodeWindow window = new EpisodeWindow (this.controller.current_episode);
+            EpisodeWindow window = new EpisodeWindow (app.controller.current_episode);
             window.show ();
         });
 
-        controller.playback_status_changed.connect (() => {
+        app.controller.playback_status_changed.connect (() => {
             playback_box.toggle_playing ();
         });
 
@@ -267,7 +267,7 @@ public class MainWindow : Gtk.ApplicationWindow {
 
 
     public void populate_views () {
-        new_episodes.rebuild (controller.library);
+        new_episodes.rebuild (app.library);
     }
 
     /*
@@ -291,14 +291,14 @@ public class MainWindow : Gtk.ApplicationWindow {
             on_download_requested (episode);
         });
         episodes_box.episode_delete_requested.connect ((episode) => {
-            controller.library.delete_episode (episode);
+            app.library.delete_episode (episode);
         });
         episodes_box.episode_play_requested.connect ((episode) => {
-            controller.current_episode = episode;
+            app.controller.current_episode = episode;
             header_bar.title_widget = new Gtk.Label ("%s - %s".printf
             (episode.parent.name, episode.title));
             playback_box.set_artwork_image (episode.parent.coverart_uri);
-            controller.play ();
+            app.controller.play ();
         });
         episodes_box.podcast_delete_requested.connect ((podcast) => {
             delete_podcast = new DeletePodcastDialog (this, podcast);
@@ -315,8 +315,8 @@ public class MainWindow : Gtk.ApplicationWindow {
             overlay_bar.label = "Deleting Podcast: " + delete_podcast.podcast.name;
             overlay_bar.active = true;
             overlay_bar.show ();
-            controller.library.delete_podcast.begin (delete_podcast.podcast, (obj, res) => {
-                controller.library.delete_podcast.end (res);
+            app.library.delete_podcast.begin (delete_podcast.podcast, (obj, res) => {
+                app.library.delete_podcast.end (res);
                 overlay_bar.active = false;
                 overlay_bar.hide ();
             });
@@ -325,7 +325,7 @@ public class MainWindow : Gtk.ApplicationWindow {
 
     public void on_download_requested (Episode episode) {
         try {
-            controller.library.download_episode (episode);
+            app.library.download_episode (episode);
         } catch {
             critical ("LeopodLibraryError");
         }
@@ -414,9 +414,12 @@ public class MainWindow : Gtk.ApplicationWindow {
             overlay_bar.label = "Adding Podcasts";
             overlay_bar.active = true;
             overlay_bar.show ();
+            if (current_widget == welcome) {
+                switch_visible_page (main_box);
+            }
             File opml_file = opml_file_dialog.get_file ();
-            controller.import_opml.begin (opml_file.get_path (), (obj, res) => {
-                controller.import_opml.end (res);
+            app.controller.import_opml.begin (opml_file.get_path (), (obj, res) => {
+                app.controller.import_opml.end (res);
                 overlay_bar.active = false;
                 overlay_bar.hide ();
             });
@@ -433,8 +436,8 @@ public class MainWindow : Gtk.ApplicationWindow {
             overlay_bar.label = "Adding Podcast";
             overlay_bar.active = true;
             overlay_bar.show ();
-            controller.add_podcast_async.begin (add_podcast.podcast_uri_entry.get_text (), (obj, res) => {
-                controller.add_podcast_async.end (res);
+            app.controller.add_podcast_async.begin (add_podcast.podcast_uri_entry.get_text (), (obj, res) => {
+                app.controller.add_podcast_async.end (res);
                 overlay_bar.active = false;
                 overlay_bar.hide ();
             });
