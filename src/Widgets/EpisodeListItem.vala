@@ -146,6 +146,12 @@ namespace Leopod {
             };
 
             download_button.clicked.connect (() => {
+                download_button.child = new Gtk.Spinner () {
+                    spinning = true,
+                };
+                episode.download_status_changed.connect (() => {
+                    download_button.icon_name = "folder-download-symbolic";
+                });
                 download_clicked (episode);
             });
 
