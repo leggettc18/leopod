@@ -8,6 +8,10 @@ namespace Leopod {
         // Objects
         public Application app { get; construct; }
 
+        // Widgets
+        private AddPodcastDialog add_podcast_dialog { get; private set; }
+        private Gtk.FileChooserNative opml_file_dialog;
+
         // Signals
         public signal void playback_status_changed (string status);
         public signal void track_changed (
@@ -38,6 +42,12 @@ namespace Leopod {
                 app.library.setup_library ();
             }
 
+            app.add_podcast_action.activate.connect (() => {
+                on_add_podcast_clicked ();
+            });
+            app.import_opml_action.activate.connect (() => {
+                on_import_opml_clicked ();
+            });
 
             //player.eos.connect (window.on_stream_ended);
             //player.additional_plugins_required.connect (window.on_additional_plugins_needed);
@@ -91,6 +101,59 @@ namespace Leopod {
                 }
                 return true;
             });
+        }
+
+        public void on_add_podcast_clicked () {
+            add_podcast_dialog = new AddPodcastDialog (app.window);
+            add_podcast_dialog.response.connect (on_add_podcast);
+            add_podcast_dialog.show ();
+        }
+
+        public void on_import_opml_clicked () {
+            opml_file_dialog = new Gtk.FileChooserNative (
+                _("Select an OPML File"),
+                app.window,
+                Gtk.FileChooserAction.OPEN,
+                _("Import"),
+                _("Cancel")
+            ) {
+                filter = new Gtk.FileFilter (),
+            };
+            opml_file_dialog.filter.add_pattern ("*.opml");
+            opml_file_dialog.response.connect (on_import_opml);
+            opml_file_dialog.show ();
+        }
+
+        /*
+         * Handles adding adding the podcast from the dialog
+         */
+        public void on_add_podcast (int response_id) {
+            add_podcast_dialog.destroy ();
+            if (response_id == Gtk.ResponseType.ACCEPT) {
+                app.window.switch_visible_page (app.window.main_box);
+                app.window.overlay_bar.label = "Adding Podcast";
+                app.window.overlay_bar.active = true;
+                app.window.overlay_bar.show ();
+                add_podcast_async.begin ( add_podcast_dialog.podcast_uri_entry.get_text (), (obj, res) => {
+                    add_podcast_async.end (res);
+                    app.window.overlay_bar.active = false;
+                    app.window.overlay_bar.hide ();
+                });
+            }
+        }
+        private void on_import_opml (int response_id) {
+            if (response_id == Gtk.ResponseType.ACCEPT) {
+                app.window.overlay_bar.label = "Adding Podcasts";
+                app.window.overlay_bar.active = true;
+                app.window.overlay_bar.show ();
+                app.window.switch_visible_page (app.window.main_box);
+                File opml_file = opml_file_dialog.get_file ();
+                import_opml.begin (opml_file.get_path (), (obj, res) => {
+                    import_opml.end (res);
+                    app.window.overlay_bar.active = false;
+                    app.window.overlay_bar.hide ();
+                });
+            }
         }
 
         public void add_podcast (string podcast_uri) {

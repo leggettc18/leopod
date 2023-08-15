@@ -14,11 +14,24 @@ public class Application : Gtk.Application {
     public DownloadManager download_manager { get; private set; }
     public MainWindow window { get; private set; }
 
+    public SimpleAction add_podcast_action { get; private set; }
+    public SimpleAction import_opml_action { get; private set; }
+
     public Application () {
         Object (
             application_id: "com.github.leggettc18.leopod",
             flags: ApplicationFlags.FLAGS_NONE
         );
+    }
+
+    construct {
+        add_podcast_action = new SimpleAction ("add-podcast", null);
+        import_opml_action = new SimpleAction ("import-opml", null);
+
+        add_action (add_podcast_action);
+        add_action (import_opml_action);
+        set_accels_for_action ("app.add-podcast", {"<Control>a"});
+        set_accels_for_action ("app.import-opml", {"<Control><Shift>i"});
     }
 
     protected override void activate () {
