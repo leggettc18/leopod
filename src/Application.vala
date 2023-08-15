@@ -16,6 +16,10 @@ public class Application : Gtk.Application {
 
     public SimpleAction add_podcast_action { get; private set; }
     public SimpleAction import_opml_action { get; private set; }
+    public SimpleAction quit_action { get; private set; }
+    public SimpleAction play_pause_action { get; private set; }
+    public SimpleAction seek_forward_action { get; private set; }
+    public SimpleAction seek_backward_action { get; private set; }
 
     public Application () {
         Object (
@@ -27,11 +31,23 @@ public class Application : Gtk.Application {
     construct {
         add_podcast_action = new SimpleAction ("add-podcast", null);
         import_opml_action = new SimpleAction ("import-opml", null);
+        quit_action = new SimpleAction ("quit", null);
+        play_pause_action = new SimpleAction ("play-pause", null);
+        seek_forward_action = new SimpleAction ("seek-forward", null);
+        seek_backward_action = new SimpleAction ("seek-backward", null);
 
         add_action (add_podcast_action);
         add_action (import_opml_action);
-        set_accels_for_action ("app.add-podcast", {"<Control>a"});
-        set_accels_for_action ("app.import-opml", {"<Control><Shift>i"});
+        add_action (quit_action);
+        add_action (play_pause_action);
+        add_action (seek_forward_action);
+        add_action (seek_backward_action);
+        set_accels_for_action ("app.add-podcast", { "<Control>a" });
+        set_accels_for_action ("app.import-opml", { "<Control><Shift>i" });
+        set_accels_for_action ("app.quit", { "<Control>q", "<Control>w" });
+        set_accels_for_action ("app.play-pause", { "k", "space" });
+        set_accels_for_action ("app.seek_forward", { "l" });
+        set_accels_for_action ("app.seek_backward", { "h" });
     }
 
     protected override void activate () {

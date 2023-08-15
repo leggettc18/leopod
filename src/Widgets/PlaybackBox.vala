@@ -60,7 +60,7 @@ public class PlaybackBox : Gtk.Box {
         podcast_label.xalign = 0.0f;
         podcast_label.max_width_chars = 20;
 
-        playback_rate_popover = new PlaybackRatePopover (app.settings.get_double ("playback-rate"));
+        playback_rate_popover = new PlaybackRatePopover (app.settings.playback_rate);
         playback_rate_popover.rate_selected.connect ((t, r) => {
             playback_rate_selected (r);
         });
@@ -68,9 +68,9 @@ public class PlaybackBox : Gtk.Box {
         seek_back_button = new Gtk.Button.from_icon_name (
             "media-seek-backward-symbolic"
         ) {
-            action_name = "app.seek_backward",
+            action_name = "app.seek-backward",
             tooltip_markup = Granite.markup_accel_tooltip (
-                app.get_accels_for_action ("app.seek_backward"),
+                app.get_accels_for_action ("app.seek-backward"),
                 _("Seek Backward")
             ),
             has_frame = false
@@ -79,9 +79,9 @@ public class PlaybackBox : Gtk.Box {
         playpause_button = new Gtk.Button.from_icon_name (
             "media-playback-start-symbolic"
         ) {
-            action_name = "app.play_pause",
+            action_name = "app.play-pause",
             tooltip_markup = Granite.markup_accel_tooltip (
-                app.get_accels_for_action ("app.play_pause"),
+                app.get_accels_for_action ("app.play-pause"),
                 _("Play/Pause")
             ),
             has_frame = false
@@ -90,9 +90,9 @@ public class PlaybackBox : Gtk.Box {
         seek_forward_button = new Gtk.Button.from_icon_name (
             "media-seek-forward-symbolic"
         ) {
-            action_name = "app.seek_forward",
+            action_name = "app.seek-forward",
             tooltip_markup = Granite.markup_accel_tooltip (
-                app.get_accels_for_action ("app.seek_forward"),
+                app.get_accels_for_action ("app.seek-forward"),
                 _("Seek Forward")
             ),
             has_frame = false

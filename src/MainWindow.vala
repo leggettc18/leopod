@@ -227,29 +227,6 @@ public class MainWindow : Gtk.ApplicationWindow {
 
         main_layout.attach (loading_box, 0, 1);
 
-        // Actions
-        var playpause_action = new SimpleAction ("play_pause", null);
-        this.app.add_action (playpause_action);
-        this.app.set_accels_for_action ("app.play_pause", {"k",
-        "space"});
-        playpause_action.activate.connect (() => {
-            app.controller.play_pause ();
-        });
-
-        var seek_forward_action = new SimpleAction ("seek_forward", null);
-        app.add_action (seek_forward_action);
-        app.set_accels_for_action ("app.seek_forward", {"l"});
-        seek_forward_action.activate.connect (() => {
-            app.controller.seek_forward ();
-        });
-
-        var seek_backward_action = new SimpleAction ("seek_backward", null);
-        app.add_action (seek_backward_action);
-        app.set_accels_for_action ("app.seek_backward", {"h"});
-        seek_backward_action.activate.connect (() => {
-            app.controller.seek_backward ();
-        });
-
         double playback_rate = app.settings.playback_rate;
         app.player.rate = playback_rate;
         playback_box = new PlaybackBox (app);
