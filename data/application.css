@@ -1,38 +1,13 @@
-.download-details {
-    background-color: inherit;
-}
-
-.episode-list {
-    border-bottom: 1px solid #77767b;
-}
-
-.episodes-list {
-    background-color: inherit;
-}
-
 .episode-button {
-    background-color: #7239b3;
+    background-color: darker(@accent_color);
     color: #fafafa;
 }
 .padded {
     padding: 10px;
 }
 
-.episode-list-box {
-    border: 1px solid #77767b;
-}
-
-.danger {
-    background-color: #c6262e;
-    color: white;
-}
-
 .coverart {
     margin: 0;
     padding: 0;
     box-shadow: 4px 4px 4px 2px rgba(0, 0, 0, 0.3);
-}
-
-.h3 {
-    font-size: 1.25rem;
 }
