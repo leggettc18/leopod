@@ -15,10 +15,14 @@ public class MainWindow : Gtk.ApplicationWindow {
     public Gtk.ScrolledWindow episodes_scrolled { get; private set; }
     public Gtk.Button back_button { get; private set; }
     public Gtk.Box main_box { get; private set; }
+    public Gtk.Grid main_layout { get; private set; }
     private Gtk.Overlay overlay;
     private Granite.OverlayBar overlay_bar;
 
     public Granite.Placeholder welcome { get; private set; }
+    private Gtk.Box loading_box;
+    private Gtk.Spinner loading_spinner;
+    private Granite.Placeholder loading_page;
     public Gtk.Stack notebook {get; private set; }
 
     public AddPodcastDialog add_podcast { get; private set; }
@@ -112,7 +116,7 @@ public class MainWindow : Gtk.ApplicationWindow {
         this.set_icon_name ("com.github.leggettc18.leopod");
         title = _("Leopod");
 
-        Gtk.Grid main_layout = new Gtk.Grid ();
+        main_layout = new Gtk.Grid ();
         main_layout.attach (header_bar, 0, 0);
 
         notebook = new Gtk.Stack () {
@@ -206,11 +210,27 @@ public class MainWindow : Gtk.ApplicationWindow {
         main_box.prepend (main_switcher);
         main_box.append (main_stack);
 
+        loading_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 12) {
+            vexpand = hexpand = true,
+            valign = Gtk.Align.CENTER,
+        };
+
+        loading_page = new Granite.Placeholder (_("Loading")) {
+            valign = halign = Gtk.Align.CENTER,
+        };
+
+        loading_spinner = new Gtk.Spinner () {
+            spinning = true,
+        };
+
+        loading_box.append (loading_page);
+        loading_box.append (loading_spinner);
+
         notebook.add_titled (main_box, "main", _("Main"));
         notebook.add_titled (welcome, "welcome", _("Welcome"));
         notebook.add_titled (episodes_scrolled, "podcast-episodes", _("Episodes"));
 
-        main_layout.attach (notebook, 0, 1);
+        main_layout.attach (loading_box, 0, 1);
 
         // Actions
         var playpause_action = new SimpleAction ("play_pause", null);
@@ -263,6 +283,11 @@ public class MainWindow : Gtk.ApplicationWindow {
 
         overlay.child = main_layout;
         child = overlay;
+
+        app.library.library_loaded.connect (() => {
+            main_layout.remove (loading_box);
+            main_layout.attach (notebook, 0, 1);
+        });
     }
 
 
@@ -351,6 +376,9 @@ public class MainWindow : Gtk.ApplicationWindow {
         } else if (widget == new_episodes) {
             notebook.set_visible_child (new_episodes);
             current_widget = new_episodes;
+        } else if (widget == loading_page) {
+            notebook.set_visible_child (loading_page);
+            current_widget = loading_page;
         } else {
             info ("Attempted to switch to a page that doesn't exist.");
         }

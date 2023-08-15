@@ -71,16 +71,13 @@ namespace Leopod {
         }
 
         public async void post_creation_sequence () {
-            Idle.add (post_creation_sequence.callback);
-            yield;
             if (first_run) {
                 app.window.switch_visible_page (app.window.welcome);
             } else {
                 yield app.library.refill_library ();
                 if (app.library.empty ()) {
-                     app.window.switch_visible_page (app.window.welcome);
+                    app.window.switch_visible_page (app.window.welcome);
                 } else {
-                    app.window.switch_visible_page (app.window.main_box);
                     yield on_update_request ();
                     app.window.populate_views ();
                 }

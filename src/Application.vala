@@ -44,21 +44,26 @@ public class Application : Gtk.Application {
 
         settings = LeopodSettings.get_default_instance ();
         download_manager = new DownloadManager ();
+        player = Player.get_default (args);
         library = new Library (this);
         controller = new Controller (this);
         MPRIS mpris = new MPRIS (this);
         mpris.initialize ();
-        player = Player.get_default (args);
         window = new MainWindow (this);
         window.podcast_delete_requested.connect ((podcast) => {
             library.delete_podcast.begin (podcast, (obj, res) => {
                 library.delete_podcast.end (res);
             });
         });
-        controller.post_creation_sequence.begin ();
         window.playback_box.hide ();
         window.present ();
 
+        // Add short delay, just long enough for the window to
+        // finish animating into view.
+        Timeout.add (250, () => {
+            controller.post_creation_sequence.begin ();
+            return false;
+        });
     }
 
     public static void main (string[] args) {

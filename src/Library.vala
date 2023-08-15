@@ -140,6 +140,7 @@ namespace Leopod {
                 }
                 stmt.reset ();
             }
+            library_loaded ();
         }
 
         public Podcast podcast_from_row (Sqlite.Statement stmt) {
