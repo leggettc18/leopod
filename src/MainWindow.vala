@@ -59,6 +59,7 @@ public class MainWindow : Gtk.ApplicationWindow {
         this.app.add_action (add_podcast_action);
         this.app.add_action (import_opml_action);
         this.app.set_accels_for_action ("app.add-podcast", {"<Control>a"});
+        this.app.set_accels_for_action ("app.import-opml", {"<Control><Shift>i"});
 
         var add_podcast_button = new Gtk.Button () {
             child = new Gtk.Image.from_icon_name ("list-add") {
@@ -71,16 +72,23 @@ public class MainWindow : Gtk.ApplicationWindow {
                 _("Add Podcast")
             )
         };
-        var import_opml_button = new Gtk.Button () {
-            child = new Gtk.Image.from_icon_name ("document-import") {
-                pixel_size = 24,
-            },
-            has_frame = false,
-            action_name = "app.import-opml",
-            tooltip_markup = _("Import from OPML file"),
-        };
+
         var download_button = new DownloadsButton (app.download_manager);
         download_button.clicked.connect (show_downloads_window);
+
+        Menu menu = new Menu ();
+        menu.append ("Import", "app.import-opml");
+        menu.append ("Quit", "app.quit");
+
+        Gtk.PopoverMenu menu_popover = new Gtk.PopoverMenu.from_model (menu);
+
+        Gtk.MenuButton menu_button = new Gtk.MenuButton () {
+            icon_name = "open-menu",
+            primary = true,
+            tooltip_markup = Granite.markup_accel_tooltip ({"F10"}, _("Menu")),
+            popover = menu_popover,
+        };
+        menu_button.add_css_class (Granite.STYLE_CLASS_LARGE_ICONS);
 
         header_bar = new Gtk.HeaderBar () {
             show_title_buttons = false,
@@ -88,7 +96,7 @@ public class MainWindow : Gtk.ApplicationWindow {
         header_bar.add_css_class (Granite.STYLE_CLASS_FLAT);
         header_bar.pack_start (new Gtk.WindowControls (Gtk.PackType.START));
         header_bar.pack_end (new Gtk.WindowControls (Gtk.PackType.END));
-        header_bar.pack_end (import_opml_button);
+        header_bar.pack_end (menu_button);
         header_bar.pack_end (add_podcast_button);
         header_bar.pack_end (download_button);
 
