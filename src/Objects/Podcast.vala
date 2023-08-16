@@ -184,6 +184,14 @@ namespace Leopod {
                 local_art_uri = "file://" + art_path;
             }
         }
+
+        public void write_opml (Xml.TextWriter writer) throws FileError {
+            ret_to_ex (writer.start_element ("outline"));
+            ret_to_ex (writer.write_attribute ("text", name.replace ("\"", "'").replace ("&", "and")));
+            ret_to_ex (writer.write_attribute ("type", "rss"));
+            ret_to_ex (writer.write_attribute ("xmlUrl", feed_uri));
+            ret_to_ex (writer.end_element ());
+        }
     }
 
     /*
