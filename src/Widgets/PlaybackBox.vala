@@ -104,6 +104,8 @@ public class PlaybackBox : Gtk.Box {
             halign = Gtk.Align.FILL
         };
         scale.set_value (0.0);
+        scale.add_css_class (Granite.STYLE_CLASS_ACCENT);
+        add_css_class ("seek-bar");
         left_time = new Gtk.Label ("0:00");
         right_time = new Gtk.Label ("0:00");
         left_time.width_chars = 6;
