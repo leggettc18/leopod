@@ -37,10 +37,6 @@ public class MainWindow : Gtk.ApplicationWindow {
     // Signals
     public signal void podcast_delete_requested (Podcast podcast);
 
-    // Members
-    private int width;
-    private int height;
-
     public MainWindow (Application app) {
         Object (app: app);
     }
@@ -51,9 +47,11 @@ public class MainWindow : Gtk.ApplicationWindow {
         overlay_bar = new Granite.OverlayBar (overlay) {
             visible = false,
         };
-        width = 0;
-        height = 0;
 
+        app.settings.bind ("width", this, "default_width", SettingsBindFlags.DEFAULT);
+        app.settings.bind ("height", this, "default_height", SettingsBindFlags.DEFAULT);
+        app.settings.bind ("maximized", this, "maximized", SettingsBindFlags.DEFAULT);
+        app.settings.bind ("fullscreen", this, "fullscreened", SettingsBindFlags.DEFAULT);
 
         var add_podcast_button = new Gtk.Button () {
             child = new Gtk.Image.from_icon_name ("list-add") {
@@ -106,8 +104,6 @@ public class MainWindow : Gtk.ApplicationWindow {
         downloads = new DownloadsWindow (app.download_manager);
 
         this.set_application (app);
-        default_height = 600;
-        default_width = 1000;
         this.set_icon_name ("com.github.leggettc18.leopod");
         title = _("Leopod");
 

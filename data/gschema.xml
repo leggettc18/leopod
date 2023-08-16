@@ -10,6 +10,26 @@
       <default>1.0</default>
       <summary>The current playback rate</summary>
       <description>The speed at which audio is played. 1.0 is normal speed, 2.0 is double speed.</description>
-     </key>
+    </key>
+    <key name="width" type="i">
+      <default>1000</default>
+      <summary>The main window width</summary>
+      <description>The main window width</description>
+    </key>
+    <key name="height" type="i">
+      <default>600</default>
+      <summary>The main window height</summary>
+      <description>The main window height</description>
+    </key>
+    <key name="maximized" type="b">
+      <default>false</default>
+      <summary>Whether window opens maximized or not</summary>
+      <description>Whether the window opens maximized or not</description>
+    </key>
+    <key name="fullscreen" type="b">
+      <default>false</default>
+      <summary>Whether the window opens fullscreened or not</summary>
+      <description>Whether the window opens fullscreened or not</description>
+    </key>
   </schema>
 </schemalist>

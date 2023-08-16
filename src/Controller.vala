@@ -54,6 +54,9 @@ namespace Leopod {
             app.play_pause_action.activate.connect (play_pause);
             app.seek_forward_action.activate.connect (seek_forward);
             app.seek_backward_action.activate.connect (seek_backward);
+            app.fullscreen_action.activate.connect (() => {
+                app.window.fullscreened = !app.window.fullscreened;
+            });
 
             //player.eos.connect (window.on_stream_ended);
             //player.additional_plugins_required.connect (window.on_additional_plugins_needed);

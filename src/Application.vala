@@ -20,6 +20,7 @@ public class Application : Gtk.Application {
     public SimpleAction play_pause_action { get; private set; }
     public SimpleAction seek_forward_action { get; private set; }
     public SimpleAction seek_backward_action { get; private set; }
+    public SimpleAction fullscreen_action { get; private set; }
 
     public Application () {
         Object (
@@ -35,6 +36,7 @@ public class Application : Gtk.Application {
         play_pause_action = new SimpleAction ("play-pause", null);
         seek_forward_action = new SimpleAction ("seek-forward", null);
         seek_backward_action = new SimpleAction ("seek-backward", null);
+        fullscreen_action = new SimpleAction ("fullscreen", null);
 
         add_action (add_podcast_action);
         add_action (import_opml_action);
@@ -42,12 +44,14 @@ public class Application : Gtk.Application {
         add_action (play_pause_action);
         add_action (seek_forward_action);
         add_action (seek_backward_action);
+        add_action (fullscreen_action);
         set_accels_for_action ("app.add-podcast", { "<Control>a" });
         set_accels_for_action ("app.import-opml", { "<Control><Shift>i" });
         set_accels_for_action ("app.quit", { "<Control>q", "<Control>w" });
         set_accels_for_action ("app.play-pause", { "k", "space" });
         set_accels_for_action ("app.seek_forward", { "l" });
         set_accels_for_action ("app.seek_backward", { "h" });
+        set_accels_for_action ("app.fullscreen", { "F11"} );
     }
 
     protected override void activate () {
