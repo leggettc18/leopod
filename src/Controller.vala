@@ -4,58 +4,65 @@
  */
 
 namespace Leopod {
-	public class Controller : GLib.Object {
-	    // Objects
-		public MainWindow window = null;
-		public Library library = null;
-		public MyApp app = null;
-		public Player player;
+    public class Controller : Object {
+        // Objects
+        public Application app { get; construct; }
+
+        // Widgets
+        private AddPodcastDialog add_podcast_dialog { get; private set; }
+        private Gtk.FileChooserNative opml_file_dialog;
 
         // Signals
         public signal void playback_status_changed (string status);
-        public signal void track_changed (string episode_title, string podcast_name, string artwork_uri, uint64 duration);
-		public signal void update_status_changed (bool currently_updating);
+        public signal void track_changed (
+            string episode_title, string podcast_name, string artwork_uri, uint64 duration
+        );
+        public signal void update_status_changed (bool currently_updating);
 
-		// Runtime Flags
-		public bool first_run = true;
-	    public bool checking_for_updates;
-	    public bool currently_repopulating = false;
+        // Runtime Flags
+        public bool first_run { get; private set; default = true; }
+        public bool checking_for_updates { get; private set; default = false; }
+        public bool currently_repopulating { get; private set; default = false; }
+        private bool importing = false;
 
-	    // System
-	    //public Gst.PbUtils.InstallPluginsContext context;
+        // System
+        //public Gst.PbUtils.InstallPluginsContext context;
 
-	    // References
-	    public Episode current_episode;
+        // References
+        public Episode current_episode;
 
-		public Controller (MyApp app) {
-			this.app = app;
-			player = Player.get_default (app.args);
-			library = new Library (this);
+        public Controller (Application app) {
+            Object (app: app);
+        }
 
-			first_run = (!library.check_database_exists ());
+        construct {
+            first_run = (!app.library.check_database_exists ());
 
-			if (first_run) {
-			    library.setup_library ();
-			} else {
-			    library.refill_library ();
-			}
+            if (first_run) {
+                app.library.setup_library ();
+            }
 
-			window = new MainWindow (this);
+            app.quit_action.activate.connect (app.quit);
 
-			window.podcast_delete_requested.connect ((podcast) => {
-				library.delete_podcast (podcast);
-				library.refill_library ();
-				window.populate_views ();
-			});
+            app.add_podcast_action.activate.connect (() => {
+                on_add_podcast_clicked ();
+            });
+            app.import_opml_action.activate.connect (() => {
+                on_import_opml_clicked ();
+            });
 
-			//player.eos.connect (window.on_stream_ended);
-			//player.additional_plugins_required.connect (window.on_additional_plugins_needed);
+            app.play_pause_action.activate.connect (play_pause);
+            app.seek_forward_action.activate.connect (seek_forward);
+            app.seek_backward_action.activate.connect (seek_backward);
+            app.fullscreen_action.activate.connect (() => {
+                app.window.fullscreened = !app.window.fullscreened;
+            });
 
-            MPRIS mpris = new MPRIS (this);
-            mpris.initialize ();
+            //player.eos.connect (window.on_stream_ended);
+            //player.additional_plugins_required.connect (window.on_additional_plugins_needed);
 
-            player.new_position_available.connect (() => {
-                if (player.progress > 0) {
+            app.player.new_position_available.connect (() => {
+                if (app.player.progress > 0) {
                     //player.current_episode.last_played_position = (int) player.get_position ();
                 }
 
@@ -64,183 +71,274 @@ namespace Leopod {
                 int mins_elapsed;
                 int secs_elapsed;
 
-                double total_secs_elapsed = (player.duration * player.progress) / 1000000000;
+                double total_secs_elapsed = (app.player.duration * app.player.progress) / 1000000000;
 
                 mins_elapsed = (int) total_secs_elapsed / 60;
                 secs_elapsed = (int) total_secs_elapsed % 60;
 
-                double total_secs_remaining = (player.duration / 1000000000) - total_secs_elapsed;
+                double total_secs_remaining = (app.player.duration / 1000000000) - total_secs_elapsed;
 
                 mins_remaining = (int) total_secs_remaining / 60;
                 secs_remaining = (int) total_secs_remaining % 60;
 
-                if (player.progress != 0.0) {
-                    window.playback_box.set_progress (player.progress, mins_remaining, secs_remaining, mins_elapsed, secs_elapsed);
+                if (app.player.progress != 0.0) {
+                    app.window.playback_box.set_progress (
+                        app.player.progress, mins_remaining, secs_remaining, mins_elapsed, secs_elapsed
+                    );
                 }
             });
+        }
 
-			post_creation_sequence ();
-		}
+        public async void post_creation_sequence () {
+            if (first_run) {
+                app.window.switch_visible_page (app.window.welcome);
+            } else {
+                yield app.library.refill_library ();
+                if (app.library.empty ()) {
+                    app.window.switch_visible_page (app.window.welcome);
+                } else {
+                    yield on_update_request ();
+                    app.window.populate_views ();
+                }
+            }
 
-		private void post_creation_sequence () {
-		    if (first_run || library.empty ()) {
-		        window.show_all ();
-		        window.switch_visible_page (window.welcome);
-		        window.playback_box.hide ();
-		    } else {
-		        window.populate_views();
-		        info ("Showing main window");
-		        window.show_all ();
-		        window.playback_box.hide ();
-		        info ("switching to all_scrolled view");
-		        window.switch_visible_page (window.main_box);
-		        on_update_request ();
-		    }
+            GLib.Timeout.add (300000, () => {
+                if (!importing) {
+                    on_update_request.begin ((obj, res) => {
+                        on_update_request.end (res);
+                    });
+                }
+                return true;
+            });
+        }
 
-		    GLib.Timeout.add (300000, () => {
-		        on_update_request ();
-		        return true;
-		    });
-		}
+        public void on_add_podcast_clicked () {
+            add_podcast_dialog = new AddPodcastDialog (app.window);
+            add_podcast_dialog.response.connect (on_add_podcast);
+            add_podcast_dialog.show ();
+        }
 
-		public void add_podcast (string podcast_uri) {
-		    Podcast podcast = new FeedParser ().get_podcast_from_file (podcast_uri);
-		    library.add_podcast (podcast);
-			window.populate_views ();
-		}
-
-		public async void add_podcast_async (string podcast_uri) {
-		    SourceFunc callback = add_podcast_async.callback;
-
-            ThreadFunc<void*> run = () => {
-
-                add_podcast (podcast_uri);
-
-                Idle.add ((owned) callback);
-                return null;
+        public void on_import_opml_clicked () {
+            opml_file_dialog = new Gtk.FileChooserNative (
+                _("Select an OPML File"),
+                app.window,
+                Gtk.FileChooserAction.OPEN,
+                _("Import"),
+                _("Cancel")
+            ) {
+                filter = new Gtk.FileFilter (),
             };
+            opml_file_dialog.filter.add_pattern ("*.opml");
+            opml_file_dialog.response.connect (on_import_opml);
+            opml_file_dialog.show ();
+        }
 
-            new Thread<void*> ("add-podcast", (owned) run);
+        /*
+         * Handles adding adding the podcast from the dialog
+         */
+        public void on_add_podcast (int response_id) {
+            add_podcast_dialog.destroy ();
+            if (response_id == Gtk.ResponseType.ACCEPT) {
+                app.window.switch_visible_page (app.window.main_box);
+                app.window.overlay_bar.label = "Adding Podcast";
+                app.window.overlay_bar.active = true;
+                app.window.overlay_bar.show ();
+                add_podcast_async.begin ( add_podcast_dialog.podcast_uri_entry.get_text (), (obj, res) => {
+                    add_podcast_async.end (res);
+                    app.window.overlay_bar.active = false;
+                    app.window.overlay_bar.hide ();
+                });
+            }
+        }
+        private void on_import_opml (int response_id) {
+            if (response_id == Gtk.ResponseType.ACCEPT) {
+                app.window.overlay_bar.label = "Adding Podcasts";
+                app.window.overlay_bar.active = true;
+                app.window.overlay_bar.show ();
+                app.window.switch_visible_page (app.window.main_box);
+                File opml_file = opml_file_dialog.get_file ();
+                import_opml.begin (opml_file.get_path (), (obj, res) => {
+                    import_opml.end (res);
+                    app.window.overlay_bar.active = false;
+                    app.window.overlay_bar.hide ();
+                });
+            }
+        }
 
+        public void add_podcast (string podcast_uri) {
+            try {
+                Podcast podcast = new FeedParser ().get_podcast_from_file (podcast_uri);
+                app.library.add_podcast.begin (podcast);
+                app.window.populate_views ();
+            } catch (Error e) {
+                error (e.message);
+            }
+        }
+
+        public async void import_opml (string path) {
+            try {
+                string[] feeds = new FeedParser ().parse_feeds_from_OPML (path);
+                importing = true;
+                foreach (string feed in feeds) {
+                    yield add_podcast_async (feed);
+                }
+                importing = false;
+            } catch (LeopodLibraryError e) {
+                error (e.message);
+            }
+        }
+
+        private async Podcast download_podcast (string podcast_uri) {
+            SourceFunc callback = download_podcast.callback;
+            Podcast* podcast = null;
+            ThreadFunc<void> run = () => {
+                try {
+                    podcast = new FeedParser ().get_podcast_from_file (podcast_uri);
+                } catch (Error e) {
+                    error (e.message);
+                }
+                Idle.add ((owned) callback);
+            };
+            new Thread<void> ("download_and_store_podcast", (owned) run);
             yield;
-		}
+            return podcast;
+        }
 
-		public void on_update_request () {
-		    if (!checking_for_updates) {
-		        info ("Checking for updates.");
+        public async void add_podcast_async (string podcast_uri) {
+            info ("downloading podcast");
+            Podcast podcast = yield download_podcast (podcast_uri);
+            try {
+                info ("adding podcast to library");
+                yield app.library.add_podcast (podcast);
+            } catch (Error e) {
+                error (e.message);
+            }
+            app.window.populate_views ();
+        }
 
-		        checking_for_updates = true;
-		        update_status_changed (true);
+        public async void on_update_request () {
+            if (!checking_for_updates) {
+                SourceFunc callback = on_update_request.callback;
 
-		        Gee.ArrayList<Episode> new_episodes = new Gee.ArrayList<Episode> ();
+                ThreadFunc<void> run = () => {
+                    checking_for_updates = true;
+                    update_status_changed (true);
 
-		        var loop = new MainLoop ();
-		        library.check_for_updates.begin ((obj, res) => {
-		            try {
-		                new_episodes = library.check_for_updates.end (res);
-		            } catch (Error e) {
-		                warning (e.message);
-		            }
-		            loop.quit ();
-		        });
-		        loop.run ();
+                    Gee.ArrayList<Episode> new_episodes = new Gee.ArrayList<Episode> ();
 
-		        checking_for_updates = false;
-		        update_status_changed (false);
+                    new_episodes = app.library.check_for_updates ();
 
-		        int new_episode_count = new_episodes.size;
+                    checking_for_updates = false;
+                    update_status_changed (false);
 
-		        new_episodes = null;
+                    int new_episode_count = new_episodes.size;
 
-		        if (new_episode_count > 0) {
-		            info ("Repopulating views after update is finished");
-		            library.refill_library ();
-		            window.populate_views ();
-		        }
-		    } else {
-		        info ("Leopod is already updating.");
-		    }
-		}
+                    new_episodes = null;
 
-		public void play_pause () {
-		    if (player != null) {
-		        if (player.playing) {
-		            pause ();
-		        } else {
-		            play ();
-		        }
-		    }
-		}
+                    if (new_episode_count > 0) {
+                        //library.refill_library ();
+                        app.window.populate_views_async.begin ((obj, res) => {
+                            app.window.populate_views_async.end (res);
+                        });
+                    }
+                    Idle.add ((owned) callback);
+                };
 
-		/*
-		 * Handles play requests and starts media playback using the player
-		 */
-		public void play () {
-		    if (current_episode != null) {
-		        window.playback_box.show ();
-		        library.mark_episode_as_played (current_episode);
+                new Thread<void> ("on_update_request", (owned) run);
+                yield;
+            } else {
+                info ("Leopod is already updating.");
+            }
+        }
 
-		        if (player.current_episode != current_episode) {
-		            if (player.current_episode != null) {
-						info ("Setting last played position of %s: %" + int64.FORMAT, current_episode.title, player.get_position ());
-		                player.current_episode.last_played_position = player.get_position ();
-		                library.set_episode_playback_position (player.current_episode);
-		            }
-					player.set_episode (current_episode);
-		            track_changed (current_episode.title.replace ("%27", "'"), current_episode.parent.name, current_episode.parent.coverart_uri, (uint64) player.duration);
-		        } else {
-                    player.play ();
+        public void play_pause () {
+            if (app.player != null) {
+                if (app.player.playing) {
+                    pause ();
+                } else {
+                    play ();
+                }
+            }
+        }
+
+        /*
+         * Handles play requests and starts media playback using the player
+         */
+        public void play () {
+            if (current_episode != null) {
+                app.window.playback_box.show ();
+                app.library.mark_episode_as_played (current_episode);
+
+                if (app.player.current_episode != current_episode) {
+                    if (app.player.current_episode != null) {
+                        info (
+                            "Setting last played position of %s: %" + int64.FORMAT,
+                            current_episode.title,
+                            app.player.get_position ()
+                        );
+                        app.player.current_episode.last_played_position = app.player.get_position ();
+                        app.library.set_episode_playback_position (app.player.current_episode);
+                    }
+                    app.player.set_episode (current_episode);
+                    track_changed (
+                        current_episode.title.replace ("%27", "'"),
+                        current_episode.parent.name,
+                        current_episode.parent.coverart_uri,
+                        (uint64) app.player.duration
+                    );
+                } else {
+                    app.player.play ();
                 }
 
-		        //TODO: handle video content
+                //TODO: handle video content
 
-		        //  GLib.Timeout.add (5000, () => {
-		        //  	if (player.duration != 0) {
-				//  		info ("Last Played Position: %" + int64.FORMAT, current_episode.last_played_position);
-				//  		player.play ();
-		        //  		if (
-		        //      		current_episode.last_played_position > 0
-		        //  		) {
-		        //  			player.set_position (current_episode.last_played_position);
-		        //  		}
-		        //  	}
-		        //  	return (player.duration == 0);
-		        //  });
+                //  GLib.Timeout.add (5000, () => {
+                //      if (player.duration != 0) {
+                //          info ("Last Played Position: %" + int64.FORMAT, current_episode.last_played_position);
+                //          player.play ();
+                //          if (
+                //              current_episode.last_played_position > 0
+                //          ) {
+                //              player.set_position (current_episode.last_played_position);
+                //          }
+                //      }
+                //      return (player.duration == 0);
+                //  });
                 playback_status_changed ("Playing");
 
 
-		        window.playback_box.set_info_title (
-		            current_episode.title.replace ("%27", "'"),
-		            current_episode.parent.name.replace ("%27", "'")
-		        );
+                app.window.playback_box.set_info_title (
+                    current_episode.title.replace ("%27", "'"),
+                    current_episode.parent.name.replace ("%27", "'")
+                );
 
-		        window.show_all ();
-		    }
-		}
+                app.window.show ();
+            }
+        }
 
-		public void pause () {
-	        if (player.playing) {
-	            player.pause ();
-	            playback_status_changed ("Paused");
+        public void pause () {
+            if (app.player.playing) {
+                app.player.pause ();
+                playback_status_changed ("Paused");
 
-	            current_episode.last_played_position = player.get_position ();
-	            library.set_episode_playback_position (current_episode);
+                current_episode.last_played_position = app.player.get_position ();
+                app.library.set_episode_playback_position (current_episode);
 
-	            window.playback_box.set_info_title (
-	                current_episode.title.replace ("%27", "'"),
-	                current_episode.parent.name.replace ("%27", "'")
-	            );
+                app.window.playback_box.set_info_title (
+                    current_episode.title.replace ("%27", "'"),
+                    current_episode.parent.name.replace ("%27", "'")
+                );
 
-	            window.show_all ();
-	        }
-		}
+                app.window.show ();
+            }
+        }
 
-		public void seek_forward () {
-		    player.seek_forward (10);
-		}
+        public void seek_forward () {
+            app.player.seek_forward (10);
+        }
 
-		public void seek_backward () {
-		    player.seek_backward (10);
-		}
-	}
+        public void seek_backward () {
+            app.player.seek_backward (10);
+        }
+    }
 }

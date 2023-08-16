@@ -5,11 +5,17 @@
 
 namespace Leopod {
     public class AddPodcastDialog : Granite.Dialog {
-        public Gtk.Entry podcast_uri_entry;
+        public Gtk.Entry podcast_uri_entry { get; private set; }
+        public Gtk.Window parent_window { get; construct; }
+
         private Gtk.Widget add_podcast_button;
 
-        public AddPodcastDialog (Gtk.Window parent) {
-            set_transient_for (parent);
+        public AddPodcastDialog (Gtk.Window parent_window) {
+            Object (parent_window: parent_window);
+        }
+
+        construct {
+            set_transient_for (parent_window);
             set_default_response (Gtk.ResponseType.ACCEPT);
             create_widgets ();
         }
@@ -19,23 +25,23 @@ namespace Leopod {
             this.podcast_uri_entry = new Gtk.Entry () {
                 width_request = 300,
             };
-            var add_label = new Gtk.Label.with_mnemonic(_("Podcast RSS Feed URL"));
-            add_label.mnemonic_widget = this.podcast_uri_entry;
+            var add_label = new Granite.HeaderLabel (_("Podcast RSS Feed URL"));
 
             // Layout Widgets
             var hbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 12) {
                 margin_start = 12,
-                margin_end = 12
+                margin_end = 12,
+                margin_top = 12,
             };
-            hbox.pack_start(add_label, false, true, 0);
-            hbox.pack_start(this.podcast_uri_entry, true, true, 0);
+            hbox.append (add_label);
+            hbox.append (this.podcast_uri_entry);
             var content = get_content_area ();
-            content.add (hbox);
+            content.append (hbox);
 
             // Add buttons to button area at the bottom
             add_button (_("Cancel"), Gtk.ResponseType.CANCEL);
             this.add_podcast_button = add_button (_("Add"), Gtk.ResponseType.ACCEPT);
-            this.add_podcast_button.get_style_context ().add_class (Gtk.STYLE_CLASS_SUGGESTED_ACTION);
+            this.add_podcast_button.get_style_context ().add_class (Granite.STYLE_CLASS_SUGGESTED_ACTION);
             this.add_podcast_button.sensitive = false;
 
             podcast_uri_entry.changed.connect (() => {
@@ -44,7 +50,7 @@ namespace Leopod {
                 }
             });
 
-            show_all ();
+            show ();
         }
     }
 }

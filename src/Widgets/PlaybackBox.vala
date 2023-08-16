@@ -12,41 +12,41 @@ public class PlaybackBox : Gtk.Box {
     public signal void seek_forward_clicked ();
     public signal void playback_rate_selected (double rate);
 
-    public Gtk.Label episode_label;
-    public Gtk.Label podcast_label;
-    public Gtk.Button seek_back_button;
-    public Gtk.Button playpause_button;
-    public Gtk.Button seek_forward_button;
-    public Gtk.Button playback_rate_button;
-    public Gtk.EventBox artwork;
-    public Gtk.Image artwork_image;
+    private Gtk.Label episode_label;
+    private Gtk.Label podcast_label;
+    private Gtk.Button seek_back_button;
+    private Gtk.Button playpause_button;
+    private Gtk.Button seek_forward_button;
+    public Gtk.Box artwork { get; set; }
+    private Gtk.Image artwork_image;
+    private PlaybackRatePopover playback_rate_popover;
     private Gtk.Image play_image;
     private Gtk.Image pause_image;
-    private Gtk.ProgressBar progress_bar;
     private Gtk.Scale scale;
     private Gtk.Grid scale_grid;
     private Gtk.Label left_time;
     private Gtk.Label right_time;
-    public Gtk.Button volume_button;
     private bool currently_playing = false;
+    public Application app { get; construct; }
 
-    public PlaybackBox (MyApp app) {
-        play_image = new Gtk.Image.from_icon_name("media-playback-start-symbolic", Gtk.IconSize.LARGE_TOOLBAR);
-        pause_image = new Gtk.Image.from_icon_name("media-playback-pause-symbolic", Gtk.IconSize.LARGE_TOOLBAR);
-        this.get_style_context ().add_class ("seek-bar");
+    public PlaybackBox (Application app) {
+        Object (app: app);
+    }
+
+    construct {
+        play_image = new Gtk.Image.from_icon_name ("media-playback-start-symbolic");
+        pause_image = new Gtk.Image.from_icon_name ("media-playback-pause-symbolic");
         orientation = Gtk.Orientation.HORIZONTAL;
 
-        //halign = Gtk.Align.FILL;
-
-        artwork = new Gtk.EventBox ();
+        artwork = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
 
         artwork_image = new Gtk.Image.from_icon_name (
-            "help-info-symbolic",
-            Gtk.IconSize.SMALL_TOOLBAR
+            "help-info-symbolic"
         );
 
         artwork_image.tooltip_text = _("View the shownotes for this episode");
-        artwork_image.margin = 12;
+        artwork_image.margin_bottom = artwork_image.margin_top =
+        artwork_image.margin_start = artwork_image.margin_end = 12;
         artwork_image.halign = Gtk.Align.START;
 
         episode_label = new Gtk.Label ("");
@@ -60,55 +60,43 @@ public class PlaybackBox : Gtk.Box {
         podcast_label.xalign = 0.0f;
         podcast_label.max_width_chars = 20;
 
-        playback_rate_button = new Gtk.Button.with_label ("x1.0") {
-            tooltip_text = _("Playback Rate"),
-            relief = Gtk.ReliefStyle.NONE
-        };
-        playback_rate_button.get_style_context ().add_class ("h3");
-        PlaybackRatePopover rate_popover = new PlaybackRatePopover (playback_rate_button);
-        playback_rate_button.clicked.connect (() => {
-            rate_popover.show_all ();
-        });
-        rate_popover.rate_selected.connect ((t, r) => {
-            playback_rate_button.label = "x%g".printf (r);
+        playback_rate_popover = new PlaybackRatePopover (app.settings.playback_rate);
+        playback_rate_popover.rate_selected.connect ((t, r) => {
             playback_rate_selected (r);
-            rate_popover.popdown ();
         });
 
         seek_back_button = new Gtk.Button.from_icon_name (
-            "media-seek-backward-symbolic",
-            Gtk.IconSize.LARGE_TOOLBAR
+            "media-seek-backward-symbolic"
         ) {
-            action_name = "app.seek_backward",
+            action_name = "app.seek-backward",
             tooltip_markup = Granite.markup_accel_tooltip (
-                app.get_accels_for_action ("app.seek_backward"),
+                app.get_accels_for_action ("app.seek-backward"),
                 _("Seek Backward")
-            )
+            ),
+            has_frame = false
         };
 
         playpause_button = new Gtk.Button.from_icon_name (
-            "media-playback-start-symbolic",
-            Gtk.IconSize.LARGE_TOOLBAR
+            "media-playback-start-symbolic"
         ) {
-            action_name = "app.playpause",
+            action_name = "app.play-pause",
             tooltip_markup = Granite.markup_accel_tooltip (
-                app.get_actions_for_accel ("app.playpause"),
+                app.get_accels_for_action ("app.play-pause"),
                 _("Play/Pause")
-            )
+            ),
+            has_frame = false
         };
 
         seek_forward_button = new Gtk.Button.from_icon_name (
-            "media-seek-forward-symbolic",
-            Gtk.IconSize.LARGE_TOOLBAR
+            "media-seek-forward-symbolic"
         ) {
-            action_name = "app.seek_forward",
+            action_name = "app.seek-forward",
             tooltip_markup = Granite.markup_accel_tooltip (
-                app.get_accels_for_action ("app.seek_forward"),
+                app.get_accels_for_action ("app.seek-forward"),
                 _("Seek Forward")
-            )
+            ),
+            has_frame = false
         };
-
-        progress_bar = new Gtk.ProgressBar ();
 
         scale = new Gtk.Scale.with_range (Gtk.Orientation.HORIZONTAL, 0, 1, 0.1) {
             hexpand = true,
@@ -116,7 +104,8 @@ public class PlaybackBox : Gtk.Box {
             halign = Gtk.Align.FILL
         };
         scale.set_value (0.0);
-        scale.get_style_context ().add_class (Granite.STYLE_CLASS_SEEKBAR);
+        scale.add_css_class (Granite.STYLE_CLASS_ACCENT);
+        add_css_class ("seek-bar");
         left_time = new Gtk.Label ("0:00");
         right_time = new Gtk.Label ("0:00");
         left_time.width_chars = 6;
@@ -137,30 +126,30 @@ public class PlaybackBox : Gtk.Box {
         scale_grid.attach (right_time, 2, 0, 1, 1);
         scale_grid.margin_end = 10;
 
-        //hexpand = true;
+        hexpand = true;
 
         var label_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 3);
-        label_box.add (episode_label);
-        label_box.add (podcast_label);
+        label_box.prepend (episode_label);
+        label_box.prepend (podcast_label);
         label_box.valign = Gtk.Align.CENTER;
         label_box.halign = Gtk.Align.START;
 
         var button_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 3);
-        button_box.add (playback_rate_button);
-        button_box.add (seek_back_button);
-        button_box.add (playpause_button);
-        button_box.add (seek_forward_button);
+        button_box.append (playback_rate_popover);
+        button_box.append (seek_back_button);
+        button_box.append (playpause_button);
+        button_box.append (seek_forward_button);
         button_box.margin_start = 5;
 
         // volume_button = new Gtk.Button.from_icon_name ("audio-volume-high-symbolic", Gtk.IconSize.SMALL_TOOLBAR);
         // volume_button.relief = Gtk.ReliefStyle.NONE;
         // volume_button.margin_end = 12;
 
-        artwork.add (artwork_image);
-        add (artwork);
-        add (label_box);
-        add (button_box);
-        add (scale_grid);
+        artwork.append (artwork_image);
+        append (artwork);
+        append (label_box);
+        append (button_box);
+        append (scale_grid);
         // add (volume_button);
     }
 
@@ -169,20 +158,20 @@ public class PlaybackBox : Gtk.Box {
      */
      public void set_playing (bool playing) {
          if (playing) {
-             playpause_button.image = pause_image;
+             playpause_button.icon_name = "media-playback-start-symbolic";
              currently_playing = true;
          } else {
-             playpause_button.image = play_image;
+             playpause_button.icon_name = "media-playback-pause-symbolic";
              currently_playing = false;
          }
      }
-     
+
      public void toggle_playing () {
          if (!currently_playing) {
-             playpause_button.image = pause_image;
+             playpause_button.icon_name = "media-playback-pause-symbolic";
              currently_playing = true;
          } else {
-             playpause_button.image = play_image;
+             playpause_button.icon_name = "media-playback-start-symbolic";
              currently_playing = false;
          }
      }
@@ -247,26 +236,26 @@ public class PlaybackBox : Gtk.Box {
             left_time.set_text ("%02d:%02d".printf (mins_elapsed, secs_elapsed));
         }
 
-        left_time.no_show_all = false;
+        //left_time.no_show_all = false;
         left_time.show ();
 
-        right_time.no_show_all = false;
+        //right_time.no_show_all = false;
         right_time.show ();
 
-        scale.no_show_all = false;
+        //scale.no_show_all = false;
         scale.show ();
     }
 
     public void show_artwork_image () {
         if (artwork_image != null) {
-            artwork_image.no_show_all = false;
+            //artwork_image.no_show_all = false;
             artwork_image.show ();
         }
     }
 
     public void hide_artwork_image () {
         if (artwork_image != null) {
-            artwork_image.no_show_all = true;
+            //artwork_image.no_show_all = true;
             artwork_image.hide ();
         }
     }
@@ -274,25 +263,12 @@ public class PlaybackBox : Gtk.Box {
     public void set_artwork_image (string uri) {
         info ("Setting artwork button to: " + uri);
         artwork_image.clear ();
-    	var artwork = GLib.File.new_for_uri (uri);
+        var artwork = GLib.File.new_for_uri (uri);
         var icon = new GLib.FileIcon (artwork);
         artwork_image.gicon = icon;
-    	artwork_image.pixel_size = 40;
+        artwork_image.pixel_size = 40;
     }
 
-    public void show_volume_button () {
-        if (volume_button != null) {
-            volume_button.no_show_all = false;
-            volume_button.show ();
-        }
-    }
-
-    public void hide_volume_button () {
-        if (volume_button != null) {
-            volume_button.no_show_all = true;
-            volume_button.hide ();
-        }
-    }
 }
 
 }

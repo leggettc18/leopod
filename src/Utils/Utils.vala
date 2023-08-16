@@ -17,13 +17,13 @@ public class Utils {
         markup = markup.replace ("&", "&amp;");
 
         // Simplify (keep only href attribute) & preserve anchor tags.
-        Regex simpleLinks = new Regex ("<a (.*?(href[\\s=]*?\".*?\").*?)>(.*?)<[\\s\\/]*?a[\\s>]*",
+        Regex simple_links = new Regex ("<a (.*?(href[\\s=]*?\".*?\").*?)>(.*?)<[\\s\\/]*?a[\\s>]*",
                                       RegexCompileFlags.CASELESS | RegexCompileFlags.DOTALL);
-        markup = simpleLinks.replace (markup, -1, 0, "?a? \\2?a-end?\\3 ?/a?");
+        markup = simple_links.replace (markup, -1, 0, "?a? \\2?a-end?\\3 ?/a?");
 
         // Replace <br> tags with line breaks.
-        Regex lineBreaks = new Regex ("<br[\\s\\/]*?>", RegexCompileFlags.CASELESS);
-        markup = lineBreaks.replace (markup, -1, 0, "\n");
+        Regex line_breaks = new Regex ("<br[\\s\\/]*?>", RegexCompileFlags.CASELESS);
+        markup = line_breaks.replace (markup, -1, 0, "\n");
 
         markup = markup.replace ("<a", "?a?");
         markup = markup.replace ("</a>", "?/a?");
@@ -32,22 +32,22 @@ public class Utils {
         markup = markup.replace ("<b>", "?b?");
         markup = markup.replace ("</b>", "?/b?");
 
-        int nextOpenBracketIndex = 0;
-        int nextCloseBracketIndex = 0;
-        while (nextOpenBracketIndex >= 0) {
-            nextOpenBracketIndex = markup.index_of ("<", 0);
-            nextCloseBracketIndex = markup.index_of (">", nextOpenBracketIndex) + 1;
+        int next_open_bracket_index = 0;
+        int next_close_bracket_index = 0;
+        while (next_open_bracket_index >= 0) {
+            next_open_bracket_index = markup.index_of ("<", 0);
+            next_close_bracket_index = markup.index_of (">", next_open_bracket_index) + 1;
             if (
-                nextOpenBracketIndex < nextCloseBracketIndex && nextOpenBracketIndex >= 0
-                && nextCloseBracketIndex >= 0
-                && nextOpenBracketIndex <= markup.length
-                && nextCloseBracketIndex <= markup.length
+                next_open_bracket_index < next_close_bracket_index && next_open_bracket_index >= 0
+                && next_close_bracket_index >= 0
+                && next_open_bracket_index <= markup.length
+                && next_close_bracket_index <= markup.length
             ) {
-                markup = markup.splice (nextOpenBracketIndex, nextCloseBracketIndex);
-                nextOpenBracketIndex = 0;
-                nextCloseBracketIndex = 0;
+                markup = markup.splice (next_open_bracket_index, next_close_bracket_index);
+                next_open_bracket_index = 0;
+                next_close_bracket_index = 0;
             } else {
-                nextOpenBracketIndex = -1;
+                next_open_bracket_index = -1;
             }
         }
 

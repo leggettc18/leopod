@@ -10,13 +10,13 @@ public class SoupClient {
         soup_session = new Soup.Session ();
     }
 
-    public string request_as_string(HttpMethod method, string url) throws Error {
+    public string request_as_string (HttpMethod method, string url) throws Error {
         var message = new Soup.Message (method.to_string (), url);
 
-        soup_session.send_message (message);
+        var response = soup_session.send_and_read (message);
         check_response_headers (message);
 
-        return (string) message.response_body.data;
+        return (string) response.get_data ();
     }
 
     public InputStream request (HttpMethod method, string url) throws Error {
@@ -58,31 +58,15 @@ public class SoupClient {
                 // resource was created in response to a PUT or POST
                 break;
 
-            case Soup.Status.CANT_RESOLVE:
-            case Soup.Status.CANT_RESOLVE_PROXY:
-                throw new PublishingError.NO_ANSWER (
-                    "Unable to resolve %s (error code %u)",
-                    message.get_uri ().to_string (false),
-                    message.status_code
-                );
-
-            case Soup.Status.CANT_CONNECT:
-            case Soup.Status.CANT_CONNECT_PROXY:
-                throw new PublishingError.NO_ANSWER (
-                    "Unable to connect to %s (error code %u)",
-                    message.get_uri ().to_string (false),
-                    message.status_code
-                );
-
             default:
                 // status codes below 100 are used by Soup, 100 and above are defined HTTP codes
                 if (message.status_code >= 100) {
                     throw new PublishingError.NO_ANSWER ("Service %s returned HTTP status code %u %s",
-                    message.get_uri ().to_string (false), message.status_code, message.reason_phrase);
+                    message.get_uri ().to_string (), message.status_code, message.reason_phrase);
                 } else {
                     throw new PublishingError.NO_ANSWER (
                         "Failure communicating with %s (error code %u)",
-                        message.get_uri ().to_string (false),
+                        message.get_uri ().to_string (),
                         message.status_code
                     );
                 }
