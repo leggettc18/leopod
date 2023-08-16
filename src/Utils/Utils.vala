@@ -2,6 +2,12 @@
 
 namespace Leopod {
 
+    public inline void ret_to_ex (int errc) throws FileError {
+        if (errc < 0) {
+            throw new FileError.FAILED ("failed");
+        }
+    }
+
 public class Utils {
     /*
      * Strips a string of HTML tags, except for ones that are useful in markup

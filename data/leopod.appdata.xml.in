@@ -33,10 +33,31 @@
     <value key="x-appcenter-suggested-price">5</value>
     <value key="x-appcenter-color-primary">#7239b3</value>
     <value key="x-appcenter-color-primary-text">#ffffff</value>
-    <value key="x-appcenter-stripe">pk_live_51JvETfBdM1m7QL9XepszrEq2gJFJdMLNTrkAqCdDVWnfaQ3fuzIw0tIevrdTr2yPh1n0sto2MLvJqzPyNZL0Sd9800Szrwqx1b</value>
+    <value key="x-appcenter-stripe">pk_live_51JvETfBdM1m7QL9XTi54nreCXuBGTHXtq5Qnnf8dwzFOcBpAHb7DSPpOhQQaugd9esKroklgftzs7ulD2JTKpySD00mmRNMvgI</value>
   </custom>
   <content_rating type="oars-1.0" />
   <releases>
+    <release version="2.0" date="2023-08-16">
+      <description>
+        <p>New Features</p>
+        <ul>
+          <li>Import from and Export to OPML files</li>
+          <li>Window size and Maximized/Fullscreen State is now remembered</li>
+        </ul>
+        <p>Improvements - Some Visible, some Under the Hood</p>
+        <ul>
+          <li>New Icon!</li>
+          <li>Update to Elementary OS 7.2 Runtime</li>
+          <li>Ported to GTK4</li>
+          <li>Downloads and Episode Details Popovers replaced with Windows</li>
+          <li>Progress Bar Overlay added to Downloads button, so overall progress on downloads can be displayed without showing a window or popover</li>
+          <li>Various improvements made to indicate when the app is loading data or performing background tasks</li>
+          <li>Fixes to various errors and warnings that were being logged to the console</li>
+          <li>Adds some color to the UI using the system's accent color</li>
+          <li>Various bits of code reorganization to improve code clarity</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.1.1" date="2022-03-06">
       <description>
         <p>Updates release info for Appcenter and updates one of the screenshots</p>

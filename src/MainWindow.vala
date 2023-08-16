@@ -70,6 +70,7 @@ public class MainWindow : Gtk.ApplicationWindow {
 
         Menu menu = new Menu ();
         menu.append ("Import", "app.import-opml");
+        menu.append ("Export", "app.export-opml");
         menu.append ("Quit", "app.quit");
 
         Gtk.PopoverMenu menu_popover = new Gtk.PopoverMenu.from_model (menu);

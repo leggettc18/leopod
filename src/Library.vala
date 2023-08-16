@@ -557,5 +557,38 @@ namespace Leopod {
             new Thread<void> ("delete_podcast", (owned) run);
             yield;
         }
+
+        public void export_to_opml (string path) {
+            DateTime now = new DateTime.now (new TimeZone.local ());
+            try {
+                Xml.TextWriter writer = new Xml.TextWriter.filename (path, false);
+                if (writer == null) {
+                    error ("Error: Xml.TextWriter.filename () == null");
+                }
+                ret_to_ex (writer.start_document ("1.0", "utf-8"));
+                ret_to_ex (writer.start_element ("opml"));
+                ret_to_ex (writer.write_attribute ("version", "1.0"));
+                ret_to_ex (writer.start_element ("head"));
+                ret_to_ex (writer.start_element ("title"));
+                ret_to_ex (writer.write_string ("Leopod Subscriptions Export"));
+                ret_to_ex (writer.end_element ());
+                ret_to_ex (writer.start_element ("dateCreated"));
+                ret_to_ex (writer.write_string (now.to_string ()));
+                ret_to_ex (writer.end_element ());
+                ret_to_ex (writer.start_element ("dateModified"));
+                ret_to_ex (writer.write_string (now.to_string ()));
+                ret_to_ex (writer.end_element ());
+                ret_to_ex (writer.end_element ());
+                ret_to_ex (writer.start_element ("body"));
+                foreach (Podcast podcast in podcasts) {
+                    podcast.write_opml (writer);
+                }
+                ret_to_ex (writer.end_element ());
+                ret_to_ex (writer.end_element ());
+                ret_to_ex (writer.flush ());
+            } catch (Error e) {
+                error (e.message);
+            }
+        }
     }
 }
