@@ -44,12 +44,9 @@ namespace Leopod {
 
             app.quit_action.activate.connect (app.quit);
 
-            app.add_podcast_action.activate.connect (() => {
-                on_add_podcast_clicked ();
-            });
-            app.import_opml_action.activate.connect (() => {
-                on_import_opml_clicked ();
-            });
+            app.add_podcast_action.activate.connect (on_add_podcast_clicked);
+            app.import_opml_action.activate.connect (on_import_opml_clicked);
+            app.export_opml_action.activate.connect (on_export_opml_clicked);
 
             app.play_pause_action.activate.connect (play_pause);
             app.seek_forward_action.activate.connect (seek_forward);
@@ -133,6 +130,22 @@ namespace Leopod {
             opml_file_dialog.show ();
         }
 
+        private void on_export_opml_clicked () {
+            opml_file_dialog = new Gtk.FileChooserNative (
+                _("Select a location for the OPML Export"),
+                app.window,
+                Gtk.FileChooserAction.SAVE,
+                _("Export"),
+                _("Cancel")
+            ) {
+                filter = new Gtk.FileFilter (),
+            };
+            opml_file_dialog.filter.add_pattern ("*.opml");
+            opml_file_dialog.set_current_name ("leopod.opml");
+            opml_file_dialog.response.connect (on_export_opml);
+            opml_file_dialog.show ();
+        }
+
         /*
          * Handles adding adding the podcast from the dialog
          */
@@ -150,6 +163,7 @@ namespace Leopod {
                 });
             }
         }
+
         private void on_import_opml (int response_id) {
             if (response_id == Gtk.ResponseType.ACCEPT) {
                 app.window.overlay_bar.label = "Adding Podcasts";
@@ -159,6 +173,21 @@ namespace Leopod {
                 File opml_file = opml_file_dialog.get_file ();
                 import_opml.begin (opml_file.get_path (), (obj, res) => {
                     import_opml.end (res);
+                    app.window.overlay_bar.active = false;
+                    app.window.overlay_bar.hide ();
+                });
+            }
+        }
+
+        private void on_export_opml (int response_id) {
+            if (response_id == Gtk.ResponseType.ACCEPT) {
+                app.window.overlay_bar.label = "Exporting OPML File";
+                app.window.overlay_bar.active = true;
+                app.window.overlay_bar.show ();
+                File opml_file = opml_file_dialog.get_file ();
+                info (opml_file.get_path ());
+                export_opml.begin (opml_file.get_path (), (obj, res) => {
+                    export_opml.end (res);
                     app.window.overlay_bar.active = false;
                     app.window.overlay_bar.hide ();
                 });
@@ -186,6 +215,12 @@ namespace Leopod {
             } catch (LeopodLibraryError e) {
                 error (e.message);
             }
+        }
+
+        public async void export_opml (string path) {
+            Idle.add (export_opml.callback);
+            yield;
+            app.library.export_to_opml (path);
         }
 
         private async Podcast download_podcast (string podcast_uri) {
