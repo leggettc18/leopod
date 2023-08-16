@@ -558,12 +558,6 @@ namespace Leopod {
             yield;
         }
 
-        private inline void ret_to_ex (int errc) throws FileError {
-            if (errc < 0) {
-                throw new FileError.FAILED ("failed");
-            }
-        }
-
         public void export_to_opml (string path) {
             DateTime now = new DateTime.now (new TimeZone.local ());
             try {
@@ -587,11 +581,7 @@ namespace Leopod {
                 ret_to_ex (writer.end_element ());
                 ret_to_ex (writer.start_element ("body"));
                 foreach (Podcast podcast in podcasts) {
-                    ret_to_ex (writer.start_element ("outline"));
-                    ret_to_ex (writer.write_attribute ("text", podcast.name.replace ("\"", "'").replace ("&", "and")));
-                    ret_to_ex (writer.write_attribute ("type", "rss"));
-                    ret_to_ex (writer.write_attribute ("xmlUrl", podcast.feed_uri));
-                    ret_to_ex (writer.end_element ());
+                    podcast.write_opml (writer);
                 }
                 ret_to_ex (writer.end_element ());
                 ret_to_ex (writer.end_element ());
