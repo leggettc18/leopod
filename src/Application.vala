@@ -75,11 +75,6 @@ public class Application : Gtk.Application {
 
         var provider = new Gtk.CssProvider ();
         provider.load_from_resource ("/com/github/leggettc18/leopod/application.css");
-        Gtk.StyleContext.add_provider_for_display (
-          Gdk.Display.get_default (),
-          provider,
-          Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-        );
 
         settings = LeopodSettings.get_default_instance ();
         download_manager = new DownloadManager ();

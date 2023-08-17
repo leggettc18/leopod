@@ -73,7 +73,7 @@ namespace Leopod {
                 max_width_chars = 30,
                 ellipsize = Pango.EllipsizeMode.END
             };
-            title.get_style_context ().add_class ("h3");
+            title.add_css_class ("h3");
             desc_text = Utils.html_to_markup (episode.description);
 
             try {
@@ -128,7 +128,7 @@ namespace Leopod {
                 tooltip_text = _("Description"),
                 hexpand = true,
                 has_frame = true,
-                css_classes = { "episode-button" }
+                css_classes = { Granite.STYLE_CLASS_SUGGESTED_ACTION }
             };
 
             info_button.clicked.connect (() => {
@@ -142,7 +142,7 @@ namespace Leopod {
                 hexpand = true,
                 tooltip_text = _("Download"),
                 has_frame = true,
-                css_classes = { "episode-button" },
+                css_classes = { Granite.STYLE_CLASS_SUGGESTED_ACTION },
             };
 
             download_button.clicked.connect (() => {
@@ -161,7 +161,7 @@ namespace Leopod {
                 tooltip_text = _("Play"),
                 hexpand = true,
                 has_frame = true,
-                css_classes = { "episode-button" },
+                css_classes = { Granite.STYLE_CLASS_SUGGESTED_ACTION },
             };
             play_button.clicked.connect (() => {
                 play_requested (episode);
@@ -173,7 +173,7 @@ namespace Leopod {
                 tooltip_text = _("Delete"),
                 hexpand = true,
                 has_frame = true,
-                css_classes = { "episode-button" },
+                css_classes = { Granite.STYLE_CLASS_SUGGESTED_ACTION },
             };
 
             delete_button.clicked.connect (() => {
