@@ -68,7 +68,7 @@ public class DownloadsWindow : Gtk.Window {
         box.append (listbox);
 
         downloads_complete = new Gtk.Label (_("No Active Downloads"));
-        downloads_complete.get_style_context ().add_class ("h3");
+        downloads_complete.add_css_class (Granite.STYLE_CLASS_H3_LABEL);
         downloads_complete.sensitive = false;
         //downloads_complete.margin = 12;
         box.prepend (downloads_complete);

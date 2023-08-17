@@ -37,6 +37,16 @@
   </custom>
   <content_rating type="oars-1.0" />
   <releases>
+    <release version="2.0.1" date="2023-08-17">
+      <description>
+        <p>Fixes</p>
+        <ul>
+          <li>Fixes the infinite loading screen on the first launch before the database is created</li>
+          <li>Replaces several deprecated functions and widgets</li>
+          <li>Fixes the keyboard shortcuts for seeking forward and back</li>
+        </ul>
+      </description>
+    </release>
     <release version="2.0" date="2023-08-16">
       <description>
         <p>New Features</p>

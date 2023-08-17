@@ -17,8 +17,8 @@ namespace Leopod {
             orientation = Gtk.Orientation.VERTICAL;
             var controller = new Gtk.GestureClick ();
             controller.released.connect ((num_presses, x, y) => {
-                    clicked (this.podcast);
-                    });
+                clicked (this.podcast);
+            });
             add_controller (controller);
             image = new Gtk.Image () {
                 margin_top = margin_end = margin_start = margin_bottom = 2,
@@ -27,7 +27,7 @@ namespace Leopod {
             Gtk.Button button = new Gtk.Button () {
                 tooltip_text = _("Browse Podcast Episodes"),
             };
-            button.get_style_context ().add_class ("coverart");
+            button.add_css_class ("coverart");
 
             //Load the actual coverart
             info (podcast.local_art_uri);

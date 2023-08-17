@@ -10,7 +10,7 @@ namespace Leopod {
 
         // Widgets
         private AddPodcastDialog add_podcast_dialog { get; private set; }
-        private Gtk.FileChooserNative opml_file_dialog;
+        private Gtk.FileDialog opml_file_dialog;
 
         // Signals
         public signal void playback_status_changed (string status);
@@ -116,34 +116,55 @@ namespace Leopod {
         }
 
         public void on_import_opml_clicked () {
-            opml_file_dialog = new Gtk.FileChooserNative (
-                _("Select an OPML File"),
-                app.window,
-                Gtk.FileChooserAction.OPEN,
-                _("Import"),
-                _("Cancel")
-            ) {
-                filter = new Gtk.FileFilter (),
+            opml_file_dialog = new Gtk.FileDialog () {
+                title = _("Select an OPML File"),
+                accept_label = _("Import"),
+                default_filter = new Gtk.FileFilter (),
+                modal = true,
             };
-            opml_file_dialog.filter.add_pattern ("*.opml");
-            opml_file_dialog.response.connect (on_import_opml);
-            opml_file_dialog.show ();
+            opml_file_dialog.default_filter.add_pattern ("*.opml");
+            opml_file_dialog.open.begin (app.window, null, (obj, res) => {
+                try {
+                    File opml_file = opml_file_dialog.open.end (res);
+                    app.window.overlay_bar.label = "Adding Podcasts";
+                    app.window.overlay_bar.active = true;
+                    app.window.overlay_bar.show ();
+                    app.window.switch_visible_page (app.window.main_box);
+                    import_opml.begin (opml_file.get_path (), (obj, res) => {
+                        import_opml.end (res);
+                        app.window.overlay_bar.active = false;
+                        app.window.overlay_bar.hide ();
+                    });
+                } catch (Error e) {
+                    warning (e.message);
+                }
+            });
         }
 
         private void on_export_opml_clicked () {
-            opml_file_dialog = new Gtk.FileChooserNative (
-                _("Select a location for the OPML Export"),
-                app.window,
-                Gtk.FileChooserAction.SAVE,
-                _("Export"),
-                _("Cancel")
-            ) {
-                filter = new Gtk.FileFilter (),
+            opml_file_dialog = new Gtk.FileDialog () {
+                title = _("Select a location for the OPML Export"),
+                accept_label = _("Export"),
+                default_filter = new Gtk.FileFilter (),
+                modal = true,
             };
-            opml_file_dialog.filter.add_pattern ("*.opml");
-            opml_file_dialog.set_current_name ("leopod.opml");
-            opml_file_dialog.response.connect (on_export_opml);
-            opml_file_dialog.show ();
+            opml_file_dialog.default_filter.add_pattern ("*.opml");
+            opml_file_dialog.initial_name = "leopod.opml";
+            opml_file_dialog.save.begin (app.window, null, (obj, res) => {
+                try {
+                    File opml_file = opml_file_dialog.save.end (res);
+                    app.window.overlay_bar.label = "Exporting OPML File";
+                    app.window.overlay_bar.active = true;
+                    app.window.overlay_bar.show ();
+                    export_opml.begin (opml_file.get_path (), (obj, res) => {
+                        export_opml.end (res);
+                        app.window.overlay_bar.active = false;
+                        app.window.overlay_bar.hide ();
+                    });
+                } catch (Error e) {
+                    warning (e.message);
+                }
+            });
         }
 
         /*
@@ -158,36 +179,6 @@ namespace Leopod {
                 app.window.overlay_bar.show ();
                 add_podcast_async.begin ( add_podcast_dialog.podcast_uri_entry.get_text (), (obj, res) => {
                     add_podcast_async.end (res);
-                    app.window.overlay_bar.active = false;
-                    app.window.overlay_bar.hide ();
-                });
-            }
-        }
-
-        private void on_import_opml (int response_id) {
-            if (response_id == Gtk.ResponseType.ACCEPT) {
-                app.window.overlay_bar.label = "Adding Podcasts";
-                app.window.overlay_bar.active = true;
-                app.window.overlay_bar.show ();
-                app.window.switch_visible_page (app.window.main_box);
-                File opml_file = opml_file_dialog.get_file ();
-                import_opml.begin (opml_file.get_path (), (obj, res) => {
-                    import_opml.end (res);
-                    app.window.overlay_bar.active = false;
-                    app.window.overlay_bar.hide ();
-                });
-            }
-        }
-
-        private void on_export_opml (int response_id) {
-            if (response_id == Gtk.ResponseType.ACCEPT) {
-                app.window.overlay_bar.label = "Exporting OPML File";
-                app.window.overlay_bar.active = true;
-                app.window.overlay_bar.show ();
-                File opml_file = opml_file_dialog.get_file ();
-                info (opml_file.get_path ());
-                export_opml.begin (opml_file.get_path (), (obj, res) => {
-                    export_opml.end (res);
                     app.window.overlay_bar.active = false;
                     app.window.overlay_bar.hide ();
                 });

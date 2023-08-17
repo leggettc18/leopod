@@ -30,7 +30,8 @@ public class Application : Gtk.Application {
         );
     }
 
-    construct {
+    protected override void startup () {
+        base.startup ();
         add_podcast_action = new SimpleAction ("add-podcast", null);
         import_opml_action = new SimpleAction ("import-opml", null);
         export_opml_action = new SimpleAction ("export-opml", null);
@@ -48,13 +49,14 @@ public class Application : Gtk.Application {
         add_action (seek_forward_action);
         add_action (seek_backward_action);
         add_action (fullscreen_action);
+
         set_accels_for_action ("app.add-podcast", { "<Control>a" });
         set_accels_for_action ("app.import-opml", { "<Control><Shift>i" });
         set_accels_for_action ("app.export-opml", { "<Control><Shift>e" });
         set_accels_for_action ("app.quit", { "<Control>q", "<Control>w" });
         set_accels_for_action ("app.play-pause", { "k", "space" });
-        set_accels_for_action ("app.seek_forward", { "l" });
-        set_accels_for_action ("app.seek_backward", { "h" });
+        set_accels_for_action ("app.seek-forward", { "l" });
+        set_accels_for_action ("app.seek-backward", { "h" });
         set_accels_for_action ("app.fullscreen", { "F11"} );
     }
 
@@ -93,6 +95,9 @@ public class Application : Gtk.Application {
             });
         });
         window.playback_box.hide ();
+        if (controller.first_run) {
+            window.switch_visible_page (window.welcome);
+        }
         window.present ();
 
         // Add short delay, just long enough for the window to

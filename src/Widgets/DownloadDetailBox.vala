@@ -110,7 +110,7 @@ public class DownloadDetailBox : Gtk.Box {
         ) {
             tooltip_text = _("Cancel Download")
         };
-        cancel_button.get_style_context ().add_class ("flat");
+        cancel_button.add_css_class (Granite.STYLE_CLASS_FLAT);
         cancel_button.tooltip_text = _("Cancel Download");
         cancel_button.clicked.connect (() => {
             download.cancel ();

@@ -45,20 +45,19 @@ public class PlaybackBox : Gtk.Box {
         );
 
         artwork_image.tooltip_text = _("View the shownotes for this episode");
-        artwork_image.margin_bottom = artwork_image.margin_top =
         artwork_image.margin_start = artwork_image.margin_end = 12;
+        margin_top = margin_bottom = 12;
         artwork_image.halign = Gtk.Align.START;
 
         episode_label = new Gtk.Label ("");
         episode_label.set_ellipsize (Pango.EllipsizeMode.END);
         episode_label.xalign = 0.0f;
-        episode_label.get_style_context ().add_class ("h3");
-        episode_label.max_width_chars = 20;
+        episode_label.max_width_chars = 30;
 
         podcast_label = new Gtk.Label ("");
         podcast_label.set_ellipsize (Pango.EllipsizeMode.END);
         podcast_label.xalign = 0.0f;
-        podcast_label.max_width_chars = 20;
+        podcast_label.max_width_chars = 30;
 
         playback_rate_popover = new PlaybackRatePopover (app.settings.playback_rate);
         playback_rate_popover.rate_selected.connect ((t, r) => {

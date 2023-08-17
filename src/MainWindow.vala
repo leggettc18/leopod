@@ -222,7 +222,11 @@ public class MainWindow : Gtk.ApplicationWindow {
         notebook.add_titled (welcome, "welcome", _("Welcome"));
         notebook.add_titled (episodes_scrolled, "podcast-episodes", _("Episodes"));
 
-        main_layout.attach (loading_box, 0, 1);
+        if (app.controller.first_run) {
+            main_layout.attach (notebook, 0, 1);
+        } else {
+            main_layout.attach (loading_box, 0, 1);
+        }
 
         double playback_rate = app.settings.playback_rate;
         app.player.rate = playback_rate;
@@ -362,7 +366,7 @@ public class MainWindow : Gtk.ApplicationWindow {
             back_button = new Gtk.Button () {
                 label = back_text,
             };
-            back_button.get_style_context ().add_class (Granite.STYLE_CLASS_BACK_BUTTON);
+            back_button.add_css_class (Granite.STYLE_CLASS_BACK_BUTTON);
             back_button.clicked.connect (() => {
                 header_bar.remove (back_button);
                 switch_visible_page (back_widget);
