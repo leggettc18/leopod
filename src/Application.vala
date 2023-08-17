@@ -95,6 +95,9 @@ public class Application : Gtk.Application {
             });
         });
         window.playback_box.hide ();
+        if (controller.first_run) {
+            window.switch_visible_page (window.welcome);
+        }
         window.present ();
 
         // Add short delay, just long enough for the window to
