@@ -128,7 +128,7 @@ namespace Leopod {
                 tooltip_text = _("Description"),
                 hexpand = true,
                 has_frame = true,
-                css_classes = { Granite.STYLE_CLASS_SUGGESTED_ACTION }
+                css_classes = { "episode-button" }
             };
 
             info_button.clicked.connect (() => {
@@ -142,7 +142,7 @@ namespace Leopod {
                 hexpand = true,
                 tooltip_text = _("Download"),
                 has_frame = true,
-                css_classes = { Granite.STYLE_CLASS_SUGGESTED_ACTION },
+                css_classes = { "episode-button" },
             };
 
             download_button.clicked.connect (() => {
@@ -161,7 +161,7 @@ namespace Leopod {
                 tooltip_text = _("Play"),
                 hexpand = true,
                 has_frame = true,
-                css_classes = { Granite.STYLE_CLASS_SUGGESTED_ACTION },
+                css_classes = { "episode-button" },
             };
             play_button.clicked.connect (() => {
                 play_requested (episode);
@@ -173,7 +173,7 @@ namespace Leopod {
                 tooltip_text = _("Delete"),
                 hexpand = true,
                 has_frame = true,
-                css_classes = { Granite.STYLE_CLASS_SUGGESTED_ACTION },
+                css_classes = { "episode-button" },
             };
 
             delete_button.clicked.connect (() => {

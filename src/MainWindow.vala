@@ -362,7 +362,7 @@ public class MainWindow : Gtk.ApplicationWindow {
             back_button = new Gtk.Button () {
                 label = back_text,
             };
-            back_button.get_style_context ().add_class (Granite.STYLE_CLASS_BACK_BUTTON);
+            back_button.add_css_class (Granite.STYLE_CLASS_BACK_BUTTON);
             back_button.clicked.connect (() => {
                 header_bar.remove (back_button);
                 switch_visible_page (back_widget);
