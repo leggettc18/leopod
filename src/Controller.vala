@@ -88,6 +88,7 @@ namespace Leopod {
 
         public async void post_creation_sequence () {
             if (first_run) {
+                app.window.on_loaded ();
                 app.window.switch_visible_page (app.window.welcome);
             } else {
                 yield app.library.refill_library ();
