@@ -41,7 +41,7 @@ namespace Leopod {
             // Add buttons to button area at the bottom
             add_button (_("Cancel"), Gtk.ResponseType.CANCEL);
             this.add_podcast_button = add_button (_("Add"), Gtk.ResponseType.ACCEPT);
-            this.add_podcast_button.get_style_context ().add_class (Granite.STYLE_CLASS_SUGGESTED_ACTION);
+            this.add_podcast_button.add_css_class (Granite.STYLE_CLASS_SUGGESTED_ACTION);
             this.add_podcast_button.sensitive = false;
 
             podcast_uri_entry.changed.connect (() => {

@@ -73,7 +73,7 @@ namespace Leopod {
                 max_width_chars = 30,
                 ellipsize = Pango.EllipsizeMode.END
             };
-            title.get_style_context ().add_class ("h3");
+            title.add_css_class ("h3");
             desc_text = Utils.html_to_markup (episode.description);
 
             try {
