@@ -30,7 +30,8 @@ public class Application : Gtk.Application {
         );
     }
 
-    construct {
+    protected override void startup () {
+        base.startup ();
         add_podcast_action = new SimpleAction ("add-podcast", null);
         import_opml_action = new SimpleAction ("import-opml", null);
         export_opml_action = new SimpleAction ("export-opml", null);
@@ -48,6 +49,7 @@ public class Application : Gtk.Application {
         add_action (seek_forward_action);
         add_action (seek_backward_action);
         add_action (fullscreen_action);
+
         set_accels_for_action ("app.add-podcast", { "<Control>a" });
         set_accels_for_action ("app.import-opml", { "<Control><Shift>i" });
         set_accels_for_action ("app.export-opml", { "<Control><Shift>e" });
