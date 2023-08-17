@@ -53,8 +53,8 @@ public class Application : Gtk.Application {
         set_accels_for_action ("app.export-opml", { "<Control><Shift>e" });
         set_accels_for_action ("app.quit", { "<Control>q", "<Control>w" });
         set_accels_for_action ("app.play-pause", { "k", "space" });
-        set_accels_for_action ("app.seek_forward", { "l" });
-        set_accels_for_action ("app.seek_backward", { "h" });
+        set_accels_for_action ("app.seek-forward", { "l" });
+        set_accels_for_action ("app.seek-backward", { "h" });
         set_accels_for_action ("app.fullscreen", { "F11"} );
     }
 
