@@ -222,7 +222,11 @@ public class MainWindow : Gtk.ApplicationWindow {
         notebook.add_titled (welcome, "welcome", _("Welcome"));
         notebook.add_titled (episodes_scrolled, "podcast-episodes", _("Episodes"));
 
-        main_layout.attach (loading_box, 0, 1);
+        if (app.controller.first_run) {
+            main_layout.attach (notebook, 0, 1);
+        } else {
+            main_layout.attach (loading_box, 0, 1);
+        }
 
         double playback_rate = app.settings.playback_rate;
         app.player.rate = playback_rate;
