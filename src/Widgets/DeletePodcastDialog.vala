@@ -32,8 +32,7 @@ namespace Leopod {
             }
 
             image_icon = delete_icon;
-            primary_text = _("Are you sure you want to unsubscribe from the following podcast? - ")
-                + "%s".printf (podcast.name);
+            primary_text = _("Are you sure you want to unsubscribe from the following podcast? - %s").printf (podcast.name);
             secondary_text = _("This action cannot be undone");
 
             // Add buttons to button area at the bottom

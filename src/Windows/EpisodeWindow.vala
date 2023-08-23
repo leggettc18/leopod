@@ -13,7 +13,7 @@ class EpisodeWindow : Gtk.Window {
     }
 
     construct {
-        title = _(episode.parent.name + " - " + episode.title);
+        title = episode.parent.name + " - " + episode.title;
         titlebar = new Gtk.Grid () {
             visible = false
         };

@@ -1,13 +1,13 @@
-# German translations for com.github.leggettc18.leapod package.
-# Copyright (C) 2021 THE com.github.leggettc18.leapod'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the com.github.leggettc18.leapod package.
+# German translations for com.github.leggettc18.leopod package.
+# Copyright (C) 2021 THE com.github.leggettc18.leopod'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the com.github.leggettc18.leopod package.
 # Automatically generated, 2021.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: com.github.leggettc18.leapod\n"
+"Project-Id-Version: com.github.leggettc18.leopod\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-24 23:45-0400\n"
+"POT-Creation-Date: 2023-08-23 13:23+0900\n"
 "PO-Revision-Date: 2021-09-04 20:59-0400\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,62 +17,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/MainWindow.vala:64
+#: data/leopod.desktop.in:3 data/leopod.appdata.xml.in:7
+#: src/MainWindow.vala:109
 msgid "Leopod"
-msgstr ""
-
-#: src/MainWindow.vala:76
-msgid "Welcome to Leopod"
-msgstr ""
-
-#: src/MainWindow.vala:77
-msgid "Build your library by adding podcasts."
-msgstr ""
-
-#: src/MainWindow.vala:81
-msgid "Add a new Feed"
-msgstr ""
-
-#: src/MainWindow.vala:82
-msgid "Provide the web address of a podcast feed."
-msgstr ""
-
-#: src/MainWindow.vala:119
-msgid "All Podcasts"
-msgstr ""
-
-#: src/MainWindow.vala:120
-msgid "Welcome"
-msgstr ""
-
-#: src/MainWindow.vala:121
-msgid "Episodes"
-msgstr ""
-
-#: src/MainWindow.vala:218 src/MainWindow.vala:221
-msgid "All Scrolled"
-msgstr ""
-
-#: src/Widgets/AddPodcastDialog.vala:12
-msgid "Add Podcast"
-msgstr ""
-
-#. Create and setup widgets
-#: src/Widgets/AddPodcastDialog.vala:26
-msgid "Podcast RSS Feed URL:"
-msgstr ""
-
-#. Add buttons to button area at the bottom
-#: src/Widgets/AddPodcastDialog.vala:38
-msgid "Close"
-msgstr ""
-
-#: src/Widgets/AddPodcastDialog.vala:39
-msgid "Add"
-msgstr ""
-
-#: data/leopod.desktop.in:3 data/leopod.appdata.xml.in:6
-msgid "Leapod"
 msgstr ""
 
 #: data/leopod.desktop.in:4
@@ -83,18 +30,342 @@ msgstr ""
 msgid "Organize and listen to your podcasts"
 msgstr ""
 
-#: data/leopod.desktop.in:8
-msgid "com.github.leggettc18.leapod"
-msgstr ""
-
 #: data/leopod.desktop.in:11
-msgid "Leapod;Podcast;Audio;"
+msgid "Leopod;Podcast;Audio;"
 msgstr ""
 
-#: data/leopod.appdata.xml.in:7
-msgid "Organize and listen to your podcasts!"
+#: data/leopod.appdata.xml.in:8
+msgid "Christopher Leggett"
 msgstr ""
 
 #: data/leopod.appdata.xml.in:9
+msgid "Organize and listen to your podcasts!"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:11
 msgid "Subscribe to podcasts, organize them, and listen to them."
+msgstr ""
+
+#: data/leopod.appdata.xml.in:16
+msgid "The Podcast List"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:20
+msgid "A Podcast's Episodes List"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:24
+msgid "The New Episodes View"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:28
+msgid "The Playback Box"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:42
+msgid "Fixes"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:44
+msgid ""
+"Fixes the infinite loading screen on the first launch before the database is "
+"created"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:45
+msgid "Replaces several deprecated functions and widgets"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:46
+msgid "Fixes the keyboard shortcuts for seeking forward and back"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:52
+msgid "New Features"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:54
+msgid "Import from and Export to OPML files"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:55
+msgid "Window size and Maximized/Fullscreen State is now remembered"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:57
+msgid "Improvements - Some Visible, some Under the Hood"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:59
+msgid "New Icon!"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:60
+msgid "Update to Elementary OS 7.2 Runtime"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:61
+msgid "Ported to GTK4"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:62
+msgid "Downloads and Episode Details Popovers replaced with Windows"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:63
+msgid ""
+"Progress Bar Overlay added to Downloads button, so overall progress on "
+"downloads can be displayed without showing a window or popover"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:64
+msgid ""
+"Various improvements made to indicate when the app is loading data or "
+"performing background tasks"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:65
+msgid ""
+"Fixes to various errors and warnings that were being logged to the console"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:66
+msgid "Adds some color to the UI using the system's accent color"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:67
+msgid "Various bits of code reorganization to improve code clarity"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:73
+msgid "Updates release info for Appcenter and updates one of the screenshots"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:78 data/leopod.appdata.xml.in:99
+msgid "Improvements"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:80
+msgid "Smooths out some UI interactions and styling"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:81
+msgid "Adds ability to increase playback rate"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:82
+msgid "Adds keyboard shortcuts for play/pause and seeking"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:84
+msgid "Under the Hood"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:86
+msgid "Replaces ClutterGST player with native GStreamer Player"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:87
+msgid ""
+"Replaces some more generic widgets with Granite Widgets, where applicable"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:93
+msgid "Bugfixes"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:95
+msgid ""
+"Fixes inconsistency between MPRIS player playpause button and in-window "
+"playpause button"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:96
+msgid "Fixes some contrast issues in light mode"
+msgstr ""
+
+#: data/leopod.appdata.xml.in:97
+msgid "Fixes Downloads Popover not showing up from New Episodes view."
+msgstr ""
+
+#: data/leopod.appdata.xml.in:101
+msgid "Metadata improvements"
+msgstr ""
+
+#: src/MainWindow.vala:64
+msgid "Add Podcast"
+msgstr ""
+
+#: src/MainWindow.vala:81
+msgid "Menu"
+msgstr ""
+
+#: src/MainWindow.vala:132
+msgid "Welcome to Leopod"
+msgstr ""
+
+#: src/MainWindow.vala:134
+msgid "Build your library by adding podcasts."
+msgstr ""
+
+#: src/MainWindow.vala:139
+msgid "Add a new Feed"
+msgstr ""
+
+#: src/MainWindow.vala:140
+msgid "Provide the web address of a podcast feed"
+msgstr ""
+
+#: src/MainWindow.vala:144
+msgid "Import an OPML file"
+msgstr ""
+
+#: src/MainWindow.vala:145
+msgid "Import your podcast feeds from another app"
+msgstr ""
+
+#: src/MainWindow.vala:192 src/MainWindow.vala:361 src/MainWindow.vala:364
+msgid "All Podcasts"
+msgstr ""
+
+#: src/MainWindow.vala:193
+msgid "New Episodes"
+msgstr ""
+
+#: src/MainWindow.vala:210
+msgid "Loading"
+msgstr ""
+
+#: src/MainWindow.vala:221
+msgid "Main"
+msgstr ""
+
+#: src/MainWindow.vala:222
+msgid "Welcome"
+msgstr ""
+
+#: src/MainWindow.vala:223
+msgid "Episodes"
+msgstr ""
+
+#: src/Controller.vala:120
+msgid "Select an OPML File"
+msgstr ""
+
+#: src/Controller.vala:121
+msgid "Import"
+msgstr ""
+
+#: src/Controller.vala:146
+msgid "Select a location for the OPML Export"
+msgstr ""
+
+#: src/Controller.vala:147
+msgid "Export"
+msgstr ""
+
+#: src/Utils/FeedParser.vala:422
+msgid "Selected file doesn't appear to contain podcast subscriptions."
+msgstr ""
+
+#. Get the root node
+#. Make sure that it didn't return a null reference, either
+#. If it did, free the document manually (since unowned)
+#: src/Utils/FeedParser.vala:434
+msgid "Selected file seems to be empty."
+msgstr ""
+
+#: src/Widgets/CoverArt.vala:28
+msgid "Browse Podcast Episodes"
+msgstr ""
+
+#: src/Widgets/AddPodcastDialog.vala:28
+msgid "Podcast RSS Feed URL"
+msgstr ""
+
+#. Add buttons to button area at the bottom
+#: src/Widgets/AddPodcastDialog.vala:42 src/Widgets/DeletePodcastDialog.vala:39
+msgid "Cancel"
+msgstr ""
+
+#: src/Widgets/AddPodcastDialog.vala:43
+msgid "Add"
+msgstr ""
+
+#: src/Widgets/DeletePodcastDialog.vala:35
+#, c-format
+msgid "Are you sure you want to unsubscribe from the following podcast? - %s"
+msgstr ""
+
+#: src/Widgets/DeletePodcastDialog.vala:36
+msgid "This action cannot be undone"
+msgstr ""
+
+#: src/Widgets/DeletePodcastDialog.vala:41 src/Widgets/PodcastView.vala:63
+msgid "Unsubscribe"
+msgstr ""
+
+#: src/Widgets/EpisodeListItem.vala:128
+msgid "Description"
+msgstr ""
+
+#: src/Widgets/EpisodeListItem.vala:143
+msgid "Download"
+msgstr ""
+
+#: src/Widgets/EpisodeListItem.vala:161
+msgid "Play"
+msgstr ""
+
+#: src/Widgets/EpisodeListItem.vala:173
+msgid "Delete"
+msgstr ""
+
+#: src/Widgets/DownloadDetailBox.vala:45
+msgid "minute"
+msgid_plural "minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Widgets/DownloadDetailBox.vala:48
+msgid "second"
+msgid_plural "seconds"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Widgets/DownloadDetailBox.vala:111
+#: src/Widgets/DownloadDetailBox.vala:114
+msgid "Cancel Download"
+msgstr ""
+
+#: src/Widgets/DownloadsButton.vala:36 src/Windows/DownloadsWindow.vala:30
+msgid "Downloads"
+msgstr ""
+
+#: src/Widgets/PodcastView.vala:64
+msgid "Unsubscribe from Podcast"
+msgstr ""
+
+#: src/Widgets/PlaybackBox.vala:47
+msgid "View the shownotes for this episode"
+msgstr ""
+
+#: src/Widgets/PlaybackBox.vala:73
+msgid "Seek Backward"
+msgstr ""
+
+#: src/Widgets/PlaybackBox.vala:84
+msgid "Play/Pause"
+msgstr ""
+
+#: src/Widgets/PlaybackBox.vala:95
+msgid "Seek Forward"
+msgstr ""
+
+#: src/Widgets/PlaybackRatePopover.vala:26
+msgid "Playback Rate"
+msgstr ""
+
+#: src/Windows/DownloadsWindow.vala:70
+msgid "No Active Downloads"
 msgstr ""
