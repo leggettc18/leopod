@@ -1,371 +1,388 @@
-# Spanish translations for com.github.leggettc18.leopod package.
+# Russian translations for com.github.leggettc18.leopod package.
 # Copyright (C) 2021 THE com.github.leggettc18.leopod'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the com.github.leggettc18.leopod package.
-# Automatically generated, 2021.
+# lenemter <lenemter@gmail.com>, 2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: com.github.leggettc18.leopod\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-23 13:23+0900\n"
-"PO-Revision-Date: 2021-09-04 20:59-0400\n"
-"Last-Translator: Automatically generated\n"
+"PO-Revision-Date: 2023-08-17 17:13+0900\n"
+"Last-Translator: lenemter <lenemter@gmail.com>\n"
 "Language-Team: none\n"
-"Language: es\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #: data/leopod.desktop.in:3 data/leopod.appdata.xml.in:7
 #: src/MainWindow.vala:109
 msgid "Leopod"
-msgstr ""
+msgstr "Leopod"
 
 #: data/leopod.desktop.in:4
 msgid "Podcast Client App"
-msgstr ""
+msgstr "Приложение для подкастов"
 
 #: data/leopod.desktop.in:5
 msgid "Organize and listen to your podcasts"
-msgstr ""
+msgstr "Организуйте и слушайте свои подкасты"
 
 #: data/leopod.desktop.in:11
 msgid "Leopod;Podcast;Audio;"
-msgstr ""
+msgstr "Leopod;Podcast;Audio;Подкаст;Аудио"
 
 #: data/leopod.appdata.xml.in:8
 msgid "Christopher Leggett"
-msgstr ""
+msgstr "Christopher Leggett"
 
 #: data/leopod.appdata.xml.in:9
 msgid "Organize and listen to your podcasts!"
-msgstr ""
+msgstr "Организуйте и слушайте свои подкасты!"
 
 #: data/leopod.appdata.xml.in:11
 msgid "Subscribe to podcasts, organize them, and listen to them."
-msgstr ""
+msgstr "Подписывайтесь, настраивайте и слушайте свои подкасты."
 
 #: data/leopod.appdata.xml.in:16
 msgid "The Podcast List"
-msgstr ""
+msgstr "Список подкастов"
 
 #: data/leopod.appdata.xml.in:20
 msgid "A Podcast's Episodes List"
-msgstr ""
+msgstr "Список эпизодов подкаста"
 
 #: data/leopod.appdata.xml.in:24
 msgid "The New Episodes View"
-msgstr ""
+msgstr "Список новых эпизодов"
 
 #: data/leopod.appdata.xml.in:28
 msgid "The Playback Box"
-msgstr ""
+msgstr "Прослушивание подкаста"
 
 #: data/leopod.appdata.xml.in:42
 msgid "Fixes"
-msgstr ""
+msgstr "Исправления"
 
 #: data/leopod.appdata.xml.in:44
 msgid ""
 "Fixes the infinite loading screen on the first launch before the database is "
 "created"
 msgstr ""
+"Исправлен бесконечный экран загрузки при первом запуске до создания базы "
+"данных"
 
 #: data/leopod.appdata.xml.in:45
 msgid "Replaces several deprecated functions and widgets"
-msgstr ""
+msgstr "Заменены несколько устаревших функций и виджетов"
 
 #: data/leopod.appdata.xml.in:46
 msgid "Fixes the keyboard shortcuts for seeking forward and back"
-msgstr ""
+msgstr "Исправлены сочетания клавиш для переключения вперед и назад"
 
 #: data/leopod.appdata.xml.in:52
 msgid "New Features"
-msgstr ""
+msgstr "Новые возможности"
 
 #: data/leopod.appdata.xml.in:54
 msgid "Import from and Export to OPML files"
-msgstr ""
+msgstr "Импорт и экспорт в OPML файлы"
 
 #: data/leopod.appdata.xml.in:55
 msgid "Window size and Maximized/Fullscreen State is now remembered"
 msgstr ""
+"Размер окна и состояния «Развернутый» и «Полноэкранный режим» теперь "
+"запоминаются"
 
 #: data/leopod.appdata.xml.in:57
 msgid "Improvements - Some Visible, some Under the Hood"
-msgstr ""
+msgstr "Улучшения — некоторые видимые, некоторые нет"
 
 #: data/leopod.appdata.xml.in:59
 msgid "New Icon!"
-msgstr ""
+msgstr "Новая иконка!"
 
 #: data/leopod.appdata.xml.in:60
 msgid "Update to Elementary OS 7.2 Runtime"
-msgstr ""
+msgstr "Обновление до elementary OS 7.2 runtime"
 
 #: data/leopod.appdata.xml.in:61
 msgid "Ported to GTK4"
-msgstr ""
+msgstr "Портировано на GTK4"
 
 #: data/leopod.appdata.xml.in:62
 msgid "Downloads and Episode Details Popovers replaced with Windows"
 msgstr ""
+"Всплывающие окна с информацией о загрузках и эпизодах заменены на обычные "
+"окна"
 
 #: data/leopod.appdata.xml.in:63
 msgid ""
 "Progress Bar Overlay added to Downloads button, so overall progress on "
 "downloads can be displayed without showing a window or popover"
 msgstr ""
+"К кнопке «Загрузки» добавлено наложение индикатора выполнения, поэтому "
+"теперь общий прогресс загрузки можно отображаться без окон"
 
 #: data/leopod.appdata.xml.in:64
 msgid ""
 "Various improvements made to indicate when the app is loading data or "
 "performing background tasks"
 msgstr ""
+"Отображение, когда приложение загружает данные или выполняет фоновые задачи"
 
 #: data/leopod.appdata.xml.in:65
 msgid ""
 "Fixes to various errors and warnings that were being logged to the console"
-msgstr ""
+msgstr "Исправлены различные ошибки и предупреждения, записываемые в консоль"
 
 #: data/leopod.appdata.xml.in:66
 msgid "Adds some color to the UI using the system's accent color"
 msgstr ""
+"Добавлен цвет в пользовательский интерфейс, используя акцентный цвет систем"
 
 #: data/leopod.appdata.xml.in:67
 msgid "Various bits of code reorganization to improve code clarity"
-msgstr ""
+msgstr "Реорганизация кода для повышения ясности"
 
 #: data/leopod.appdata.xml.in:73
 msgid "Updates release info for Appcenter and updates one of the screenshots"
-msgstr ""
+msgstr "Обновление информации в Appcenter и снимка экрана"
 
 #: data/leopod.appdata.xml.in:78 data/leopod.appdata.xml.in:99
 msgid "Improvements"
-msgstr ""
+msgstr "Улучшения"
 
 #: data/leopod.appdata.xml.in:80
 msgid "Smooths out some UI interactions and styling"
-msgstr ""
+msgstr "Улучшения пользовательских взаимодействий и стилей"
 
 #: data/leopod.appdata.xml.in:81
 msgid "Adds ability to increase playback rate"
-msgstr ""
+msgstr "Добавлена возможность увеличивать скорость воспроизведения"
 
 #: data/leopod.appdata.xml.in:82
 msgid "Adds keyboard shortcuts for play/pause and seeking"
-msgstr ""
+msgstr "Добавлены сочетания клавиш для паузы и переключения"
 
 #: data/leopod.appdata.xml.in:84
 msgid "Under the Hood"
-msgstr ""
+msgstr "«Под капотом»"
 
 #: data/leopod.appdata.xml.in:86
 msgid "Replaces ClutterGST player with native GStreamer Player"
-msgstr ""
+msgstr "Заменён ClutterGST плеер на нативный GStreamer плеер"
 
 #: data/leopod.appdata.xml.in:87
 msgid ""
 "Replaces some more generic widgets with Granite Widgets, where applicable"
-msgstr ""
+msgstr "Некоторые виджеты были заменены на их аналоги из Granite"
 
 #: data/leopod.appdata.xml.in:93
 msgid "Bugfixes"
-msgstr ""
+msgstr "Исправления ошибок"
 
 #: data/leopod.appdata.xml.in:95
 msgid ""
 "Fixes inconsistency between MPRIS player playpause button and in-window "
 "playpause button"
 msgstr ""
+"Исправлено несоответствие между кнопкой паузы проигрывателя MPRIS и кнопкой "
+"паузы в окне"
 
 #: data/leopod.appdata.xml.in:96
 msgid "Fixes some contrast issues in light mode"
-msgstr ""
+msgstr "Исправлены некоторые проблемы с контрастностью в светлом режиме"
 
 #: data/leopod.appdata.xml.in:97
 msgid "Fixes Downloads Popover not showing up from New Episodes view."
 msgstr ""
+"Исправлены всплывающие окна с загрузками, которые не отображались в "
+"просмотре новых эпизодов"
 
 #: data/leopod.appdata.xml.in:101
 msgid "Metadata improvements"
-msgstr ""
+msgstr "Улучшения метаданных"
 
 #: src/MainWindow.vala:64
 msgid "Add Podcast"
-msgstr ""
+msgstr "Добавить подкаст"
 
 #: src/MainWindow.vala:81
 msgid "Menu"
-msgstr ""
+msgstr "Меню"
 
 #: src/MainWindow.vala:132
 msgid "Welcome to Leopod"
-msgstr ""
+msgstr "Добро пожаловать в Leopod"
 
 #: src/MainWindow.vala:134
 msgid "Build your library by adding podcasts."
-msgstr ""
+msgstr "Создайте свою библиотеку подкастов."
 
 #: src/MainWindow.vala:139
 msgid "Add a new Feed"
-msgstr ""
+msgstr "Добавить новую ленту"
 
 #: src/MainWindow.vala:140
 msgid "Provide the web address of a podcast feed"
-msgstr ""
+msgstr "Введите веб-адрес ленты подкастов"
 
 #: src/MainWindow.vala:144
 msgid "Import an OPML file"
-msgstr ""
+msgstr "Импортировать OPML файл"
 
 #: src/MainWindow.vala:145
 msgid "Import your podcast feeds from another app"
-msgstr ""
+msgstr "Импортируйте ваши ленты подкастов из другого приложения"
 
 #: src/MainWindow.vala:192 src/MainWindow.vala:361 src/MainWindow.vala:364
 msgid "All Podcasts"
-msgstr ""
+msgstr "Все подкасты"
 
 #: src/MainWindow.vala:193
 msgid "New Episodes"
-msgstr ""
+msgstr "Новые эпизоды"
 
 #: src/MainWindow.vala:210
 msgid "Loading"
-msgstr ""
+msgstr "Загрузка"
 
 #: src/MainWindow.vala:221
 msgid "Main"
-msgstr ""
+msgstr "Главный экран"
 
 #: src/MainWindow.vala:222
 msgid "Welcome"
-msgstr ""
+msgstr "Добро пожаловать"
 
 #: src/MainWindow.vala:223
 msgid "Episodes"
-msgstr ""
+msgstr "Эпизоды"
 
 #: src/Controller.vala:120
 msgid "Select an OPML File"
-msgstr ""
+msgstr "Выберите OPML файл"
 
 #: src/Controller.vala:121
 msgid "Import"
-msgstr ""
+msgstr "Импортировать"
 
 #: src/Controller.vala:146
 msgid "Select a location for the OPML Export"
-msgstr ""
+msgstr "Выберите место для экспорта OPML файла"
 
 #: src/Controller.vala:147
 msgid "Export"
-msgstr ""
+msgstr "Экспортировать"
 
 #: src/Utils/FeedParser.vala:422
 msgid "Selected file doesn't appear to contain podcast subscriptions."
-msgstr ""
+msgstr "Выбранный файл не содержит подписок на подкасты."
 
 #. Get the root node
 #. Make sure that it didn't return a null reference, either
 #. If it did, free the document manually (since unowned)
 #: src/Utils/FeedParser.vala:434
 msgid "Selected file seems to be empty."
-msgstr ""
+msgstr "Кажется, выбранный файл пуст."
 
 #: src/Widgets/CoverArt.vala:28
 msgid "Browse Podcast Episodes"
-msgstr ""
+msgstr "Просмотр эпизодов подкастов"
 
 #: src/Widgets/AddPodcastDialog.vala:28
 msgid "Podcast RSS Feed URL"
-msgstr ""
+msgstr "URL-ссылка на RSS ленту подкаста"
 
 #. Add buttons to button area at the bottom
 #: src/Widgets/AddPodcastDialog.vala:42 src/Widgets/DeletePodcastDialog.vala:39
 msgid "Cancel"
-msgstr ""
+msgstr "Отменить"
 
 #: src/Widgets/AddPodcastDialog.vala:43
 msgid "Add"
-msgstr ""
+msgstr "Добавить"
 
 #: src/Widgets/DeletePodcastDialog.vala:35
 #, c-format
 msgid "Are you sure you want to unsubscribe from the following podcast? - %s"
-msgstr ""
+msgstr "Вы уверены что хотите отписаться от следующего подкаста? - %s"
 
 #: src/Widgets/DeletePodcastDialog.vala:36
 msgid "This action cannot be undone"
-msgstr ""
+msgstr "Это действие не может быть отменено"
 
 #: src/Widgets/DeletePodcastDialog.vala:41 src/Widgets/PodcastView.vala:63
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Отписаться"
 
 #: src/Widgets/EpisodeListItem.vala:128
 msgid "Description"
-msgstr ""
+msgstr "Описание"
 
 #: src/Widgets/EpisodeListItem.vala:143
 msgid "Download"
-msgstr ""
+msgstr "Загрузить"
 
 #: src/Widgets/EpisodeListItem.vala:161
 msgid "Play"
-msgstr ""
+msgstr "Играть"
 
 #: src/Widgets/EpisodeListItem.vala:173
 msgid "Delete"
-msgstr ""
+msgstr "Удалить"
 
 #: src/Widgets/DownloadDetailBox.vala:45
 msgid "minute"
 msgid_plural "minutes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "минута"
+msgstr[1] "минуты"
+msgstr[2] "минут"
 
 #: src/Widgets/DownloadDetailBox.vala:48
 msgid "second"
 msgid_plural "seconds"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "секунда"
+msgstr[1] "секунды"
+msgstr[2] "секунд"
 
 #: src/Widgets/DownloadDetailBox.vala:111
 #: src/Widgets/DownloadDetailBox.vala:114
 msgid "Cancel Download"
-msgstr ""
+msgstr "Отменить загрузку"
 
 #: src/Widgets/DownloadsButton.vala:36 src/Windows/DownloadsWindow.vala:30
 msgid "Downloads"
-msgstr ""
+msgstr "Загрузки"
 
 #: src/Widgets/PodcastView.vala:64
 msgid "Unsubscribe from Podcast"
-msgstr ""
+msgstr "Отписаться от подкаста"
 
 #: src/Widgets/PlaybackBox.vala:47
 msgid "View the shownotes for this episode"
-msgstr ""
+msgstr "Посмотреть заметки об этом эпизоде"
 
 #: src/Widgets/PlaybackBox.vala:73
 msgid "Seek Backward"
-msgstr ""
+msgstr "Назад"
 
 #: src/Widgets/PlaybackBox.vala:84
 msgid "Play/Pause"
-msgstr ""
+msgstr "Играть/Остановить"
 
 #: src/Widgets/PlaybackBox.vala:95
 msgid "Seek Forward"
-msgstr ""
+msgstr "Вперёд"
 
 #: src/Widgets/PlaybackRatePopover.vala:26
 msgid "Playback Rate"
-msgstr ""
+msgstr "Скорость воспроизведения"
 
 #: src/Windows/DownloadsWindow.vala:70
 msgid "No Active Downloads"
-msgstr ""
+msgstr "Нет активных загрузок"

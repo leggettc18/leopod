@@ -136,13 +136,13 @@ public class MainWindow : Gtk.ApplicationWindow {
         };
         var welcome_add_action = welcome.append_button (
             welcome_add_icon,
-            _(" Add a new Feed"),
-            _(" Provide the web address of a podcast feed.")
+            _("Add a new Feed"),
+            _("Provide the web address of a podcast feed")
         );
         var welcome_import_action = welcome.append_button (
             welcome_import_icon,
-            _(" Import an OPML file"),
-            _(" Import your podcast feeds from another app")
+            _("Import an OPML file"),
+            _("Import your podcast feeds from another app")
         );
 
         welcome_add_action.action_name = "app.add-podcast";
